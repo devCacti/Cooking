@@ -71,7 +71,7 @@ Future<List<Recipe>> loadRecipes() async {
         jsonList.map((json) => Recipe.fromJson(json)).toList();
     return recipes;
   } catch (e) {
-    //* If the file doesn't exist or an error occurs while reading the file, return an empty list of recipes.
+    //* Caso a receita não exista ou tenha ocorrido algum erro, vai retornar uma lista vazia.
     return [];
   }
 }
@@ -80,20 +80,20 @@ Future<void> saveRecipe(Recipe recipe) async {
   try {
     final file = await _localFile;
     List<dynamic> jsonList = [];
-    //* Read the existing contents of the file, if it exists.
+    //* Lê os elementos do ficheiro, caso exista.
     try {
       final contents = await file.readAsString();
       jsonList = json.decode(contents);
     } catch (e) {
-      //* If the file doesn't exist, create an empty list.
+      //* Caso o ficheiro não exista, cria uma lista vazia.
       jsonList = [];
     }
-    // Append the new recipe to the end of the array.
+    // Adiciona a nova lista ao fim da lista correspondente ao que o ficheiro contém.
     jsonList.add(recipe.toJson());
-    // Write the updated array back to the file.
+    // Escreve a versão atualizada do ficheiro com a nova receita para o ficheiro.
     await file.writeAsString(json.encode(jsonList));
   } catch (e) {
-    // If an error occurs, throw an exception.
+    // Caso ocorra um erro, lança uma exceção.
     throw Exception('Failed to save recipe: $e');
   }
 }
@@ -112,8 +112,6 @@ Future<int> getNextId() async {
     await file.writeAsString('$nextId');
     return nextId;
   } catch (e) {
-    // If the file doesn't exist or an error occurs while reading the file,
-    // create a new file with id 1 and return it.
     await file.writeAsString('1');
     return 1;
   }
