@@ -14,28 +14,33 @@ class NewRecipeForm extends StatefulWidget {
 }
 
 class _NewRecipeFormState extends State<NewRecipeForm> {
+  //? Variaveis para guardar no ficheiro
   XFile? _image;
-  String? _selectedValue;
+  String? nomeR; //* Nome da receita
+  String? descR; //* Decrição da receita
+  String? ingsR; //* Ingredientes da receita
+  String? procR; //* Procedimento da receita
+
+  //? Outras variáveis (Não necessárias por enquanto)
   double tempoCozi = 0;
   double porcoes = 0;
+  String? _selectedValue;
   bool? favorita = false;
+
+  //*Variável para validar (Não utilizada na gravação de dados)
   bool? validate = false;
 
   //*Nome
   final _nameKey = GlobalKey<FormFieldState>();
-  final TextEditingController _nameController = TextEditingController();
 
   //*Descrição
   final _descKey = GlobalKey<FormFieldState>();
-  final TextEditingController _descController = TextEditingController();
 
   //*Ingredientes
   final _ingsKey = GlobalKey<FormFieldState>();
-  final TextEditingController _igredientsController = TextEditingController();
 
   //*Confecionamento
   final _procKey = GlobalKey<FormFieldState>();
-  final TextEditingController _procedureController = TextEditingController();
 
   String? dropdownValidator(String? value) {
     if (value == null) {
@@ -104,10 +109,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _descController.dispose();
-    _igredientsController.dispose();
-    _procedureController.dispose();
     super.dispose();
   }
 
@@ -167,7 +168,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               padding: const EdgeInsets.only(right: 32, left: 32),
               child: TextFormField(
                 key: _nameKey,
-                controller: _nameController,
                 maxLength: 75,
                 decoration: const InputDecoration(
                   labelText: 'Nome',
@@ -176,6 +176,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 ),
                 onChanged: (value) {
                   _nameKey.currentState!.validate();
+                  nomeR = value;
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -190,7 +191,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   right: 32, left: 32, top: 16, bottom: 12),
               child: TextFormField(
                 key: _descKey,
-                controller: _descController,
                 maxLines: null,
                 maxLength: 500,
                 decoration: const InputDecoration(
@@ -219,7 +219,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               padding: const EdgeInsets.only(right: 32, left: 32, top: 16),
               child: TextFormField(
                 key: _ingsKey,
-                controller: _igredientsController,
                 maxLines: null,
                 decoration: const InputDecoration(
                   labelText: 'Ingredientes',
@@ -241,7 +240,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               padding: const EdgeInsets.only(right: 32, left: 32, top: 16),
               child: TextFormField(
                 key: _procKey,
-                controller: _procedureController,
                 maxLines: null,
                 decoration: const InputDecoration(
                   labelText: 'Preparação',

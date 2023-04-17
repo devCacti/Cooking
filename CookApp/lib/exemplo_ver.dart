@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -88,11 +89,15 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () async {
                 Recipe newRecipe = Recipe(
                   id: await getNextId(),
+                  foto: null,
                   nome: nome!,
                   descricao: desc!,
                   ingredientes: ingr!,
                   procedimento: step!,
-                  tempo: 1,
+                  tempo: null,
+                  porcoes: null,
+                  categoria: null,
+                  favorita: false,
                 );
                 saveRecipe(newRecipe);
                 // ignore: avoid_print

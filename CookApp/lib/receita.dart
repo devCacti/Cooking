@@ -1,42 +1,59 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 class Recipe {
   final int id;
+  final XFile? foto;
   final String nome;
   final String descricao;
   final String ingredientes;
   final String procedimento;
-  final int tempo;
+  final int? tempo;
+  final int? porcoes;
+  final String? categoria;
+  final bool favorita;
 
   Recipe({
     required this.id,
+    required this.foto,
     required this.nome,
     required this.descricao,
     required this.ingredientes,
     required this.procedimento,
     required this.tempo,
+    required this.porcoes,
+    required this.categoria,
+    required this.favorita,
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
       id: json['id'],
+      foto: json['foto'],
       nome: json['nome'],
       descricao: json['descricao'],
       ingredientes: json['ingredientes'],
       procedimento: json['procedimento'],
       tempo: json['tempo'],
+      porcoes: json['porcoes'],
+      categoria: json['categoria'],
+      favorita: json['favorita'],
     );
   }
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'foto': foto,
         'nome': nome,
         'descricao': descricao,
         'ingredientes': ingredientes,
         'procedimento': procedimento,
         'tempo': tempo,
+        'pocoes': porcoes,
+        'categoria': categoria,
+        'favorita': favorita,
       };
 }
 
