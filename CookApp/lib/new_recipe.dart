@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
+import 'package:test_app/receita.dart';
+
 class NewRecipeForm extends StatefulWidget {
   const NewRecipeForm({Key? key}) : super(key: key);
 
@@ -14,7 +16,10 @@ class NewRecipeForm extends StatefulWidget {
 }
 
 class _NewRecipeFormState extends State<NewRecipeForm> {
+  Recipe? novaReceita;
+
   //? Variaveis para guardar no ficheiro
+  int id = 1;
   XFile? _image;
   String? nomeR; //* Nome da receita
   String? descR; //* Decrição da receita
@@ -23,7 +28,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   //? Outras variáveis (Não necessárias por enquanto)
   double tempoCozi = 0;
-  double porcoes = 0;
+  double porcoes = 1;
   String? _selectedValue;
   bool? favorita = false;
 
@@ -51,7 +56,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   final TextEditingController _tempoController = TextEditingController();
   final TextEditingController _porcoesController = TextEditingController();
-
   Future<bool> showConfirmationDialog(BuildContext context) async {
     bool confirm = false;
     await showDialog<bool>(
@@ -85,8 +89,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 onPressed: () {
                   confirm = true;
                   Navigator.pop(context);
-                  Navigator.pushReplacementNamed(
-                      context, 'Miau'); // navigate to home page
                 },
                 child: const Text('Sim'),
               ),
@@ -110,6 +112,16 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeData();
+  }
+
+  void initializeData() async {
+    id = await getNextId();
   }
 
   @override
@@ -200,6 +212,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 ),
                 onChanged: (value) {
                   _descKey.currentState!.validate();
+                  descR = value;
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -227,6 +240,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 ),
                 onChanged: (value) {
                   _ingsKey.currentState!.validate();
+                  ingsR = value;
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -248,6 +262,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 ),
                 onChanged: (value) {
                   _procKey.currentState!.validate();
+                  procR = value;
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -341,8 +356,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                   if (newValue != null &&
                                       newValue != tempoCozi) {
                                     setState(() {
-                                      tempoCozi =
-                                          newValue.clamp(0, 240) as double;
+                                      tempoCozi = newValue;
                                     });
                                   }
                                 },
@@ -437,7 +451,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           height: 1,
                         ),
                         DropdownButton<String>(
-                          value: _selectedValue,
+                          value: _selectedValue ?? 'Geral',
                           hint: const Text(
                             'Escolha...',
                             style: TextStyle(
@@ -448,8 +462,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             color: Colors.black54,
                             fontSize: 18,
                           ),
-                          items: <String>['Bolos', 'Sobremesas', 'Pratos']
-                              .map<DropdownMenuItem<String>>((String value) {
+                          items: <String>[
+                            'Geral',
+                            'Bolos',
+                            'Sobremesas',
+                            'Pratos'
+                          ].map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(value),
@@ -524,33 +542,65 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   ),
                 ),
                 child: IconButton(
+                  //! Botão para guardar
                   icon: const Icon(Icons.save),
                   highlightColor: Colors.orange,
                   tooltip: 'Guardar',
                   onPressed: () {
                     //Processo para fazer com que apareça a mensagem em todos os campos
-                    _nameKey.currentState!.validate();
-                    _descKey.currentState!.validate();
-                    _ingsKey.currentState!.validate();
-                    _procKey.currentState!.validate();
 
-                    //Certificação
-                    validate = _nameKey.currentState!.validate() &&
-                        _descKey.currentState!.validate() &&
-                        _ingsKey.currentState!.validate() &&
-                        _procKey.currentState!.validate();
+                    try {
+                      _nameKey.currentState!.validate();
+                      _descKey.currentState!.validate();
+                      _ingsKey.currentState!.validate();
+                      _procKey.currentState!.validate();
 
-                    if (validate == true) {
-                    } else {
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text(
-                            'Por favor preencha todos os campos necessários',
+                      //Certificação
+                      validate = _nameKey.currentState!.validate() &&
+                          _descKey.currentState!.validate() &&
+                          _ingsKey.currentState!.validate() &&
+                          _procKey.currentState!.validate();
+                      if (validate == true) {
+                        //! Processo que guarda a informação
+                        final novaReceita = Recipe(
+                          id: id,
+                          foto: _image == null ? null : _image!.path,
+                          nome: nomeR!,
+                          descricao: descR!,
+                          ingredientes: ingsR!,
+                          procedimento: procR!,
+                          tempo: tempoCozi,
+                          porcoes: porcoes,
+                          categoria: _selectedValue,
+                          favorita: favorita!,
+                        );
+
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                              'Em princípio a receita foi guardada.',
+                            ),
+                            action:
+                                SnackBarAction(label: 'OK', onPressed: () {}),
                           ),
-                          action: SnackBarAction(label: 'OK', onPressed: () {}),
-                        ),
-                      );
+                        );
+                        saveRecipe(novaReceita);
+                        Navigator.pop(context);
+                      } else {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                              'Por favor preencha todos os campos necessários',
+                            ),
+                            action:
+                                SnackBarAction(label: 'OK', onPressed: () {}),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      throw Exception('Não deu: $e');
                     }
                   },
                 ),

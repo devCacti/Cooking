@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "CookApp",
+            "cwd": "CookApp",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "CookApp (profile mode)",
+            "cwd": "CookApp",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "CookApp (release mode)",
+            "cwd": "CookApp",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "test_app",
+            "cwd": "test_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "test_app (profile mode)",
+            "cwd": "test_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "test_app (release mode)",
+            "cwd": "test_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

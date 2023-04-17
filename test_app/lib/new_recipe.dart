@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,7 +24,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   //Nome
   final _nameKey = GlobalKey<FormFieldState>();
-  final TextEditingController _nameController = TextEditingController();
 
   final _ingredientsKey = GlobalKey<FormFieldState>();
   final _procedureKey = GlobalKey<FormFieldState>();
@@ -144,7 +145,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               padding: const EdgeInsets.only(right: 32, left: 32),
               child: TextFormField(
                   key: _nameKey,
-                  controller: _nameController,
                   maxLength: 75,
                   decoration: const InputDecoration(
                     labelText: 'Nome',

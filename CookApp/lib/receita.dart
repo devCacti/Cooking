@@ -1,23 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 class Recipe {
   final int id;
-  final XFile? foto;
+  final String? foto;
   final String nome;
   final String descricao;
   final String ingredientes;
   final String procedimento;
-  final int? tempo;
-  final int? porcoes;
+  final double? tempo;
+  final double? porcoes;
   final String? categoria;
   final bool favorita;
 
   Recipe({
     required this.id,
-    required this.foto,
+    this.foto,
     required this.nome,
     required this.descricao,
     required this.ingredientes,
@@ -59,7 +58,7 @@ class Recipe {
 
 Future<File> get _localFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/testes_receitas.json');
+  return File('${directory.path}/testes_num1_receitas.json');
 }
 
 Future<List<Recipe>> loadRecipes() async {
