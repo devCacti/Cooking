@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'receita.dart';
 
@@ -10,12 +13,16 @@ class ListRecipesForm extends StatefulWidget {
 }
 
 class _ListRecipesFormState extends State<ListRecipesForm> {
-  List<Recipe>? recipes;
+  List<Recipe> _recipes = [];
 
   @override
   void initState() {
     super.initState();
-    //recipes = loadRecipes() as List<Recipe>?;
+    loadRecipes().then((recipes) {
+      setState(() {
+        _recipes = recipes;
+      });
+    });
   }
 
   @override
@@ -71,29 +78,43 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                   ),
                 ),
               ),
-              // ignore: unnecessary_null_comparison
-              //! CASO ESTEJA ALGO A CORRER MAL PODEM SER ESTES ELEMENTOS O PROBLEMA!!
-              recipes != null
-                  ? Expanded(
-                      child: Scrollbar(
-                        child: ListView(
-                          restorationId: 'test_load_recipes',
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          children: [
-                            for (var recipe in recipes as List<Recipe>)
-                              ListTile(
-                                leading: ExcludeSemantics(
-                                  child:
-                                      CircleAvatar(child: Text('${recipe.id}')),
-                                ),
-                                title: Text(recipe.nome),
-                                subtitle: Text(recipe.descricao),
-                              ),
-                          ],
+              //! CASO ESTEJA ALGO A CORRER MAL PODEM SER ESTES ELEMENTOS O PROBLEMA!
+              SizedBox(
+                height: 500, //MediaQuery.of(context).size.height,
+                child: ListView.builder(
+                  itemCount: _recipes.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black12,
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            _recipes[index].nome,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                          subtitle: Text(_recipes[index].descricao),
+                          leading: _recipes[index].foto != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.file(
+                                    File(_recipes[index].foto!),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
                         ),
                       ),
-                    )
-                  : const Text('miau'),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),

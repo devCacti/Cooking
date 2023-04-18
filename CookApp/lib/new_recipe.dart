@@ -1,5 +1,3 @@
-//TODO: guardar nome, descrição, ingredientes e procedimento para o fincheiro .JSON
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,17 +14,15 @@ class NewRecipeForm extends StatefulWidget {
 }
 
 class _NewRecipeFormState extends State<NewRecipeForm> {
-  Recipe? novaReceita;
-
   //? Variaveis para guardar no ficheiro
+  Recipe? novaReceita; //? Variável principal
+
   int id = 1;
   XFile? _image;
   String? nomeR; //* Nome da receita
   String? descR; //* Decrição da receita
   String? ingsR; //* Ingredientes da receita
   String? procR; //* Procedimento da receita
-
-  //? Outras variáveis (Não necessárias por enquanto)
   double tempoCozi = 0;
   double porcoes = 1;
   String? _selectedValue;
