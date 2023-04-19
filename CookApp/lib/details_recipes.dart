@@ -36,15 +36,20 @@ void showBigDialog(
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: foto == null
-                          ? const Icon(
-                              Icons.warning,
-                              size: 50,
-                              color: Colors.red,
-                            )
-                          : Image.file(File(foto)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 75, right: 75),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: foto == null
+                            ? const Icon(
+                                Icons.warning,
+                                size: 50,
+                                color: Colors.red,
+                              )
+                            : Image.file(
+                                File(foto),
+                              ),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Column(
