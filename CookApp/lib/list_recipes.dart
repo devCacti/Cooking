@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'receita.dart';
+import 'details_recipes.dart';
 
 class ListRecipesForm extends StatefulWidget {
   const ListRecipesForm({Key? key}) : super(key: key);
@@ -167,6 +168,16 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                     action: SnackBarAction(
                                         label: 'OK', onPressed: () {}),
                                   ),
+                                );
+                                showBigDialog(
+                                  context,
+                                  _recipes[index].foto,
+                                  _recipes[index].nome,
+                                  _recipes[index].descricao,
+                                  _recipes[index].ingredientes,
+                                  _recipes[index].procedimento,
+                                  _recipes[index].tempo,
+                                  _recipes[index].porcoes,
                                 );
                               },
                               onLongPress: () {

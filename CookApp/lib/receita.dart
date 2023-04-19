@@ -21,9 +21,9 @@ class Recipe {
     required this.descricao,
     required this.ingredientes,
     required this.procedimento,
-    this.tempo,
-    this.porcoes,
-    this.categoria,
+    required this.tempo,
+    required this.porcoes,
+    required this.categoria,
     required this.favorita,
   });
 
@@ -50,7 +50,7 @@ class Recipe {
         'ingredientes': ingredientes,
         'procedimento': procedimento,
         'tempo': tempo,
-        'pocoes': porcoes,
+        'porcoes': porcoes,
         'categoria': categoria,
         'favorita': favorita,
       };
@@ -58,7 +58,7 @@ class Recipe {
 
 Future<File> get _localFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/testes_num4_receitas.json');
+  return File('${directory.path}/testes_num5_receitas.json');
 }
 
 Future<List<Recipe>> loadRecipes() async {
@@ -99,7 +99,7 @@ Future<void> saveRecipe(Recipe recipe) async {
 
 Future<File> get _localIdFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/last_recipe_id_test_4.txt');
+  return File('${directory.path}/last_recipe_id_test_5.txt');
 }
 
 Future<int> getNextId() async {

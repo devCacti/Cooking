@@ -24,7 +24,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   String? ingsR; //* Ingredientes da receita
   String? procR; //* Procedimento da receita
   double tempoCozi = 0;
-  double porcoes = 1;
+  double porcoes = 0;
   String? _selectedValue;
   bool? favorita = false;
 
@@ -354,6 +354,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     setState(() {
                                       tempoCozi = newValue;
                                     });
+                                  } else {
+                                    tempoCozi = 0;
                                   }
                                 },
                                 keyboardType: TextInputType.number,
@@ -409,6 +411,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     setState(() {
                                       porcoes = newValue;
                                     });
+                                  } else {
+                                    porcoes = 0;
                                   }
                                 },
                                 keyboardType: TextInputType.number,
@@ -461,6 +465,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           items: <String>[
                             'Geral',
                             'Bolos',
+                            'Tartes',
                             'Sobremesas',
                             'Pratos'
                           ].map<DropdownMenuItem<String>>((String value) {
