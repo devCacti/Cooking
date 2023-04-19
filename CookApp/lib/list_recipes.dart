@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'receita.dart';
 
@@ -25,6 +24,57 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
     });
   }
 
+  Future<bool> showConfirmationDialog(BuildContext context, int id) async {
+    bool confirm = false;
+    await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return Theme(
+          data: ThemeData(
+              brightness: Brightness.dark,
+              textTheme: const TextTheme(
+                  titleMedium: TextStyle(
+                color: Colors.red,
+              ))),
+          child: CupertinoAlertDialog(
+            title: const Text(
+              'Eliminar?',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: const Text(
+              'Esta ação é irrevertível.\nA receita será eliminada permanentemente!',
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                isDestructiveAction: true,
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancelar'),
+              ),
+              CupertinoDialogAction(
+                isDestructiveAction: true,
+                onPressed: () {
+                  confirm = true;
+                  deleteRecipeById(id).then((_) {
+                    loadRecipes().then((recipes) {
+                      setState(() {
+                        _recipes = recipes;
+                      });
+                    });
+                  });
+                  Navigator.pop(context);
+                },
+                child: const Text('Sim'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    return confirm;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +84,8 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 48, left: 8, right: 8),
+                padding: const EdgeInsets.only(
+                    top: 48, left: 8, right: 8, bottom: 4),
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -79,40 +130,81 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                 ),
               ),
               //! CASO ESTEJA ALGO A CORRER MAL PODEM SER ESTES ELEMENTOS O PROBLEMA!
-              SizedBox(
-                height: 500, //MediaQuery.of(context).size.height,
-                child: ListView.builder(
-                  itemCount: _recipes.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.black12,
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            _recipes[index].nome,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontSize: 20,
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  height: MediaQuery.of(context).size.height - 250,
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      loadRecipes().then((recipes) {
+                        setState(() {
+                          _recipes = recipes;
+                        });
+                      });
+                    },
+                    child: ListView.builder(
+                      itemCount: _recipes.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.black12,
+                            ),
+                            child: ListTile(
+                              onTap: () {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "É suposto aparecer uma página com cenas\nNome: ${_recipes[index].nome}",
+                                    ),
+                                    action: SnackBarAction(
+                                        label: 'OK', onPressed: () {}),
+                                  ),
+                                );
+                              },
+                              onLongPress: () {
+                                showConfirmationDialog(
+                                  context,
+                                  _recipes[index].id,
+                                );
+                              },
+                              title: Text(
+                                _recipes[index].nome,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                              subtitle: Text(
+                                _recipes[index].descricao,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                              leading: _recipes[index].foto != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.file(
+                                        File(_recipes[index].foto!),
+                                      ),
+                                    )
+                                  : const Icon(
+                                      Icons.warning,
+                                      size: 50,
+                                    ),
                             ),
                           ),
-                          subtitle: Text(_recipes[index].descricao),
-                          leading: _recipes[index].foto != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.file(
-                                    File(_recipes[index].foto!),
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                      ),
-                    );
-                  },
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],

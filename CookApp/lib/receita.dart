@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 class Recipe {
@@ -114,5 +113,19 @@ Future<int> getNextId() async {
   } catch (e) {
     await file.writeAsString('1');
     return 1;
+  }
+}
+
+Future<void> deleteRecipeById(int id) async {
+  try {
+    final file = await _localFile;
+    final contents = await file.readAsString();
+    final List<dynamic> jsonList = json.decode(contents);
+    final List<Recipe> recipes =
+        jsonList.map((json) => Recipe.fromJson(json)).toList();
+    final updatedRecipes = recipes.where((recipe) => recipe.id != id).toList();
+    await file.writeAsString(json.encode(updatedRecipes));
+  } catch (e) {
+    throw Exception('Failed to delete recipe: $e');
   }
 }
