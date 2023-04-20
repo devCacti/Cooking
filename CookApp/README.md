@@ -1,16 +1,10 @@
-# test_app
+# Cooking
+App made for storing your own recipes.
+Why go look for your notebook when you can simply take out your device and start cooking?
 
-A new Flutter project.
+## Objectives
+My objective with the development of this application is to learn more about programming so that I know a good variety of programming languages.
+And it's also meant to help my reputation when I go look for a job without only having the school certification.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## How was it made
+I made this project using Flutter as the main resource (https://flutter.dev)
