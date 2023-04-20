@@ -25,7 +25,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   String? procR; //* Procedimento da receita
   double tempoCozi = 0;
   double porcoes = 0;
-  String? _selectedValue;
+  String _selectedValue = 'Geral';
   bool? favorita = false;
 
   //*Variável para validar (Não utilizada na gravação de dados)
@@ -136,41 +136,42 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             child: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
-                padding: const EdgeInsets.only(
-                  left: 72.0,
-                  right: 72.0,
-                  top: 32,
-                  bottom: 32,
-                ),
-                child: _image == null
-                    ? IconButton(
-                        icon: const Icon(Icons.camera_alt_outlined),
-                        iconSize: 75,
-                        onPressed: _getImage,
-                        tooltip: 'Escolher Foto',
-                      )
-                    : Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              File(_image!.path),
-                              fit: BoxFit.cover,
-                            ),
+              padding: const EdgeInsets.only(
+                left: 72.0,
+                right: 72.0,
+                top: 32,
+                bottom: 32,
+              ),
+              child: _image == null
+                  ? IconButton(
+                      icon: const Icon(Icons.camera_alt_outlined),
+                      iconSize: 75,
+                      onPressed: _getImage,
+                      tooltip: 'Escolher Foto',
+                    )
+                  : Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            File(_image!.path),
+                            fit: BoxFit.cover,
                           ),
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: IconButton(
-                              icon: const Icon(Icons.edit_outlined),
-                              onPressed: _getImage,
-                              tooltip: 'Mudar Foto',
-                              iconSize: 40,
-                              color: Colors.orange,
-                            ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit_outlined),
+                            onPressed: _getImage,
+                            tooltip: 'Mudar Foto',
+                            iconSize: 40,
+                            color: Colors.orange,
                           ),
-                        ],
-                      )),
+                        ),
+                      ],
+                    ),
+            ),
             //!Começo
             Padding(
               padding: const EdgeInsets.only(right: 32, left: 32),
@@ -451,7 +452,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           height: 1,
                         ),
                         DropdownButton<String>(
-                          value: _selectedValue ?? 'Geral',
+                          value: _selectedValue,
                           hint: const Text(
                             'Escolha...',
                             style: TextStyle(
@@ -476,7 +477,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           }).toList(),
                           onChanged: (String? newValue) {
                             setState(() {
-                              _selectedValue = newValue;
+                              _selectedValue = newValue!;
                             });
                           },
                         ),

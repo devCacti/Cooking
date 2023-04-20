@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'receita.dart';
 import 'details_recipes.dart';
 
-class ListRecipesForm extends StatefulWidget {
-  const ListRecipesForm({Key? key}) : super(key: key);
+class ListFavoutiresForm extends StatefulWidget {
+  const ListFavoutiresForm({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _ListRecipesFormState createState() => _ListRecipesFormState();
+  _ListFavouritesFormState createState() => _ListFavouritesFormState();
 }
 
-class _ListRecipesFormState extends State<ListRecipesForm> {
+class _ListFavouritesFormState extends State<ListFavoutiresForm> {
   List<Recipe> _recipes = [];
 
   @override
@@ -122,7 +122,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                             ),
                           ),
                           const Text(
-                            'Esta página serve para voçê ver as receitas que criou, clique numa para ver os seus detalhes. ;)',
+                            'Aqui aparecem todas as suas receitas favoritas. ;)',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
@@ -154,6 +154,10 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                     child: ListView.builder(
                       itemCount: _recipes.length,
                       itemBuilder: (BuildContext context, int index) {
+                        if (!_recipes[index].favorita) {
+                          // Return an empty Container if the recipe is not a favorite
+                          return Container();
+                        }
                         return Padding(
                           padding: const EdgeInsets.all(4),
                           child: Container(
@@ -211,13 +215,11 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                       Icons.warning,
                                       size: 50,
                                     ),
-                              trailing: _recipes[index].favorita
-                                  ? const Icon(
-                                      Icons.star,
-                                      color: Colors.yellow,
-                                      size: 30,
-                                    )
-                                  : null,
+                              trailing: const Icon(
+                                Icons.star,
+                                color: Colors.yellow,
+                                size: 30,
+                              ),
                             ),
                           ),
                         );

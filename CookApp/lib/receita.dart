@@ -9,9 +9,9 @@ class Recipe {
   final String descricao;
   final String ingredientes;
   final String procedimento;
-  final double? tempo;
-  final double? porcoes;
-  final String? categoria;
+  final double tempo;
+  final double porcoes;
+  final String categoria;
   final bool favorita;
 
   Recipe({

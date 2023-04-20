@@ -11,6 +11,7 @@ void showBigDialog(
   String prep,
   double? prepTime,
   double? porcoes,
+  String category,
 ) {
   showDialog(
     context: context,
@@ -114,7 +115,7 @@ void showBigDialog(
                               fontSize: 22, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          prepTime!.toInt().toString(),
+                          '${prepTime!.toInt().toString()} min',
                           style: const TextStyle(
                             fontSize: 22,
                           ),
@@ -167,6 +168,32 @@ void showBigDialog(
                         ),
                         Text(
                           prep,
+                          style: const TextStyle(
+                            fontSize: 22,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(
+                      color: Colors.black38,
+                      indent: 20,
+                      endIndent: 20,
+                      height: 1,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Categoria:  ',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          category,
                           style: const TextStyle(
                             fontSize: 22,
                           ),

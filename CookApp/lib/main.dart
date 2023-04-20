@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'new_recipe.dart';
 import 'list_recipes.dart';
+import 'list_favoritas.dart';
 
 void main() {
   runApp(const MyApp());
@@ -129,7 +130,13 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.favorite),
               tooltip: 'Favoritas',
               iconSize: 35,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ListFavoutiresForm()),
+                );
+              },
             ),
             IconButton(
               icon: const Icon(Icons.person),
