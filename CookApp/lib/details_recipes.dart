@@ -7,8 +7,8 @@ void showBigDialog(
   String? foto,
   String name,
   String desc,
-  String ings,
-  String prep,
+  List<String>? ings,
+  String? prep,
   double? prepTime,
   double? porcoes,
   String category,
@@ -28,7 +28,7 @@ void showBigDialog(
               Text(
                 name,
                 style: const TextStyle(
-                  fontSize: 40,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
@@ -43,9 +43,9 @@ void showBigDialog(
                         borderRadius: BorderRadius.circular(10),
                         child: foto == null
                             ? const Icon(
-                                Icons.warning,
-                                size: 50,
-                                color: Colors.red,
+                                Icons.image_not_supported,
+                                size: 100,
+                                color: Colors.grey,
                               )
                             : Image.file(
                                 File(foto),
@@ -88,13 +88,39 @@ void showBigDialog(
                           style: TextStyle(
                               fontSize: 22, fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          ings,
-                          style: const TextStyle(
-                            fontSize: 22,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        ings!.isEmpty
+                            ? const Text(
+                                'Nenhum ingrediente',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              )
+                            : Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                height: ings.length * 65,
+                                child: ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: ings.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(4),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.black12,
+                                        ),
+                                        child: ListTile(
+                                          title: Text(ings[index]),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -105,11 +131,10 @@ void showBigDialog(
                       height: 1,
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Column(
                       children: [
                         const Text(
-                          'Tempo de preparação:  ',
+                          'Tempo de preparação:\n',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 22, fontWeight: FontWeight.bold),
@@ -147,6 +172,7 @@ void showBigDialog(
                           ),
                           textAlign: TextAlign.center,
                         ),
+                        const Icon(Icons.person),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -167,9 +193,10 @@ void showBigDialog(
                               fontSize: 22, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          prep,
+                          prep ?? 'Indisponível',
                           style: const TextStyle(
                             fontSize: 22,
+                            height: 1.5,
                           ),
                           textAlign: TextAlign.center,
                         ),

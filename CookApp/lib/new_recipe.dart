@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
@@ -39,6 +40,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   //*Ingredientes
   final _ingsKey = GlobalKey<FormFieldState>();
+  final TextEditingController _ingsController = TextEditingController();
+  List<String> ingredientes = [];
+  List<String> ings_opts = [];
 
   //*Confecionamento
   final _procKey = GlobalKey<FormFieldState>();
@@ -50,8 +54,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     return null;
   }
 
-  final TextEditingController _tempoController = TextEditingController();
-  final TextEditingController _porcoesController = TextEditingController();
+  final TextEditingController _tempoController = TextEditingController(
+    text: '0',
+  );
+  final TextEditingController _porcoesController = TextEditingController(
+    text: '0',
+  );
   Future<bool> showConfirmationDialog(BuildContext context) async {
     bool confirm = false;
     await showDialog<bool>(
@@ -226,25 +234,100 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               color: Colors.grey,
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 32, left: 32, top: 16),
-              child: TextFormField(
-                key: _ingsKey,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  labelText: 'Ingredientes',
-                  hintText: 'Insira ingredientes',
-                  border: OutlineInputBorder(),
+              padding: const EdgeInsets.all(8),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                onChanged: (value) {
-                  _ingsKey.currentState!.validate();
-                  ingsR = value;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor insira ingredientes';
-                  }
-                  return null;
-                },
+                height: 195,
+                child: ingredientes.isEmpty == true
+                    ? const Center(
+                        child: Text(
+                          'Nenhum ingrediente',
+                          style: TextStyle(
+                            fontSize: 22,
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: ingredientes.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 8, left: 16, right: 16),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.black12,
+                              ),
+                              child: ListTile(
+                                title: Text(ingredientes[index]),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  splashRadius: 25,
+                                  iconSize: 35,
+                                  color: Colors.red,
+                                  onPressed: () {
+                                    setState(() {
+                                      ingredientes.remove(ingredientes[index]);
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 32, left: 32, top: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: TextFormField(
+                      key: _ingsKey,
+                      controller: _ingsController,
+                      decoration: const InputDecoration(
+                        labelText: 'Ingredientes',
+                        hintText: 'Insira um ingrediente',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        ingsR = value;
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    flex: 0,
+                    child: IconButton(
+                      tooltip: 'Adicionar',
+                      splashRadius: 35,
+                      iconSize: 50,
+                      splashColor: Colors.black12,
+                      color: Colors.orange,
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        setState(() {
+                          if (ingsR!.isNotEmpty) {
+                            //* Parte principal
+                            ingredientes.add(ingsR!);
+                            _ingsController.text = '';
+                            ingsR = '';
+
+                            //* Parte das opções
+                            ings_opts.add('g');
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -453,12 +536,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         ),
                         DropdownButton<String>(
                           value: _selectedValue,
-                          hint: const Text(
-                            'Escolha...',
-                            style: TextStyle(
-                              color: Colors.black45,
-                            ),
-                          ),
                           style: const TextStyle(
                             color: Colors.black54,
                             fontSize: 18,
@@ -554,14 +631,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     try {
                       _nameKey.currentState!.validate();
                       _descKey.currentState!.validate();
-                      _ingsKey.currentState!.validate();
-                      _procKey.currentState!.validate();
 
                       //Certificação
                       validate = _nameKey.currentState!.validate() &&
-                          _descKey.currentState!.validate() &&
-                          _ingsKey.currentState!.validate() &&
-                          _procKey.currentState!.validate();
+                          _descKey.currentState!.validate();
                       if (validate == true) {
                         //! Processo que guarda a informação
                         final novaReceita = Recipe(
@@ -569,8 +642,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           foto: _image == null ? null : _image!.path,
                           nome: nomeR!,
                           descricao: descR!,
-                          ingredientes: ingsR!,
-                          procedimento: procR!,
+                          ingredientes: ingredientes,
+                          procedimento: procR == null ? null : procR!,
                           tempo: tempoCozi,
                           porcoes: porcoes,
                           categoria: _selectedValue,
@@ -581,7 +654,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: const Text(
-                              'Em princípio a receita foi guardada.',
+                              'A receita foi guardada com sucesso.',
                             ),
                             action:
                                 SnackBarAction(label: 'OK', onPressed: () {}),
@@ -594,7 +667,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: const Text(
-                              'Por favor preencha todos os campos necessários',
+                              'Por favor insira um nome e uma descrição.',
                             ),
                             action:
                                 SnackBarAction(label: 'OK', onPressed: () {}),

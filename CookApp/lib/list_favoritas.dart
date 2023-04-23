@@ -14,7 +14,7 @@ class ListFavoutiresForm extends StatefulWidget {
 
 class _ListFavouritesFormState extends State<ListFavoutiresForm> {
   List<Recipe> _recipes = [];
-
+  String categoria = 'Geral';
   @override
   void initState() {
     super.initState();
@@ -79,62 +79,44 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Favoritas'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: DropdownButton<String>(
+              value: categoria,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+              ),
+              dropdownColor: Colors.white,
+              items: <String>[
+                'Geral',
+                'Bolos',
+                'Tartes',
+                'Sobremesas',
+                'Pratos',
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? novaCategoria) {
+                setState(() {
+                  categoria = novaCategoria!;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 48, left: 8, right: 8, bottom: 4),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.orange),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  width: 1,
-                                  color: Colors.white,
-                                ),
-                                color: Colors.pink,
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                tooltip: 'Voltar',
-                                icon: const Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            'Aqui aparecem todas as suas receitas favoritas. ;)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ]),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               //! CASO ESTEJA ALGO A CORRER MAL PODEM SER ESTES ELEMENTOS O PROBLEMA!
               Padding(
                 padding: const EdgeInsets.all(8),
@@ -142,7 +124,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  height: MediaQuery.of(context).size.height - 250,
+                  height: MediaQuery.of(context).size.height - 50,
                   child: RefreshIndicator(
                     onRefresh: () async {
                       loadRecipes().then((recipes) {
@@ -151,80 +133,85 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                         });
                       });
                     },
-                    child: ListView.builder(
-                      itemCount: _recipes.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (!_recipes[index].favorita) {
-                          // Return an empty Container if the recipe is not a favorite
-                          return Container();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.black12,
-                            ),
-                            child: ListTile(
-                              onTap: () {
-                                showBigDialog(
-                                  context,
-                                  _recipes[index].foto,
-                                  _recipes[index].nome,
-                                  _recipes[index].descricao,
-                                  _recipes[index].ingredientes,
-                                  _recipes[index].procedimento,
-                                  _recipes[index].tempo,
-                                  _recipes[index].porcoes,
-                                  _recipes[index].categoria,
-                                );
-                              },
-                              onLongPress: () {
-                                showConfirmationDialog(
-                                  context,
-                                  _recipes[index].id,
-                                );
-                              },
-                              title: Text(
-                                _recipes[index].nome,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                              subtitle: Text(
-                                _recipes[index].descricao,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              leading: _recipes[index].foto != null
-                                  ? SizedBox(
-                                      width: 55,
-                                      height: 50,
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(4)),
-                                        child: Image.file(
-                                          File(_recipes[index].foto!),
-                                          fit: BoxFit.cover,
-                                        ),
+                    child: _recipes.isEmpty == true
+                        ? const Text('Nenhuma receita encontrada...')
+                        : ListView.builder(
+                            itemCount: _recipes.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (!_recipes[index].favorita ||
+                                  _recipes[index].categoria != categoria &&
+                                      categoria != 'Geral') {
+                                // Return an empty Container if the recipe is not a favorite
+                                return Container();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.black12,
+                                  ),
+                                  child: ListTile(
+                                    onTap: () {
+                                      showBigDialog(
+                                        context,
+                                        _recipes[index].foto,
+                                        _recipes[index].nome,
+                                        _recipes[index].descricao,
+                                        _recipes[index].ingredientes,
+                                        _recipes[index].procedimento,
+                                        _recipes[index].tempo,
+                                        _recipes[index].porcoes,
+                                        _recipes[index].categoria,
+                                      );
+                                    },
+                                    onLongPress: () {
+                                      showConfirmationDialog(
+                                        context,
+                                        _recipes[index].id,
+                                      );
+                                    },
+                                    title: Text(
+                                      _recipes[index].nome,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        fontSize: 20,
                                       ),
-                                    )
-                                  : const Icon(
-                                      Icons.warning,
-                                      size: 50,
                                     ),
-                              trailing: const Icon(
-                                Icons.star,
-                                color: Colors.yellow,
-                                size: 30,
-                              ),
-                            ),
+                                    subtitle: Text(
+                                      _recipes[index].descricao,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    leading: _recipes[index].foto != null
+                                        ? SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(4)),
+                                              child: Image.file(
+                                                File(_recipes[index].foto!),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.image_not_supported,
+                                            size: 50,
+                                          ),
+                                    trailing: const Icon(
+                                      Icons.star,
+                                      color: Colors.yellow,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
               ),

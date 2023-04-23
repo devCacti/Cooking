@@ -14,6 +14,7 @@ class ListRecipesForm extends StatefulWidget {
 
 class _ListRecipesFormState extends State<ListRecipesForm> {
   List<Recipe> _recipes = [];
+  String categoria = 'Geral';
 
   @override
   void initState() {
@@ -79,62 +80,44 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Receitas'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: DropdownButton<String>(
+              value: categoria,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+              ),
+              dropdownColor: Colors.white,
+              items: <String>[
+                'Geral',
+                'Bolos',
+                'Tartes',
+                'Sobremesas',
+                'Pratos',
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? novaCategoria) {
+                setState(() {
+                  categoria = novaCategoria!;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 48, left: 8, right: 8, bottom: 4),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.orange),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  width: 1,
-                                  color: Colors.white,
-                                ),
-                                color: Colors.pink,
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                tooltip: 'Voltar',
-                                icon: const Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            'Esta página serve para voçê ver as receitas que criou, clique numa para ver os seus detalhes. ;)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ]),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               //! CASO ESTEJA ALGO A CORRER MAL PODEM SER ESTES ELEMENTOS O PROBLEMA!
               Padding(
                 padding: const EdgeInsets.all(8),
@@ -142,7 +125,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  height: MediaQuery.of(context).size.height - 250,
+                  height: MediaQuery.of(context).size.height - 50,
                   child: RefreshIndicator(
                     onRefresh: () async {
                       loadRecipes().then((recipes) {
@@ -154,6 +137,10 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                     child: ListView.builder(
                       itemCount: _recipes.length,
                       itemBuilder: (BuildContext context, int index) {
+                        if (_recipes[index].categoria != categoria &&
+                            categoria != 'Geral') {
+                          return Container();
+                        }
                         return Padding(
                           padding: const EdgeInsets.all(4),
                           child: Container(
@@ -196,7 +183,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                               ),
                               leading: _recipes[index].foto != null
                                   ? SizedBox(
-                                      width: 55,
+                                      width: 50,
                                       height: 50,
                                       child: ClipRRect(
                                         borderRadius: const BorderRadius.all(
@@ -208,7 +195,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                       ),
                                     )
                                   : const Icon(
-                                      Icons.warning,
+                                      Icons.image_not_supported,
                                       size: 50,
                                     ),
                               trailing: _recipes[index].favorita

@@ -7,8 +7,8 @@ class Recipe {
   final String? foto;
   final String nome;
   final String descricao;
-  final String ingredientes;
-  final String procedimento;
+  final List<String>? ingredientes;
+  final String? procedimento;
   final double tempo;
   final double porcoes;
   final String categoria;
@@ -33,7 +33,9 @@ class Recipe {
       foto: json['foto'],
       nome: json['nome'],
       descricao: json['descricao'],
-      ingredientes: json['ingredientes'],
+      ingredientes: json['ingredientes'] != null
+          ? List<String>.from(json['ingredientes'])
+          : null,
       procedimento: json['procedimento'],
       tempo: json['tempo'],
       porcoes: json['porcoes'],
