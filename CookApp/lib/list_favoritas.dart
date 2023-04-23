@@ -159,6 +159,8 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                         _recipes[index].nome,
                                         _recipes[index].descricao,
                                         _recipes[index].ingredientes,
+                                        _recipes[index].ingTipo!,
+                                        _recipes[index].ingQuant!,
                                         _recipes[index].procedimento,
                                         _recipes[index].tempo,
                                         _recipes[index].porcoes,

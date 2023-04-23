@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
@@ -42,7 +41,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   final _ingsKey = GlobalKey<FormFieldState>();
   final TextEditingController _ingsController = TextEditingController();
   List<String> ingredientes = [];
-  List<String> ings_opts = [];
+
+  List<String> ingsOpts = [];
+  List<double> ingsQaunt = [];
 
   //*Confecionamento
   final _procKey = GlobalKey<FormFieldState>();
@@ -239,8 +240,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                height: 195,
-                child: ingredientes.isEmpty == true
+                height:
+                    ingredientes.isNotEmpty ? 64.0 * ingredientes.length : 50,
+                child: ingredientes.isEmpty
                     ? const Center(
                         child: Text(
                           'Nenhum ingrediente',
@@ -250,6 +252,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         ),
                       )
                     : ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: ingredientes.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Padding(
@@ -261,17 +264,81 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 color: Colors.black12,
                               ),
                               child: ListTile(
+                                onLongPress: () {
+                                  setState(() {
+                                    ingredientes.remove(ingredientes[index]);
+                                    ingsOpts.remove(ingsOpts[index]);
+                                    ingsQaunt.remove(ingsQaunt[index]);
+                                  });
+                                },
                                 title: Text(ingredientes[index]),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  splashRadius: 25,
-                                  iconSize: 35,
-                                  color: Colors.red,
-                                  onPressed: () {
-                                    setState(() {
-                                      ingredientes.remove(ingredientes[index]);
-                                    });
-                                  },
+                                trailing: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Semantics(
+                                      label: 'quantidade',
+                                      child: SizedBox(
+                                        width: 32,
+                                        height: 44,
+                                        child: TextField(
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 16,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          onChanged: (value) {
+                                            final newValue =
+                                                double.tryParse(value);
+                                            if (newValue != null &&
+                                                newValue != ingsQaunt[index]) {
+                                              setState(() {
+                                                ingsQaunt[index] = newValue;
+                                              });
+                                            } else {
+                                              ingsQaunt[index] = 0;
+                                            }
+                                          },
+                                          keyboardType: TextInputType.number,
+                                          decoration: const InputDecoration(
+                                            hintText: '0',
+                                            border: InputBorder.none,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    DropdownButton<String>(
+                                      value: ingsOpts[index],
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 20,
+                                      ),
+                                      items: <String>[
+                                        'Kg',
+                                        'g',
+                                        'L',
+                                        'mL',
+                                        'unid.',
+                                        'colh.',
+                                      ].map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        },
+                                      ).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          ingsOpts[index] = newValue!;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -314,14 +381,15 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       icon: const Icon(Icons.add),
                       onPressed: () {
                         setState(() {
-                          if (ingsR!.isNotEmpty) {
+                          if (ingsR != '') {
                             //* Parte principal
                             ingredientes.add(ingsR!);
                             _ingsController.text = '';
                             ingsR = '';
 
                             //* Parte das opções
-                            ings_opts.add('g');
+                            ingsOpts.add('g');
+                            ingsQaunt.add(0);
                           }
                         });
                       },
@@ -643,6 +711,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           nome: nomeR!,
                           descricao: descR!,
                           ingredientes: ingredientes,
+                          ingTipo: ingsOpts,
+                          ingQuant: ingsQaunt,
                           procedimento: procR == null ? null : procR!,
                           tempo: tempoCozi,
                           porcoes: porcoes,

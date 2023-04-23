@@ -8,6 +8,8 @@ void showBigDialog(
   String name,
   String desc,
   List<String>? ings,
+  List<String> ingsOpts,
+  List<double> ingsQuant,
   String? prep,
   double? prepTime,
   double? porcoes,
@@ -114,7 +116,35 @@ void showBigDialog(
                                           color: Colors.black12,
                                         ),
                                         child: ListTile(
-                                          title: Text(ings[index]),
+                                          title: Text(
+                                            ings[index],
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                ingsQuant[index]
+                                                    .toStringAsFixed(2)
+                                                    .replaceAll(
+                                                        RegExp(r'\.0+$'), ''),
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                ingsOpts[index],
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );

@@ -8,6 +8,8 @@ class Recipe {
   final String nome;
   final String descricao;
   final List<String>? ingredientes;
+  final List<String>? ingTipo;
+  final List<double>? ingQuant;
   final String? procedimento;
   final double tempo;
   final double porcoes;
@@ -20,6 +22,8 @@ class Recipe {
     required this.nome,
     required this.descricao,
     required this.ingredientes,
+    required this.ingTipo,
+    required this.ingQuant,
     required this.procedimento,
     required this.tempo,
     required this.porcoes,
@@ -36,6 +40,10 @@ class Recipe {
       ingredientes: json['ingredientes'] != null
           ? List<String>.from(json['ingredientes'])
           : null,
+      ingTipo:
+          json['ingTipo'] != null ? List<String>.from(json['ingTipo']) : null,
+      ingQuant:
+          json['ingQuant'] != null ? List<double>.from(json['ingQuant']) : null,
       procedimento: json['procedimento'],
       tempo: json['tempo'],
       porcoes: json['porcoes'],
@@ -50,6 +58,8 @@ class Recipe {
         'nome': nome,
         'descricao': descricao,
         'ingredientes': ingredientes,
+        'ingTipo': ingTipo,
+        'ingQuant': ingQuant,
         'procedimento': procedimento,
         'tempo': tempo,
         'porcoes': porcoes,

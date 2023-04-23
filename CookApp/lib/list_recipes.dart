@@ -125,7 +125,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  height: MediaQuery.of(context).size.height - 50,
+                  height: MediaQuery.of(context).size.height - 90,
                   child: RefreshIndicator(
                     onRefresh: () async {
                       loadRecipes().then((recipes) {
@@ -156,6 +156,8 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                   _recipes[index].nome,
                                   _recipes[index].descricao,
                                   _recipes[index].ingredientes,
+                                  _recipes[index].ingTipo!,
+                                  _recipes[index].ingQuant!,
                                   _recipes[index].procedimento,
                                   _recipes[index].tempo,
                                   _recipes[index].porcoes,
