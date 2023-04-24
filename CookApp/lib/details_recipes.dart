@@ -10,7 +10,7 @@ void showBigDialog(
   List<String>? ings,
   List<String> ingsOpts,
   List<double> ingsQuant,
-  String? prep,
+  List<String>? prep,
   double? prepTime,
   double? porcoes,
   String category,
@@ -101,8 +101,8 @@ void showBigDialog(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                height: ings.length * 65,
                                 child: ListView.builder(
+                                  shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: ings.length,
                                   itemBuilder:
@@ -161,10 +161,91 @@ void showBigDialog(
                       height: 1,
                     ),
                     const SizedBox(height: 20),
+                    const Text(
+                      'Preparação',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: prep!.isEmpty
+                                ? const Center(
+                                    child: Text(
+                                      'Nenhum passo',
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                      ),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: prep.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 8, left: 16, right: 16),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Passo N.º ${index + 1}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              prep[index],
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                              ),
+                                              textAlign: TextAlign.justify,
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            index < prep.length - 1
+                                                ? const Divider(
+                                                    thickness: 1,
+                                                    indent: 30,
+                                                    endIndent: 30,
+                                                  )
+                                                : const SizedBox(),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(
+                      color: Colors.black38,
+                      indent: 20,
+                      endIndent: 20,
+                      height: 1,
+                    ),
+                    const SizedBox(height: 20),
                     Column(
                       children: [
                         const Text(
-                          'Tempo de preparação:\n',
+                          'Tempo de cozedura:\n',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 22, fontWeight: FontWeight.bold),
@@ -203,33 +284,6 @@ void showBigDialog(
                           textAlign: TextAlign.center,
                         ),
                         const Icon(Icons.person),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    const Divider(
-                      color: Colors.black38,
-                      indent: 20,
-                      endIndent: 20,
-                      height: 1,
-                    ),
-                    const SizedBox(height: 20),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Procedimento:\n',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          prep ?? 'Indisponível',
-                          style: const TextStyle(
-                            fontSize: 22,
-                            height: 1.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
                       ],
                     ),
                     const SizedBox(height: 20),

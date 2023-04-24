@@ -47,6 +47,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   //*Confecionamento
   final _procKey = GlobalKey<FormFieldState>();
+  final TextEditingController _procController = TextEditingController();
+  List<String> procedimentos = [];
 
   String? dropdownValidator(String? value) {
     if (value == null) {
@@ -240,8 +242,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                height:
-                    ingredientes.isNotEmpty ? 64.0 * ingredientes.length : 50,
                 child: ingredientes.isEmpty
                     ? const Center(
                         child: Text(
@@ -252,6 +252,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         ),
                       )
                     : ListView.builder(
+                        shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: ingredientes.length,
                         itemBuilder: (BuildContext context, int index) {
@@ -261,7 +262,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                color: Colors.black12,
+                                color: Colors.grey[200],
                               ),
                               child: ListTile(
                                 onLongPress: () {
@@ -271,7 +272,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     ingsQaunt.remove(ingsQaunt[index]);
                                   });
                                 },
-                                title: Text(ingredientes[index]),
+                                title: Text(
+                                  ingredientes[index],
+                                  style: const TextStyle(fontSize: 18),
+                                ),
                                 trailing: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -324,6 +328,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                         'mL',
                                         'unid.',
                                         'colh.',
+                                        'chav.',
                                       ].map<DropdownMenuItem<String>>(
                                         (String value) {
                                           return DropdownMenuItem<String>(
@@ -398,26 +403,130 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 ],
               ),
             ),
+            const Divider(
+              thickness: 1,
+              indent: 35,
+              endIndent: 35,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: procedimentos.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Nenhum passo',
+                          style: TextStyle(
+                            fontSize: 22,
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: procedimentos.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: 8, left: 16, right: 16),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Passo N.º ${index + 1}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  procedimentos[index],
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                  textAlign: TextAlign.justify,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      procedimentos
+                                          .remove(procedimentos[index]);
+                                    });
+                                  },
+                                  child: const Text(
+                                    'Eliminar',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                index < procedimentos.length - 1
+                                    ? const Divider(
+                                        thickness: 1,
+                                        indent: 30,
+                                        endIndent: 30,
+                                      )
+                                    : const SizedBox(),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 32, left: 32, top: 16),
-              child: TextFormField(
-                key: _procKey,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  labelText: 'Preparação',
-                  hintText: 'Descreva o procedimento',
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  _procKey.currentState!.validate();
-                  procR = value;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor escreva um procedimento';
-                  }
-                  return null;
-                },
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: TextFormField(
+                      key: _procKey,
+                      controller: _procController,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        labelText: 'Preparação',
+                        hintText: 'Descreva o procedimento',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          procR = value;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    flex: 0,
+                    child: IconButton(
+                      tooltip: 'Adicionar',
+                      splashRadius: 35,
+                      iconSize: 50,
+                      color: Colors.orange,
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        setState(() {
+                          if (procR != '') {
+                            procedimentos.add(procR!);
+                            _procController.text = '';
+                            procR = '';
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             //!Acaba
@@ -713,7 +822,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           ingredientes: ingredientes,
                           ingTipo: ingsOpts,
                           ingQuant: ingsQaunt,
-                          procedimento: procR == null ? null : procR!,
+                          procedimento: procedimentos,
                           tempo: tempoCozi,
                           porcoes: porcoes,
                           categoria: _selectedValue,

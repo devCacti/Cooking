@@ -10,7 +10,7 @@ class Recipe {
   final List<String>? ingredientes;
   final List<String>? ingTipo;
   final List<double>? ingQuant;
-  final String? procedimento;
+  final List<String>? procedimento;
   final double tempo;
   final double porcoes;
   final String categoria;
@@ -44,7 +44,9 @@ class Recipe {
           json['ingTipo'] != null ? List<String>.from(json['ingTipo']) : null,
       ingQuant:
           json['ingQuant'] != null ? List<double>.from(json['ingQuant']) : null,
-      procedimento: json['procedimento'],
+      procedimento: json['procedimento'] != null
+          ? List<String>.from(json['procedimento'])
+          : null,
       tempo: json['tempo'],
       porcoes: json['porcoes'],
       categoria: json['categoria'],
