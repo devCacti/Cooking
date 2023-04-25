@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'edit_recipe.dart';
 import 'receita.dart';
 import 'details_recipes.dart';
 
@@ -25,7 +26,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
     });
   }
 
-  Future decisionDialog(BuildContext context, int id) async {
+  Future decisionDialog(BuildContext context, int id, int index) async {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -45,7 +46,13 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
             actions: [
               CupertinoDialogAction(
                 isDefaultAction: true,
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                  editingDialog(
+                    context,
+                    _recipes[index],
+                  );
+                },
                 child: const Text('Editar'),
               ),
               CupertinoDialogAction(
@@ -209,6 +216,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                       decisionDialog(
                                         context,
                                         _recipes[index].id,
+                                        index,
                                       );
                                     },
                                     title: Text(
