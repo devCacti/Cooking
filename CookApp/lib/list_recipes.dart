@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test_app/edit_recipe.dart';
 import 'receita.dart';
 import 'details_recipes.dart';
 
@@ -24,6 +25,50 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
         _recipes = recipes;
       });
     });
+  }
+
+  Future decisionDialog(BuildContext context, int id, int index) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return Theme(
+          data: ThemeData(
+            brightness: Brightness.light,
+            textTheme: const TextTheme(
+              titleMedium: TextStyle(
+                color: Colors.blue,
+              ),
+            ),
+          ),
+          child: CupertinoAlertDialog(
+            title: const Text('Editar ou Eliminar'),
+            content: const Text(
+                'Deseja editar esta receita ou elimina-la permanentemente?'),
+            actions: [
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                  editingDialog(
+                    context,
+                    _recipes[index],
+                  );
+                },
+                child: const Text('Editar'),
+              ),
+              CupertinoDialogAction(
+                isDestructiveAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                  showConfirmationDialog(context, id);
+                },
+                child: const Text('Eliminar'),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<bool> showConfirmationDialog(BuildContext context, int id) async {
@@ -165,9 +210,10 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                 );
                               },
                               onLongPress: () {
-                                showConfirmationDialog(
+                                decisionDialog(
                                   context,
                                   _recipes[index].id,
+                                  index,
                                 );
                               },
                               title: Text(

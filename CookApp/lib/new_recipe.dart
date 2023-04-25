@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
-
-import 'package:test_app/receita.dart';
+import 'receita.dart';
 
 class NewRecipeForm extends StatefulWidget {
   const NewRecipeForm({Key? key}) : super(key: key);
@@ -49,13 +48,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   final _procKey = GlobalKey<FormFieldState>();
   final TextEditingController _procController = TextEditingController();
   List<String> procedimentos = [];
-
-  String? dropdownValidator(String? value) {
-    if (value == null) {
-      return 'Please select an option';
-    }
-    return null;
-  }
 
   final TextEditingController _tempoController = TextEditingController(
     text: '0',
@@ -135,6 +127,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         return showConfirmationDialog(context);
       },
       child: Scaffold(

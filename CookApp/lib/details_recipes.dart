@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 void showBigDialog(
@@ -40,7 +39,7 @@ void showBigDialog(
                 child: SingleChildScrollView(
                   child: Column(children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 120, right: 120),
+                      padding: const EdgeInsets.only(left: 55, right: 55),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: foto == null

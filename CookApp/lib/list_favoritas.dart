@@ -25,18 +25,57 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
     });
   }
 
-  Future<bool> showConfirmationDialog(BuildContext context, int id) async {
-    bool confirm = false;
+  Future decisionDialog(BuildContext context, int id) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return Theme(
+          data: ThemeData(
+            brightness: Brightness.light,
+            textTheme: const TextTheme(
+              titleMedium: TextStyle(
+                color: Colors.blue,
+              ),
+            ),
+          ),
+          child: CupertinoAlertDialog(
+            title: const Text('Editar ou Eliminar'),
+            content: const Text(
+                'Deseja editar esta receita ou elimina-la permanentemente?'),
+            actions: [
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Editar'),
+              ),
+              CupertinoDialogAction(
+                isDestructiveAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                  showConfirmationDialog(context, id);
+                },
+                child: const Text('Eliminar'),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> showConfirmationDialog(BuildContext context, int id) async {
     await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return Theme(
           data: ThemeData(
-              brightness: Brightness.dark,
-              textTheme: const TextTheme(
-                  titleMedium: TextStyle(
+            brightness: Brightness.dark,
+            textTheme: const TextTheme(
+              titleMedium: TextStyle(
                 color: Colors.red,
-              ))),
+              ),
+            ),
+          ),
           child: CupertinoAlertDialog(
             title: const Text(
               'Eliminar?',
@@ -44,19 +83,19 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
             ),
             content: const Text(
               'Esta ação é irrevertível!',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(
+                color: Colors.white,
+              ),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
                 isDefaultAction: true,
-                isDestructiveAction: true,
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Cancelar'),
               ),
               CupertinoDialogAction(
                 isDestructiveAction: true,
                 onPressed: () {
-                  confirm = true;
                   deleteRecipeById(id).then((_) {
                     loadRecipes().then((recipes) {
                       setState(() {
@@ -73,7 +112,6 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
         );
       },
     );
-    return confirm;
   }
 
   @override
@@ -168,7 +206,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                       );
                                     },
                                     onLongPress: () {
-                                      showConfirmationDialog(
+                                      decisionDialog(
                                         context,
                                         _recipes[index].id,
                                       );
