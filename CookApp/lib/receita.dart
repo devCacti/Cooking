@@ -143,3 +143,35 @@ Future<void> deleteRecipeById(int id) async {
     throw Exception('Failed to delete recipe: $e');
   }
 }
+
+Future<void> editRecipeById(int id, Recipe newRecipe) async {
+  try {
+    final file = await _localFile;
+    final contents = await file.readAsString();
+    final List<dynamic> jsonList = json.decode(contents);
+    final List<Recipe> recipes =
+        jsonList.map((json) => Recipe.fromJson(json)).toList();
+    final index = recipes.indexWhere((recipe) => recipe.id == id);
+    if (index == -1) {
+      throw Exception('Recipe with id $id not found');
+    }
+    final updatedRecipes = List<Recipe>.from(recipes);
+    updatedRecipes[index] = Recipe(
+      id: id,
+      foto: newRecipe.foto,
+      nome: newRecipe.nome,
+      descricao: newRecipe.descricao,
+      ingredientes: newRecipe.ingredientes,
+      ingQuant: newRecipe.ingQuant,
+      ingTipo: newRecipe.ingTipo,
+      procedimento: newRecipe.procedimento,
+      tempo: newRecipe.tempo,
+      porcoes: newRecipe.porcoes,
+      categoria: newRecipe.categoria,
+      favorita: newRecipe.favorita,
+    );
+    await file.writeAsString(json.encode(updatedRecipes));
+  } catch (e) {
+    throw Exception('Failed to edit recipe: $e');
+  }
+}
