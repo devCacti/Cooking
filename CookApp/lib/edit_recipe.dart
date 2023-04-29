@@ -265,6 +265,8 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                                   ings.remove(ings[index]);
                                                   ingsT.remove(ingsT[index]);
                                                   ingsQ.remove(ingsQ[index]);
+                                                  hintControllers
+                                                      .removeAt(index);
                                                 });
                                               },
                                               title: Text(
