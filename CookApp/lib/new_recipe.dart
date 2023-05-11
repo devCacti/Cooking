@@ -62,11 +62,13 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
       builder: (BuildContext context) {
         return Theme(
           data: ThemeData(
-              brightness: Brightness.dark,
-              textTheme: const TextTheme(
-                  titleMedium: TextStyle(
+            brightness: Brightness.dark,
+            textTheme: const TextTheme(
+              titleMedium: TextStyle(
                 color: Colors.red,
-              ))),
+              ),
+            ),
+          ),
           child: CupertinoAlertDialog(
             title: const Text(
               'Sair?',

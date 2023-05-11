@@ -107,7 +107,7 @@ void showBigDialog(
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Padding(
-                                      padding: const EdgeInsets.all(4),
+                                      padding: const EdgeInsets.all(8),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius:
