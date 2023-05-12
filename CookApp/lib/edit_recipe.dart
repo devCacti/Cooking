@@ -71,11 +71,15 @@ void editingDialog(BuildContext context, Recipe toEditR) {
   final _nameKey = GlobalKey<FormFieldState>();
   final _descKey = GlobalKey<FormFieldState>();
   final _ingsKey = GlobalKey<FormFieldState>();
+  final _procKey = GlobalKey<FormFieldState>();
 
   final TextEditingController _ingsController = TextEditingController();
   final TextEditingController _quantController = TextEditingController();
 
+  final TextEditingController _procController = TextEditingController();
+
   String? ingsR;
+  String? procR;
 
   List<TextEditingController> hintControllers = List.generate(
     toEditR.ingQuant!.length,
@@ -199,7 +203,8 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: const EdgeInsets.only(
+                                      top: 16, right: 16, left: 16),
                                   child: TextFormField(
                                     key: _descKey,
                                     maxLength: 500,
@@ -227,6 +232,11 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                 ),
                               ],
                             ),
+                          ),
+                          const Divider(
+                            indent: 40,
+                            endIndent: 40,
+                            color: Colors.black,
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8),
@@ -413,6 +423,133 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                           //* Parte das opções
                                           ingsT!.add('g');
                                           ingsQ.add(0);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: procs!.isEmpty
+                                  ? const Center(
+                                      child: Text(
+                                        'Nenhum passo',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                        ),
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: procs.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 8, left: 16, right: 16),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'Passo N.º ${index + 1}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 24,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                procs[index],
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                ),
+                                                textAlign: TextAlign.justify,
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    procs.remove(procs[index]);
+                                                  });
+                                                },
+                                                child: const Text(
+                                                  'Eliminar',
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              index < procs.length - 1
+                                                  ? const Divider(
+                                                      thickness: 1,
+                                                      indent: 30,
+                                                      endIndent: 30,
+                                                    )
+                                                  : const SizedBox(),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                right: 16, left: 16, top: 4),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: TextFormField(
+                                    key: _procKey,
+                                    controller: _procController,
+                                    maxLines: null,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Preparação',
+                                      hintText: 'Descreva o procedimento',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        procR = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  flex: 0,
+                                  child: IconButton(
+                                    tooltip: 'Adicionar',
+                                    splashRadius: 35,
+                                    iconSize: 50,
+                                    color: Colors.orange,
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (procR != '') {
+                                          procs.add(procR!);
+                                          _procController.text = '';
+                                          procR = '';
                                         }
                                       });
                                     },

@@ -41,12 +41,49 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: Column(
         children: [
+          const SizedBox(
+            height: 25,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(
+                  Icons.fastfood_rounded,
+                  size: 40,
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Cooking',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 40,
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Icon(
+                  Icons.local_dining_sharp,
+                  size: 40,
+                ),
+              ],
+            ),
+          ),
+          const Divider(
+            indent: 50,
+            endIndent: 50,
+            color: Colors.black,
+          ),
           Expanded(
             child: ListView(
               shrinkWrap: true,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.only(left: 16, right: 16),
                   child: FractionallySizedBox(
                     alignment: Alignment.center,
                     widthFactor: 0.5,
@@ -116,12 +153,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(8),
                               child: Column(
                                 children: const [
                                   Icon(
-                                    Icons.fastfood,
-                                    size: 100,
+                                    Icons.dinner_dining,
+                                    size: 75,
                                   ),
                                   SizedBox(
                                     height: 20,
@@ -145,7 +182,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.normal,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
+                                    maxLines: 1,
                                     textAlign: TextAlign.justify,
                                   ),
                                 ],
