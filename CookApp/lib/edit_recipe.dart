@@ -598,7 +598,7 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                   ingredientes: ings,
                                   ingTipo: ingsT,
                                   ingQuant: ingsQ,
-                                  procedimento: toEditR.procedimento,
+                                  procedimento: procs,
                                   tempo: toEditR.tempo,
                                   porcoes: toEditR.porcoes,
                                   categoria: toEditR.categoria,
