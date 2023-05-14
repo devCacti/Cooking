@@ -78,8 +78,16 @@ void editingDialog(BuildContext context, Recipe toEditR) {
 
   final TextEditingController _procController = TextEditingController();
 
+  final TextEditingController _tempoController = TextEditingController(
+    text: tempo.toStringAsFixed(0),
+  );
+  final TextEditingController _porcsController = TextEditingController(
+    text: porcs.toStringAsFixed(0),
+  );
+
   String? ingsR;
-  String? procR;
+  String procR = '';
+  String _selectedValue = categ;
 
   List<TextEditingController> hintControllers = List.generate(
     toEditR.ingQuant!.length,
@@ -116,6 +124,7 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const SizedBox(height: 5),
                     Expanded(
                       child: ListView(
                         shrinkWrap: true,
@@ -144,7 +153,7 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                         },
                                       )
                                     : Padding(
-                                        padding: const EdgeInsets.all(40),
+                                        padding: const EdgeInsets.all(30),
                                         child: Stack(
                                           children: [
                                             ClipRRect(
@@ -152,7 +161,7 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                                   BorderRadius.circular(8),
                                               child: Image.file(
                                                 File(foto!),
-                                                height: 100,
+                                                height: 200,
                                               ),
                                             ),
                                             Positioned(
@@ -439,6 +448,11 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                           const SizedBox(
                             height: 20,
                           ),
+                          const Divider(
+                            indent: 40,
+                            endIndent: 40,
+                            color: Colors.black,
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(8),
                             child: Container(
@@ -463,7 +477,11 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                           (BuildContext context, int index) {
                                         return Padding(
                                           padding: const EdgeInsets.only(
-                                              bottom: 8, left: 16, right: 16),
+                                            bottom: 16,
+                                            left: 16,
+                                            right: 16,
+                                            top: 24,
+                                          ),
                                           child: Column(
                                             children: [
                                               Text(
@@ -482,6 +500,10 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                                 style: const TextStyle(
                                                   fontSize: 20,
                                                 ),
+                                                decoration:
+                                                    const InputDecoration(
+                                                  label: Text('Procedimento'),
+                                                ),
                                                 textAlign: TextAlign.justify,
                                                 onChanged: (value) {
                                                   setState(
@@ -492,19 +514,19 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                                 },
                                               ),
                                               const SizedBox(
-                                                height: 10,
+                                                height: 20,
                                               ),
-                                              ElevatedButton(
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.delete_outlined,
+                                                  color: Colors.red,
+                                                ),
+                                                iconSize: 40,
                                                 onPressed: () {
                                                   setState(() {
                                                     procs.remove(procs[index]);
                                                   });
                                                 },
-                                                child: const Text(
-                                                  'Eliminar',
-                                                  style:
-                                                      TextStyle(fontSize: 18),
-                                                ),
                                               ),
                                               const SizedBox(
                                                 height: 10,
@@ -514,6 +536,7 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                                       thickness: 1,
                                                       indent: 30,
                                                       endIndent: 30,
+                                                      color: Colors.black,
                                                     )
                                                   : const SizedBox(),
                                             ],
@@ -527,6 +550,7 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                             padding: const EdgeInsets.only(
                                 right: 16, left: 16, top: 4),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Expanded(
                                   flex: 3,
@@ -559,8 +583,13 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                     icon: const Icon(Icons.add),
                                     onPressed: () {
                                       setState(() {
-                                        if (procR != '') {
-                                          procs.add(procR!);
+                                        if (procR.isNotEmpty) {
+                                          procsControllers.add(
+                                            TextEditingController(
+                                              text: procR,
+                                            ),
+                                          );
+                                          procs.add(procR);
                                           _procController.text = '';
                                           procR = '';
                                         }
@@ -571,8 +600,247 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                               ],
                             ),
                           ),
+                          const SizedBox(height: 15),
+                          const Divider(
+                            indent: 40,
+                            endIndent: 40,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(height: 10),
+                          //* Outras edições
+                          const Text(
+                            'Outras Opções',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              const Text(
+                                'Tempo:',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 25,
+                                height: 1,
+                              ),
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.grey,
+                                ),
+                                child: const SizedBox(
+                                  width: 75,
+                                  height: 1,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 25,
+                                height: 1,
+                              ),
+                              Semantics(
+                                label: 'tempo',
+                                child: SizedBox(
+                                  width: 48,
+                                  height: 48,
+                                  child: TextField(
+                                    style: const TextStyle(
+                                      color: Colors.black54,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    onChanged: (value) {
+                                      final newValue = double.tryParse(value);
+                                      if (newValue != null &&
+                                          newValue != tempo) {
+                                        setState(() {
+                                          tempo = newValue;
+                                        });
+                                      } else {
+                                        tempo = 0;
+                                      }
+                                    },
+                                    keyboardType: TextInputType.number,
+                                    controller: _tempoController,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 2.5,
+                              ),
+                              const Text('min'),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              const Text(
+                                'Porções:',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 25,
+                                height: 1,
+                              ),
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.grey,
+                                ),
+                                child: const SizedBox(
+                                  width: 50,
+                                  height: 1,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 25,
+                                height: 1,
+                              ),
+                              Semantics(
+                                label: 'porcoes',
+                                child: SizedBox(
+                                  width: 48,
+                                  height: 48,
+                                  child: TextField(
+                                    style: const TextStyle(
+                                      color: Colors.black54,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    onChanged: (value) {
+                                      final newValue = double.tryParse(value);
+                                      if (newValue != null &&
+                                          newValue != porcs) {
+                                        setState(() {
+                                          porcs = newValue;
+                                        });
+                                      } else {
+                                        porcs = 0;
+                                      }
+                                    },
+                                    keyboardType: TextInputType.number,
+                                    controller: _porcsController,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 2.5,
+                              ),
+                              const Icon(Icons.person),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              const Text(
+                                'Categoria:',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 15,
+                                height: 1,
+                              ),
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.grey,
+                                ),
+                                child: const SizedBox(
+                                  width: 50,
+                                  height: 1,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 15,
+                                height: 1,
+                              ),
+                              DropdownButton<String>(
+                                value: categ,
+                                style: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 18,
+                                ),
+                                items: <String>[
+                                  'Geral',
+                                  'Bolos',
+                                  'Tartes',
+                                  'Sobremesas',
+                                  'Pratos'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    categ = newValue!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              const Text(
+                                'Favorita',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 30,
+                                height: 1,
+                              ),
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.grey,
+                                ),
+                                child: const SizedBox(
+                                  width: 75,
+                                  height: 1,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 20,
+                                height: 1,
+                              ),
+                              Checkbox(
+                                value: fav,
+                                onChanged: (value) {
+                                  setState(() {
+                                    fav = value!;
+                                  });
+                                },
+                              )
+                            ],
+                          ),
                         ],
                       ),
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -612,10 +880,10 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                   ingTipo: ingsT,
                                   ingQuant: ingsQ,
                                   procedimento: procs,
-                                  tempo: toEditR.tempo,
-                                  porcoes: toEditR.porcoes,
-                                  categoria: toEditR.categoria,
-                                  favorita: toEditR.favorita,
+                                  tempo: tempo!,
+                                  porcoes: porcs!,
+                                  categoria: categ!,
+                                  favorita: fav,
                                 ),
                               );
                               Navigator.pop(context);
