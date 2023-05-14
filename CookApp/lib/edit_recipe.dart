@@ -86,6 +86,11 @@ void editingDialog(BuildContext context, Recipe toEditR) {
     (_) => TextEditingController(text: toEditR.ingQuant![_].toStringAsFixed(0)),
   );
 
+  List<TextEditingController> procsControllers = List.generate(
+    toEditR.procedimento!.length,
+    (_) => TextEditingController(text: toEditR.procedimento![_]),
+  );
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -471,12 +476,20 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                               const SizedBox(
                                                 height: 10,
                                               ),
-                                              Text(
-                                                procs[index],
+                                              TextFormField(
+                                                controller:
+                                                    procsControllers[index],
                                                 style: const TextStyle(
                                                   fontSize: 20,
                                                 ),
                                                 textAlign: TextAlign.justify,
+                                                onChanged: (value) {
+                                                  setState(
+                                                    () {
+                                                      procs[index] = value;
+                                                    },
+                                                  );
+                                                },
                                               ),
                                               const SizedBox(
                                                 height: 10,
