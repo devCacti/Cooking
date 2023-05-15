@@ -27,7 +27,14 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
     });
   }
 
-  Future decisionDialog(BuildContext context, int id, int index) async {
+  GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  Future decisionDialog(
+    BuildContext context,
+    int id,
+    int index,
+  ) async {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -49,10 +56,9 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                 isDefaultAction: true,
                 onPressed: () {
                   Navigator.pop(context);
-                  editingDialog(
-                    context,
-                    _recipes[index],
-                  );
+                  editingDialog(context, _recipes[index], () {
+                    refreshIndicatorKey.currentState?.show();
+                  });
                 },
                 child: const Text('Editar'),
               ),
@@ -172,6 +178,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                   ),
                   height: MediaQuery.of(context).size.height - 90,
                   child: RefreshIndicator(
+                    key: refreshIndicatorKey,
                     onRefresh: () async {
                       loadRecipes().then((recipes) {
                         setState(() {
@@ -179,85 +186,88 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                         });
                       });
                     },
-                    child: ListView.builder(
-                      itemCount: _recipes.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (_recipes[index].categoria != categoria &&
-                            categoria != 'Geral') {
-                          return Container();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.black12,
-                            ),
-                            child: ListTile(
-                              onTap: () {
-                                showBigDialog(
-                                  context,
-                                  _recipes[index].foto,
-                                  _recipes[index].nome,
-                                  _recipes[index].descricao,
-                                  _recipes[index].ingredientes,
-                                  _recipes[index].ingTipo!,
-                                  _recipes[index].ingQuant!,
-                                  _recipes[index].procedimento,
-                                  _recipes[index].tempo,
-                                  _recipes[index].porcoes,
-                                  _recipes[index].categoria,
-                                );
-                              },
-                              onLongPress: () {
-                                decisionDialog(
-                                  context,
-                                  _recipes[index].id,
-                                  index,
-                                );
-                              },
-                              title: Text(
-                                _recipes[index].nome,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                              subtitle: Text(
-                                _recipes[index].descricao,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              leading: _recipes[index].foto != null
-                                  ? SizedBox(
-                                      width: 50,
-                                      height: 50,
-                                      child: ClipRRect(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(4)),
-                                        child: Image.file(
-                                          File(_recipes[index].foto!),
-                                          fit: BoxFit.cover,
-                                        ),
+                    child: _recipes.isEmpty == true
+                        ? const Text('Nenhuma receita encontrada...')
+                        : ListView.builder(
+                            itemCount: _recipes.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (_recipes[index].categoria != categoria &&
+                                  categoria != 'Geral') {
+                                return Container();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.black12,
+                                  ),
+                                  child: ListTile(
+                                    onTap: () {
+                                      showBigDialog(
+                                        context,
+                                        _recipes[index].foto,
+                                        _recipes[index].nome,
+                                        _recipes[index].descricao,
+                                        _recipes[index].ingredientes,
+                                        _recipes[index].ingTipo!,
+                                        _recipes[index].ingQuant!,
+                                        _recipes[index].procedimento,
+                                        _recipes[index].tempo,
+                                        _recipes[index].porcoes,
+                                        _recipes[index].categoria,
+                                      );
+                                    },
+                                    onLongPress: () {
+                                      decisionDialog(
+                                        context,
+                                        _recipes[index].id,
+                                        index,
+                                      );
+                                    },
+                                    title: Text(
+                                      _recipes[index].nome,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        fontSize: 20,
                                       ),
-                                    )
-                                  : const Icon(
-                                      Icons.image_not_supported,
-                                      size: 50,
                                     ),
-                              trailing: _recipes[index].favorita
-                                  ? const Icon(
-                                      Icons.star,
-                                      color: Colors.yellow,
-                                      size: 30,
-                                    )
-                                  : null,
-                            ),
+                                    subtitle: Text(
+                                      _recipes[index].descricao,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    leading: _recipes[index].foto != null
+                                        ? SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(4)),
+                                              child: Image.file(
+                                                File(_recipes[index].foto!),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.image_not_supported,
+                                            size: 50,
+                                          ),
+                                    trailing: _recipes[index].favorita
+                                        ? const Icon(
+                                            Icons.star,
+                                            color: Colors.yellow,
+                                            size: 30,
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
               ),

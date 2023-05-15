@@ -13,6 +13,9 @@ class ListFavoutiresForm extends StatefulWidget {
   _ListFavouritesFormState createState() => _ListFavouritesFormState();
 }
 
+GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+    GlobalKey<RefreshIndicatorState>();
+
 class _ListFavouritesFormState extends State<ListFavoutiresForm> {
   List<Recipe> _recipes = [];
   String categoria = 'Geral';
@@ -48,10 +51,9 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                 isDefaultAction: true,
                 onPressed: () {
                   Navigator.pop(context);
-                  editingDialog(
-                    context,
-                    _recipes[index],
-                  );
+                  editingDialog(context, _recipes[index], () {
+                    refreshIndicatorKey.currentState?.show();
+                  });
                 },
                 child: const Text('Editar'),
               ),
@@ -171,6 +173,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                   ),
                   height: MediaQuery.of(context).size.height - 50,
                   child: RefreshIndicator(
+                    key: refreshIndicatorKey,
                     onRefresh: () async {
                       loadRecipes().then((recipes) {
                         setState(() {

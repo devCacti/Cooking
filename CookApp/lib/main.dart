@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/receita.dart';
+import 'receita.dart';
 import 'details_recipes.dart';
 import 'new_recipe.dart';
 import 'list_recipes.dart';
 import 'list_favoritas.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
+      debugShowCheckedModeBanner: false,
       home: const MyHomePage(
         title: 'Miau',
       ),
@@ -45,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 25,
           ),
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.only(top: 26, bottom: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
@@ -161,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     size: 75,
                                   ),
                                   SizedBox(
-                                    height: 20,
+                                    height: 5,
                                   ),
                                   Divider(
                                     color: Colors.black,
@@ -214,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     children: const [
                       Text(
-                        '\tBem-vindo à minha aplicação de receitas! Sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.'
+                        '\tBem-vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.'
                         '\n\n\tEnquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.'
                         '\n\tE assim nasceu esta aplicação!'
                         '\n\n\tEsta aplicação tem como objetivo dar-lhe a oportunidade de adicionar facilmente as suas receitas à sua coleção e aceda a elas a qualquer momento, em qualquer lugar. E também para que mantenha todas as suas receitas favoritas organizadas num só lugar e nunca se esqueça de como fazer aquele prato especial novamente.'

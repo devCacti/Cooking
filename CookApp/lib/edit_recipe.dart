@@ -53,7 +53,11 @@ Future<bool> showConfirmationDialog(BuildContext context) async {
   return confirm;
 }
 
-void editingDialog(BuildContext context, Recipe toEditR) {
+void editingDialog(
+  BuildContext context,
+  Recipe toEditR,
+  VoidCallback refreshCallBack,
+) {
   //!Declaring all Variables
   String? foto = toEditR.foto;
   int id = toEditR.id;
@@ -762,7 +766,7 @@ void editingDialog(BuildContext context, Recipe toEditR) {
                                   color: Colors.grey,
                                 ),
                                 child: const SizedBox(
-                                  width: 50,
+                                  width: 25,
                                   height: 1,
                                 ),
                               ),
