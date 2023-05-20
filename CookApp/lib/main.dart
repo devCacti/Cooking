@@ -43,8 +43,38 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(
-            height: 25,
+          const SizedBox(height: 40),
+          //*Early Access
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey[200],
+              ),
+              child: const ListTile(
+                title: Text(
+                  'ACESSO ANTECIPADO',
+                  style: TextStyle(fontSize: 28),
+                  textAlign: TextAlign.center,
+                ),
+                subtitle: Text(
+                  'Esta aplicação pode conter problemas e, por enquanto, não é completamente fiável guardar receitas nesta aplicação!',
+                  style: TextStyle(fontSize: 20),
+                  textAlign: TextAlign.center,
+                ),
+                leading: Icon(
+                  Icons.info_outline,
+                  color: Colors.orange,
+                  size: 45,
+                ),
+                trailing: Icon(
+                  Icons.info_outline,
+                  color: Colors.orange,
+                  size: 45,
+                ),
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 26, bottom: 8),
@@ -160,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 children: const [
                                   Icon(
                                     Icons.dinner_dining,
-                                    size: 75,
+                                    size: 100,
                                   ),
                                   SizedBox(
                                     height: 5,
