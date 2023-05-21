@@ -54,6 +54,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   final TextEditingController _porcoesController = TextEditingController(
     text: '0',
   );
+
+  List<TextEditingController> procsControllers = [];
+
   Future<bool> showConfirmationDialog(BuildContext context) async {
     bool confirm = false;
     await showDialog<bool>(
@@ -429,7 +432,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             itemBuilder: (BuildContext context, int index) {
                               return Padding(
                                 padding: const EdgeInsets.only(
-                                    bottom: 8, left: 16, right: 16),
+                                  bottom: 8,
+                                  left: 16,
+                                  right: 16,
+                                ),
                                 child: Column(
                                   children: [
                                     Text(
@@ -442,27 +448,126 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    Text(
-                                      procedimentos[index],
+                                    TextFormField(
+                                      controller: procsControllers[index],
                                       style: const TextStyle(
                                         fontSize: 20,
                                       ),
+                                      decoration: const InputDecoration(
+                                        label: Text('Procedimento'),
+                                      ),
                                       textAlign: TextAlign.justify,
+                                      onChanged: (value) {
+                                        setState(
+                                          () {
+                                            procedimentos[index] = value;
+                                          },
+                                        );
+                                      },
                                     ),
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          procedimentos
-                                              .remove(procedimentos[index]);
-                                        });
-                                      },
-                                      child: const Text(
-                                        'Eliminar',
-                                        style: TextStyle(fontSize: 18),
+                                    IconButton(
+                                      onPressed: index < 1
+                                          ? null
+                                          : () {
+                                              String temp;
+                                              setState(() {
+                                                temp = procedimentos[index - 1];
+
+                                                procedimentos[index - 1] =
+                                                    procedimentos[index];
+                                                procedimentos[index] = temp;
+
+                                                procsControllers[index - 1]
+                                                        .text =
+                                                    procsControllers[index]
+                                                        .text;
+                                                procsControllers[index].text =
+                                                    temp;
+                                              });
+                                            },
+                                      icon: const Icon(Icons.arrow_upward),
+                                      tooltip: 'Mover para cima',
+                                    ),
+                                    IconButton(
+                                      tooltip: 'Eliminar',
+                                      icon: const Icon(
+                                        Icons.delete_outlined,
+                                        color: Colors.red,
                                       ),
+                                      iconSize: 40,
+                                      onPressed: () {
+                                        showDialog<bool>(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Theme(
+                                              data: ThemeData(
+                                                brightness: Brightness.light,
+                                                textTheme: const TextTheme(
+                                                  titleMedium: TextStyle(
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: CupertinoAlertDialog(
+                                                title: const Text('Eliminar?'),
+                                                content: const Text(
+                                                    'Deseja eliminar este procedimento permanentemente?'),
+                                                actions: [
+                                                  CupertinoDialogAction(
+                                                    isDefaultAction: true,
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child:
+                                                        const Text('Cancelar'),
+                                                  ),
+                                                  CupertinoDialogAction(
+                                                    isDestructiveAction: true,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        procedimentos.remove(
+                                                            procedimentos[
+                                                                index]);
+                                                        procsControllers.remove(
+                                                            procsControllers[
+                                                                index]);
+                                                      });
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child:
+                                                        const Text('Eliminar'),
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      onPressed: index ==
+                                              procedimentos.length - 1
+                                          ? null
+                                          : () {
+                                              String temp;
+                                              setState(() {
+                                                temp = procedimentos[index + 1];
+                                                procedimentos[index + 1] =
+                                                    procedimentos[index];
+                                                procedimentos[index] = temp;
+                                                procsControllers[index + 1]
+                                                        .text =
+                                                    procsControllers[index]
+                                                        .text;
+                                                procsControllers[index].text =
+                                                    temp;
+                                              });
+                                            },
+                                      icon: const Icon(Icons.arrow_downward),
+                                      tooltip: 'Mover para cima',
                                     ),
                                     const SizedBox(
                                       height: 10,
@@ -519,6 +624,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               if (procR != '') {
                                 procedimentos.add(procR!);
                                 _procController.text = '';
+                                procsControllers
+                                    .add(TextEditingController(text: procR));
                                 procR = '';
                               }
                             });

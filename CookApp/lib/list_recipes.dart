@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/edit_recipe.dart';
+import 'edit_recipe.dart';
 import 'receita.dart';
 import 'details_recipes.dart';
 

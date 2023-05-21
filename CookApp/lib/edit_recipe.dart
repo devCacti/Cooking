@@ -521,16 +521,126 @@ void editingDialog(
                                                 height: 20,
                                               ),
                                               IconButton(
+                                                onPressed: index < 1
+                                                    ? null
+                                                    : () {
+                                                        String temp;
+                                                        setState(() {
+                                                          temp =
+                                                              procs[index - 1];
+
+                                                          procs[index - 1] =
+                                                              procs[index];
+                                                          procs[index] = temp;
+
+                                                          procsControllers[
+                                                                      index - 1]
+                                                                  .text =
+                                                              procsControllers[
+                                                                      index]
+                                                                  .text;
+                                                          procsControllers[
+                                                                  index]
+                                                              .text = temp;
+                                                        });
+                                                      },
+                                                icon: const Icon(
+                                                    Icons.arrow_upward),
+                                                tooltip: 'Mover para cima',
+                                              ),
+                                              IconButton(
+                                                tooltip: 'Eliminar',
                                                 icon: const Icon(
                                                   Icons.delete_outlined,
                                                   color: Colors.red,
                                                 ),
                                                 iconSize: 40,
                                                 onPressed: () {
-                                                  setState(() {
-                                                    procs.remove(procs[index]);
-                                                  });
+                                                  showDialog<bool>(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return Theme(
+                                                        data: ThemeData(
+                                                          brightness:
+                                                              Brightness.light,
+                                                          textTheme:
+                                                              const TextTheme(
+                                                            titleMedium:
+                                                                TextStyle(
+                                                              color:
+                                                                  Colors.blue,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        child:
+                                                            CupertinoAlertDialog(
+                                                          title: const Text(
+                                                              'Eliminar?'),
+                                                          content: const Text(
+                                                              'Deseja eliminar este procedimento permanentemente?'),
+                                                          actions: [
+                                                            CupertinoDialogAction(
+                                                              isDefaultAction:
+                                                                  true,
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: const Text(
+                                                                  'Cancelar'),
+                                                            ),
+                                                            CupertinoDialogAction(
+                                                              isDestructiveAction:
+                                                                  true,
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  procs.remove(
+                                                                      procs[
+                                                                          index]);
+                                                                  procsControllers.remove(
+                                                                      procsControllers[
+                                                                          index]);
+                                                                });
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: const Text(
+                                                                  'Eliminar'),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
                                                 },
+                                              ),
+                                              IconButton(
+                                                onPressed: index ==
+                                                        procs.length - 1
+                                                    ? null
+                                                    : () {
+                                                        String temp;
+                                                        setState(() {
+                                                          temp =
+                                                              procs[index + 1];
+                                                          procs[index + 1] =
+                                                              procs[index];
+                                                          procs[index] = temp;
+                                                          procsControllers[
+                                                                      index + 1]
+                                                                  .text =
+                                                              procsControllers[
+                                                                      index]
+                                                                  .text;
+                                                          procsControllers[
+                                                                  index]
+                                                              .text = temp;
+                                                        });
+                                                      },
+                                                icon: const Icon(
+                                                    Icons.arrow_downward),
+                                                tooltip: 'Mover para cima',
                                               ),
                                               const SizedBox(
                                                 height: 10,
@@ -626,60 +736,76 @@ void editingDialog(
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text(
-                                'Tempo:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 25,
-                                height: 1,
-                              ),
                               Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(
-                                  width: 75,
-                                  height: 1,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 25,
-                                height: 1,
-                              ),
-                              Semantics(
-                                label: 'tempo',
-                                child: SizedBox(
-                                  width: 48,
-                                  height: 48,
-                                  child: TextField(
-                                    style: const TextStyle(
-                                      color: Colors.black54,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    onChanged: (value) {
-                                      final newValue = double.tryParse(value);
-                                      if (newValue != null &&
-                                          newValue != tempo) {
-                                        setState(() {
-                                          tempo = newValue;
-                                        });
-                                      } else {
-                                        tempo = 0;
-                                      }
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    controller: _tempoController,
+                                alignment: Alignment.center,
+                                width: 150,
+                                child: const Text(
+                                  'Tempo:',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 2.5,
+                              Container(
+                                alignment: Alignment.center,
+                                width: 200,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.grey,
+                                  ),
+                                  child: const SizedBox(
+                                    width: 75,
+                                    height: 1,
+                                  ),
+                                ),
                               ),
-                              const Text('min'),
+                              Container(
+                                alignment: Alignment.center,
+                                width: 150,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Semantics(
+                                      label: 'tempo',
+                                      child: SizedBox(
+                                        width: 48,
+                                        height: 48,
+                                        child: TextField(
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          onChanged: (value) {
+                                            final newValue =
+                                                double.tryParse(value);
+                                            if (newValue != null &&
+                                                newValue != tempo) {
+                                              setState(() {
+                                                tempo = newValue;
+                                              });
+                                            } else {
+                                              tempo = 0;
+                                            }
+                                          },
+                                          keyboardType: TextInputType.number,
+                                          controller: _tempoController,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 2.5,
+                                    ),
+                                    const Text(
+                                      'min',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(

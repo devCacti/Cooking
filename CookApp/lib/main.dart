@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'shopping_list.dart';
 import 'receita.dart';
 import 'details_recipes.dart';
 import 'new_recipe.dart';
@@ -279,7 +280,14 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.menu_book_rounded),
               tooltip: 'Lista de Compras',
               iconSize: 35,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ShoppingListForm(),
+                  ),
+                );
+              },
             ),
             IconButton(
               icon: const Icon(Icons.local_dining),
@@ -289,7 +297,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ListRecipesForm()),
+                    builder: (context) => const ListRecipesForm(),
+                  ),
                 );
               },
             ),
@@ -302,7 +311,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const ListFavoutiresForm()),
+                    builder: (context) => const ListFavoutiresForm(),
+                  ),
                 );
               },
             ),
@@ -319,7 +329,9 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const NewRecipeForm()),
+            MaterialPageRoute(
+              builder: (context) => const NewRecipeForm(),
+            ),
           );
         },
         tooltip: 'Nova Receita',
