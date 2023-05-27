@@ -165,6 +165,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
         ],
       ),
       body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -93,20 +93,15 @@ Future<void> saveRecipe(Recipe recipe) async {
   try {
     final file = await _localFile;
     List<dynamic> jsonList = [];
-    //* Lê os elementos do ficheiro, caso exista.
     try {
       final contents = await file.readAsString();
       jsonList = json.decode(contents);
     } catch (e) {
-      //* Caso o ficheiro não exista, cria uma lista vazia.
       jsonList = [];
     }
-    // Adiciona a nova lista ao fim da lista correspondente ao que o ficheiro contém.
     jsonList.add(recipe.toJson());
-    // Escreve a versão atualizada do ficheiro com a nova receita para o ficheiro.
     await file.writeAsString(json.encode(jsonList));
   } catch (e) {
-    // Caso ocorra um erro, lança uma exceção.
     throw Exception('Failed to save recipe: $e');
   }
 }
