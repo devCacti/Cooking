@@ -6,21 +6,26 @@ class LstItem {
   final int id;
   final String nome;
   final String? descricao;
+  late final bool? done;
 
-  LstItem({required this.id, required this.nome, this.descricao});
+  LstItem({required this.id, required this.nome, this.descricao, this.done});
 
   factory LstItem.fromJson(Map<String, dynamic> json) {
     return LstItem(
-        id: json['id'], nome: json['nome'], descricao: json['descricao']);
+      id: json['id'],
+      nome: json['nome'],
+      descricao: json['descricao'],
+      done: json['done'],
+    );
   }
 
   Map<String, dynamic> toJson() =>
-      {'id': id, 'nome': nome, 'descricao': descricao};
+      {'id': id, 'nome': nome, 'descricao': descricao, 'done': done};
 }
 
 Future<File> get _localFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/testes_list_compras9.json');
+  return File('${directory.path}/testes_list_compras10.json');
 }
 
 Future<List<LstItem>> loadItems() async {
@@ -55,7 +60,7 @@ Future<void> saveItem(LstItem item) async {
 
 Future<File> get _localIdFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/last_item_id9.txt');
+  return File('${directory.path}/last_item_id10.txt');
 }
 
 Future<int> getNextID() async {
