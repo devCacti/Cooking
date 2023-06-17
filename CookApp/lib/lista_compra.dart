@@ -19,8 +19,7 @@ class LstItem {
     );
   }
 
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'nome': nome, 'descricao': descricao, 'done': done};
+  Map<String, dynamic> toJson() => {'id': id, 'nome': nome, 'descricao': descricao, 'done': done};
 }
 
 Future<File> get _localFile async {
@@ -33,8 +32,7 @@ Future<List<LstItem>> loadItems() async {
     final file = await _localFile;
     final contents = await file.readAsString();
     final List<dynamic> jsonList = jsonDecode(contents);
-    final List<LstItem> items =
-        jsonList.map((json) => LstItem.fromJson(json)).toList();
+    final List<LstItem> items = jsonList.map((json) => LstItem.fromJson(json)).toList();
     return items;
   } catch (e) {
     return [];
@@ -77,13 +75,23 @@ Future<int> getNextID() async {
   }
 }
 
+// ignore: non_constant_identifier_names
+Future<int> update_all_items(List<LstItem> items) async {
+  try {
+    final file = await _localFile;
+    await file.writeAsString(json.encode(items));
+    return 1;
+  } catch (e) {
+    throw Exception('Failed to update items: $e');
+  }
+}
+
 Future<void> deleteItemById(int id) async {
   try {
     final file = await _localFile;
     final contents = await file.readAsString();
     final List<dynamic> jsonList = json.decode(contents);
-    final List<LstItem> items =
-        jsonList.map((json) => LstItem.fromJson(json)).toList();
+    final List<LstItem> items = jsonList.map((json) => LstItem.fromJson(json)).toList();
     final updatedItems = items.where((item) => item.id != id).toList();
     await file.writeAsString(json.encode(updatedItems));
   } catch (e) {

@@ -78,12 +78,23 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
         child: RefreshIndicator(
           key: refreshIndicatorKey,
           onRefresh: () async {
+            //* Meter itens com done = true no fim da lista
+
             loadItems().then((items) {
               setState(() {
                 _items = items.toList();
                 bools = List<bool>.filled(_items.length, false);
               });
             });
+
+            for (int i = 0; i < _items.length; i++) {
+              if (_items[i].done == true) {
+                final item = _items.removeAt(i);
+                _items.add(item);
+                bools.removeAt(i);
+                bools.add(true);
+              }
+            }
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -136,7 +147,8 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                           descricao: dItem != '' ? dItem : '',
                           done: false,
                         );
-                        saveItem(novoItem);
+                        _items.insert(0, novoItem);
+                        update_all_items(_items);
                       }
                       refreshIndicatorKey.currentState?.show();
                       itemN.text = '';
@@ -186,20 +198,19 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                                         descricao: _items[index].descricao,
                                         done: value,
                                       );
-                                      for (var i = 0; i < _items.length; i++) {
-                                        final LstItem l;
-                                        if (_items[i].done == true && _items[index].id != _items[i].id) {
-                                          l = _items[index];
-                                          _items.removeAt(index);
-                                          _items.insert(i, l);
-                                          break;
-                                        } else if (_items[_items.length - 1].done == false) {
-                                          l = _items[index];
-                                          _items.removeAt(index);
-                                          _items.insert(_items.length, l);
-                                          break;
-                                        }
+
+                                      //?Mudar a posição do item na lista
+                                      if (_items[index].done == true) {
+                                        final LstItem l = _items[index];
+                                        _items.removeAt(index);
+                                        _items.insert(_items.length, l);
+                                      } else {
+                                        final LstItem l = _items[index];
+                                        _items.removeAt(index);
+                                        _items.insert(0, l);
                                       }
+                                      //*Guardar informação na base de dados
+                                      update_all_items(_items);
                                     },
                                   );
                                 },
@@ -208,14 +219,26 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                             title: AnimatedDefaultTextStyle(
                               style: TextStyle(
                                 fontSize: 24,
-                                color: bools[index] == true ? Colors.grey : Colors.black,
+                                color: _items[index].done == true ? Colors.grey : Colors.black,
                               ),
                               duration: const Duration(seconds: 1),
                               child: Text(
                                 _items[index].nome,
                               ),
                             ),
-                            subtitle: _items[index].descricao != '' && _items[index].descricao != null ? Text(_items[index].descricao!) : null,
+                            //?Aplicar animação ao bloco do id que foi alterado
+                            subtitle: _items[index].descricao != '' && _items[index].descricao != null
+                                ? AnimatedDefaultTextStyle(
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: _items[index].done == true ? Colors.grey : Colors.black,
+                                    ),
+                                    duration: const Duration(seconds: 1),
+                                    child: Text(
+                                      _items[index].descricao!,
+                                    ),
+                                  )
+                                : null,
                             trailing: GestureDetector(
                               onTap: () {
                                 deleteItemById(_items[index].id);
