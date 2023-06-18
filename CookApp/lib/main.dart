@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'user_settings.dart';
 import 'shopping_list.dart';
 import 'receita.dart';
 import 'details_recipes.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cook',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.green,
       ),
       debugShowCheckedModeBanner: false,
       home: const MyHomePage(
@@ -60,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   textAlign: TextAlign.center,
                 ),
                 subtitle: Text(
-                  'Esta aplicação pode conter problemas e, por enquanto, não é completamente fiável guardar receitas nesta aplicação!',
+                  'Esta aplicação pode conter problemas e, por enquanto, não é fiável guardar as suas receitas apenas nesta aplicação!',
                   style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
@@ -126,8 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           id: 0,
                           foto: null,
                           nome: "Massa cozida",
-                          descricao:
-                              "Preparação de massa para apenas uma pessoa.",
+                          descricao: "Preparação de massa para apenas uma pessoa.",
                           ingredientes: [
                             "Massa",
                             "Água",
@@ -144,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                           ingQuant: [
                             20,
-                            1,
+                            0.7,
                             5,
                             0.5,
                             1,
@@ -177,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(20),
                           color: Colors.black12,
                         ),
                         height: MediaQuery.of(context).size.width / 2,
@@ -247,11 +247,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     children: const [
                       Text(
-                        '\tBem-vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.'
-                        '\n\n\tEnquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.'
-                        '\n\tE assim nasceu esta aplicação!'
-                        '\n\n\tEsta aplicação tem como objetivo dar-lhe a oportunidade de adicionar facilmente as suas receitas à sua coleção e aceda a elas a qualquer momento, em qualquer lugar. E também para que mantenha todas as suas receitas favoritas organizadas num só lugar e nunca se esqueça de como fazer aquele prato especial novamente.'
-                        '\n\n\tEspero que goste de usar esta aplicação para acompanhar todas as suas criações culinárias!',
+                        '\t Bem-vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.'
+                        '\n\n\t Enquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.'
+                        '\n\t E assim nasceu esta aplicação!'
+                        '\n\n\t Esta aplicação tem como objetivo dar-lhe a oportunidade de adicionar facilmente as suas receitas à sua coleção e aceda a elas a qualquer momento, em qualquer lugar. E também para que mantenha todas as suas receitas favoritas organizadas num só lugar e nunca se esqueça de como fazer aquele prato especial novamente.'
+                        '\n\n\t Espero que goste de usar esta aplicação para acompanhar todas as suas criações culinárias!',
                         textAlign: TextAlign.justify,
                         style: TextStyle(
                           fontSize: 26,
@@ -274,7 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
               icon: const Icon(Icons.menu_book_rounded),
@@ -320,7 +320,14 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.person),
               tooltip: 'Conta',
               iconSize: 35,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const UserSettings(),
+                  ),
+                );
+              },
             ),
           ],
         ),

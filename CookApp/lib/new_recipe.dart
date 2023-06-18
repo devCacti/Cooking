@@ -147,8 +147,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                    left: 72.0,
-                    right: 72.0,
+                    left: 100.0,
+                    right: 100.0,
                     top: 32,
                     bottom: 32,
                   ),
@@ -176,7 +176,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 onPressed: _getImage,
                                 tooltip: 'Mudar Foto',
                                 iconSize: 40,
-                                color: Colors.orange,
+                                color: Colors.green,
                               ),
                             ),
                           ],
@@ -206,8 +206,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      right: 32, left: 32, top: 16, bottom: 12),
+                  padding: const EdgeInsets.only(right: 32, left: 32, top: 16, bottom: 12),
                   child: TextFormField(
                     key: _descKey,
                     maxLines: null,
@@ -256,8 +255,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             itemCount: ingredientes.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 8, left: 16, right: 16),
+                                padding: const EdgeInsets.only(bottom: 8, left: 16, right: 16),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
@@ -266,8 +264,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                   child: ListTile(
                                     onLongPress: () {
                                       setState(() {
-                                        ingredientes
-                                            .remove(ingredientes[index]);
+                                        ingredientes.remove(ingredientes[index]);
                                         ingsOpts.remove(ingsOpts[index]);
                                         ingsQaunt.remove(ingsQaunt[index]);
                                       });
@@ -277,8 +274,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                     trailing: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Semantics(
@@ -293,11 +289,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                               ),
                                               textAlign: TextAlign.center,
                                               onChanged: (value) {
-                                                final newValue =
-                                                    double.tryParse(value);
-                                                if (newValue != null &&
-                                                    newValue !=
-                                                        ingsQaunt[index]) {
+                                                final newValue = double.tryParse(value);
+                                                if (newValue != null && newValue != ingsQaunt[index]) {
                                                   setState(() {
                                                     ingsQaunt[index] = newValue;
                                                   });
@@ -305,8 +298,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                                   ingsQaunt[index] = 0;
                                                 }
                                               },
-                                              keyboardType:
-                                                  TextInputType.number,
+                                              keyboardType: TextInputType.number,
                                               decoration: const InputDecoration(
                                                 hintText: '0',
                                                 border: InputBorder.none,
@@ -384,7 +376,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           splashRadius: 35,
                           iconSize: 50,
                           splashColor: Colors.black12,
-                          color: Colors.orange,
+                          color: Colors.green,
                           icon: const Icon(Icons.add),
                           onPressed: () {
                             setState(() {
@@ -476,16 +468,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                               setState(() {
                                                 temp = procedimentos[index - 1];
 
-                                                procedimentos[index - 1] =
-                                                    procedimentos[index];
+                                                procedimentos[index - 1] = procedimentos[index];
                                                 procedimentos[index] = temp;
 
-                                                procsControllers[index - 1]
-                                                        .text =
-                                                    procsControllers[index]
-                                                        .text;
-                                                procsControllers[index].text =
-                                                    temp;
+                                                procsControllers[index - 1].text = procsControllers[index].text;
+                                                procsControllers[index].text = temp;
                                               });
                                             },
                                       icon: const Icon(Icons.arrow_upward),
@@ -513,32 +500,25 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                               ),
                                               child: CupertinoAlertDialog(
                                                 title: const Text('Eliminar?'),
-                                                content: const Text(
-                                                    'Deseja eliminar este procedimento permanentemente?'),
+                                                content: const Text('Deseja eliminar este procedimento permanentemente?'),
                                                 actions: [
                                                   CupertinoDialogAction(
                                                     isDefaultAction: true,
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
-                                                    child:
-                                                        const Text('Cancelar'),
+                                                    child: const Text('Cancelar'),
                                                   ),
                                                   CupertinoDialogAction(
                                                     isDestructiveAction: true,
                                                     onPressed: () {
                                                       setState(() {
-                                                        procedimentos.remove(
-                                                            procedimentos[
-                                                                index]);
-                                                        procsControllers.remove(
-                                                            procsControllers[
-                                                                index]);
+                                                        procedimentos.remove(procedimentos[index]);
+                                                        procsControllers.remove(procsControllers[index]);
                                                       });
                                                       Navigator.pop(context);
                                                     },
-                                                    child:
-                                                        const Text('Eliminar'),
+                                                    child: const Text('Eliminar'),
                                                   )
                                                 ],
                                               ),
@@ -548,22 +528,16 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       },
                                     ),
                                     IconButton(
-                                      onPressed: index ==
-                                              procedimentos.length - 1
+                                      onPressed: index == procedimentos.length - 1
                                           ? null
                                           : () {
                                               String temp;
                                               setState(() {
                                                 temp = procedimentos[index + 1];
-                                                procedimentos[index + 1] =
-                                                    procedimentos[index];
+                                                procedimentos[index + 1] = procedimentos[index];
                                                 procedimentos[index] = temp;
-                                                procsControllers[index + 1]
-                                                        .text =
-                                                    procsControllers[index]
-                                                        .text;
-                                                procsControllers[index].text =
-                                                    temp;
+                                                procsControllers[index + 1].text = procsControllers[index].text;
+                                                procsControllers[index].text = temp;
                                               });
                                             },
                                       icon: const Icon(Icons.arrow_downward),
@@ -617,15 +591,14 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           tooltip: 'Adicionar',
                           splashRadius: 35,
                           iconSize: 50,
-                          color: Colors.orange,
+                          color: Colors.green,
                           icon: const Icon(Icons.add),
                           onPressed: () {
                             setState(() {
                               if (procR != '') {
                                 procedimentos.add(procR!);
                                 _procController.text = '';
-                                procsControllers
-                                    .add(TextEditingController(text: procR));
+                                procsControllers.add(TextEditingController(text: procR));
                                 procR = '';
                               }
                             });
@@ -716,8 +689,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     textAlign: TextAlign.center,
                                     onChanged: (value) {
                                       final newValue = double.tryParse(value);
-                                      if (newValue != null &&
-                                          newValue != tempoCozi) {
+                                      if (newValue != null && newValue != tempoCozi) {
                                         setState(() {
                                           tempoCozi = newValue;
                                         });
@@ -774,8 +746,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     textAlign: TextAlign.center,
                                     onChanged: (value) {
                                       final newValue = double.tryParse(value);
-                                      if (newValue != null &&
-                                          newValue != porcoes) {
+                                      if (newValue != null && newValue != porcoes) {
                                         setState(() {
                                           porcoes = newValue;
                                         });
@@ -824,13 +795,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 color: Colors.black54,
                                 fontSize: 18,
                               ),
-                              items: <String>[
-                                'Geral',
-                                'Bolos',
-                                'Tartes',
-                                'Sobremesas',
-                                'Pratos'
-                              ].map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['Geral', 'Bolos', 'Tartes', 'Sobremesas', 'Pratos'].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
@@ -907,7 +872,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     child: IconButton(
                       //! Botão para guardar
                       icon: const Icon(Icons.save),
-                      highlightColor: Colors.orange,
+                      highlightColor: Colors.green[200],
                       tooltip: 'Guardar',
                       onPressed: () {
                         //Processo para fazer com que apareça a mensagem em todos os campos
@@ -917,8 +882,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           _descKey.currentState!.validate();
 
                           //Certificação
-                          validate = _nameKey.currentState!.validate() &&
-                              _descKey.currentState!.validate();
+                          validate = _nameKey.currentState!.validate() && _descKey.currentState!.validate();
                           if (validate == true) {
                             //! Processo que guarda a informação
                             final novaReceita = Recipe(
@@ -942,8 +906,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 content: const Text(
                                   'A receita foi guardada com sucesso.',
                                 ),
-                                action: SnackBarAction(
-                                    label: 'OK', onPressed: () {}),
+                                action: SnackBarAction(label: 'OK', onPressed: () {}),
                               ),
                             );
                             saveRecipe(novaReceita);
@@ -955,8 +918,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 content: const Text(
                                   'Por favor insira um nome e uma descrição.',
                                 ),
-                                action: SnackBarAction(
-                                    label: 'OK', onPressed: () {}),
+                                action: SnackBarAction(label: 'OK', onPressed: () {}),
                               ),
                             );
                           }

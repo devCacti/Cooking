@@ -35,10 +35,6 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
         bools = List<bool>.filled(_items.length, false);
       });
     });
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
   }
 
   void initializeData() async {
@@ -178,10 +174,10 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                       return Padding(
                         padding: const EdgeInsets.all(4),
                         child: AnimatedContainer(
-                          duration: const Duration(seconds: 1),
+                          duration: const Duration(milliseconds: 500),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: bools[index] == true ? Colors.grey[100] : Colors.grey[300],
+                            color: _items[index].done == true ? Colors.grey[75] : Colors.grey[200],
                           ),
                           child: ListTile(
                             leading: Transform.scale(
@@ -198,17 +194,6 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                                         descricao: _items[index].descricao,
                                         done: value,
                                       );
-
-                                      //?Mudar a posição do item na lista
-                                      if (_items[index].done == true) {
-                                        final LstItem l = _items[index];
-                                        _items.removeAt(index);
-                                        _items.insert(_items.length, l);
-                                      } else {
-                                        final LstItem l = _items[index];
-                                        _items.removeAt(index);
-                                        _items.insert(0, l);
-                                      }
                                       //*Guardar informação na base de dados
                                       update_all_items(_items);
                                     },
@@ -220,6 +205,8 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                               style: TextStyle(
                                 fontSize: 24,
                                 color: _items[index].done == true ? Colors.grey : Colors.black,
+                                //mete o texto a riscado
+                                decoration: _items[index].done == true ? TextDecoration.lineThrough : null,
                               ),
                               duration: const Duration(seconds: 1),
                               child: Text(
@@ -231,19 +218,21 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                                 ? AnimatedDefaultTextStyle(
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: _items[index].done == true ? Colors.grey : Colors.black,
+                                      color: _items[index].done == true ? Colors.grey[400] : Colors.black,
                                     ),
-                                    duration: const Duration(seconds: 1),
+                                    duration: const Duration(milliseconds: 500),
                                     child: Text(
                                       _items[index].descricao!,
                                     ),
                                   )
                                 : null,
                             trailing: GestureDetector(
-                              onTap: () {
-                                deleteItemById(_items[index].id);
-                                triggerRefresh();
-                              },
+                              onTap: _items[index].done!
+                                  ? () {
+                                      deleteItemById(_items[index].id);
+                                      triggerRefresh();
+                                    }
+                                  : null,
                               child: AnimatedSwitcher(
                                 duration: const Duration(seconds: 1),
                                 transitionBuilder: (Widget child, Animation<double> animation) {
@@ -252,11 +241,19 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                                     child: child,
                                   );
                                 },
-                                child: Icon(
-                                  Icons.delete_outline,
-                                  size: 48.0,
-                                  key: ValueKey<bool>(!bools[index]),
-                                  color: bools[index] ? Colors.red[100] : Colors.red,
+                                child: TweenAnimationBuilder(
+                                  tween: ColorTween(
+                                    begin: _items[index].done! == true ? Colors.red : Colors.red[100],
+                                    end: !_items[index].done! == true ? Colors.red[100] : Colors.red,
+                                  ),
+                                  duration: const Duration(milliseconds: 500),
+                                  builder: (BuildContext context, Color? color, Widget? child) {
+                                    return Icon(
+                                      Icons.delete_outline,
+                                      size: 40,
+                                      color: color,
+                                    );
+                                  },
                                 ),
                               ),
                             ),
