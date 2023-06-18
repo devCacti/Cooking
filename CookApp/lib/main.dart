@@ -277,7 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: const Icon(Icons.menu_book_rounded),
+              icon: const Icon(Icons.list),
               tooltip: 'Lista de Compras',
               iconSize: 35,
               onPressed: () {
@@ -290,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.local_dining),
+              icon: const Icon(Icons.book_outlined),
               tooltip: 'Receitas',
               iconSize: 35,
               onPressed: () {
@@ -304,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(),
             IconButton(
-              icon: const Icon(Icons.favorite),
+              icon: const Icon(Icons.favorite_outline),
               tooltip: 'Favoritas',
               iconSize: 35,
               onPressed: () {
@@ -317,7 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.person),
+              icon: const Icon(Icons.settings_outlined),
               tooltip: 'Conta',
               iconSize: 35,
               onPressed: () {

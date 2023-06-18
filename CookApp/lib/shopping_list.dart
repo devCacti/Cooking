@@ -10,8 +10,6 @@ class ShoppingListForm extends StatefulWidget {
 }
 
 class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
   List<LstItem> _items = [];
   List<bool> bools = [];
   int id = 1;
@@ -47,16 +45,7 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
-  }
-
-  void toggleAnimation() {
-    if (_controller.isCompleted || _controller.velocity > 0) {
-      _controller.reverse();
-    } else {
-      _controller.forward();
-    }
   }
 
   @override
@@ -112,7 +101,6 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                       ),
                       onChanged: (value) {
                         nItem = value;
-                        toggleAnimation();
                       },
                     ),
                   ),
