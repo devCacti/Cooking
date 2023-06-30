@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:test_app/login_page.dart';
 
 class UserSettings extends StatefulWidget {
   const UserSettings({Key? key}) : super(key: key);
@@ -72,13 +70,25 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
         const SizedBox(height: 20),
         FilledButton(
           onPressed: () async {
-            List<dynamic> users = await getUsers();
-            print(users[0]['name']);
+            //* List<dynamic> users = await getUsers();
+            // *print(users[0]['name']);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginPage(),
+              ),
+            );
           },
           child: const Text(
             ' Login ',
             style: TextStyle(fontSize: 26, color: Colors.white),
           ),
+        ),
+        Column(
+          children: const [
+            SizedBox(height: 5),
+            SizedBox(child: Text('ou', style: TextStyle(fontSize: 20, color: Colors.black54))),
+          ],
         ),
         OutlinedButton(
             onPressed: () {
@@ -139,24 +149,4 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
       ),
     );
   }
-}
-
-Future<List<dynamic>> getUsers() async {
-  final response = await http.get(Uri.parse('http://192.168.31.82:3000/users'));
-  List<dynamic> users = [];
-  if (response.statusCode == 200) {
-    // ignore: avoid_print
-    print('Code: ${response.statusCode} - Accepted !');
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    users = jsonDecode(response.body);
-
-    // Print the contents of the users variable to the console
-    // ignore: avoid_print
-    print(users);
-  } else {
-    // ignore: avoid_print
-    print('${response.statusCode} - FAILED to load users !');
-  }
-  return users;
 }
