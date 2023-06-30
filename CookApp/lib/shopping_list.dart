@@ -44,11 +44,6 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -217,6 +212,7 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                             trailing: GestureDetector(
                               onTap: _items[index].done!
                                   ? () {
+                                      //* Antes de apagar o item, fazer o item desaparecer com uma animação de slide
                                       deleteItemById(_items[index].id);
                                       triggerRefresh();
                                     }
