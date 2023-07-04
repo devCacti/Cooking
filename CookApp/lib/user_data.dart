@@ -9,14 +9,8 @@ Future<List<dynamic>> userExists(String test) async {
   final response = await http.get(Uri.parse('$sv$test'));
   List<dynamic> users = [];
   if (response.statusCode == 200) {
-    // ignore: avoid_print
     print('Code: ${response.statusCode} - Accepted !');
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
     users = jsonDecode(response.body);
-    // Print the contents of the users variable to the console
-    // ignore: avoid_print
-    print(users);
   } else {
     // ignore: avoid_print
     print('${response.statusCode} - FAILED to load users !');
@@ -26,16 +20,16 @@ Future<List<dynamic>> userExists(String test) async {
 
 Future<File> get _localFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/userInfo.json');
+  return File('${directory.path}/userInfoTests1.json');
 }
 
 //guardar dados do utilizador num ficheiro local
-Future<void> saveUserLocal(String? name, String? email) async {
+Future<void> saveUserLocal(bool? login, String? name, String? email) async {
   try {
     final file = await _localFile;
     List<dynamic> jsonList = [];
-    if (name != null && email != null) {
-      jsonList.add({'name': name, 'email': email});
+    if (login != null && name != null && email != null) {
+      jsonList.add({'islogin': login, 'name': name, 'email': email});
     }
     await file.writeAsString(json.encode(jsonList));
   } catch (e) {

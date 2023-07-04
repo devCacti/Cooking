@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'user_data.dart';
+import 'register_page.dart';
 
 class UserSettings extends StatefulWidget {
   const UserSettings({Key? key}) : super(key: key);
@@ -22,13 +23,23 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
     registerForRestoration(_selectedIndex, 'selected_index');
   }
 
+  List<dynamic> user = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserLocal().then((userData) {
+      setState(() {
+        user = userData;
+      });
+    });
+  }
+
   @override
   void dispose() {
     _selectedIndex.dispose();
     super.dispose();
   }
-
-  List<dynamic> user = [];
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +55,7 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text('${selectedItem[_selectedIndex.value]}  - (Não implementado)'),
+        title: Text(selectedItem[_selectedIndex.value]),
       ),
       body: Row(
         children: [
@@ -69,22 +80,32 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
           //Mostra o que está dentro da função UserSettings
           Expanded(
             child: Center(
-              child: selectedItem[_selectedIndex.value] == "Perfil" ? await decisionPerfil(context) : null,
+              child: FutureBuilder<List<dynamic>>(
+                future: loadUserLocal(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Show a loading screen while the data is being loaded
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    // Handle the error
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    // Use the user data to build your UI
+                    List<dynamic> user = snapshot.data!;
+                    return selectedItem[_selectedIndex.value] == "Perfil"
+                        ? user[0]['islogin']
+                            ? display(context)
+                            : userSettings(context)
+                        : const SizedBox.shrink();
+                  }
+                },
+              ),
             ),
           ),
         ],
       ),
     );
   }
-}
-
-Future<Widget> decisionPerfil(BuildContext context) async {
-  List<dynamic> user = [];
-  loadUserLocal().then((value) {
-    print(value);
-    user = value;
-  });
-  return user != null ? display(context) : userSettings(context);
 }
 
 Widget userSettings(BuildContext context) {
@@ -117,11 +138,17 @@ Widget userSettings(BuildContext context) {
         children: const [
           SizedBox(height: 5),
           SizedBox(child: Text('ou', style: TextStyle(fontSize: 20, color: Colors.black54))),
+          SizedBox(height: 5),
         ],
       ),
       OutlinedButton(
           onPressed: () {
-            nImpl(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RegisterPage(),
+              ),
+            );
           },
           style: OutlinedButton.styleFrom(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -220,7 +247,7 @@ Widget display(BuildContext context) {
               onPressed: () {
                 showConfirmationDialog(context).then((value) {
                   if (value) {
-                    saveUserLocal('none', 'none');
+                    saveUserLocal(false, 'none', 'none');
                     Navigator.push(
                       context,
                       MaterialPageRoute(

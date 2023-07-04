@@ -247,15 +247,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     children: const [
                       Text(
-                        '\t Bem-vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.'
-                        '\n\n\t Enquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.'
-                        '\n\t E assim nasceu esta aplicação!'
-                        '\n\n\t Esta aplicação tem como objetivo dar-lhe a oportunidade de adicionar facilmente as suas receitas à sua coleção e aceda a elas a qualquer momento, em qualquer lugar. E também para que mantenha todas as suas receitas favoritas organizadas num só lugar e nunca se esqueça de como fazer aquele prato especial novamente.'
-                        '\n\n\t Espero que goste de usar esta aplicação para acompanhar todas as suas criações culinárias!',
+                        '\t\t   Bem-vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.'
+                        '\n\n\t\t   Enquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.'
+                        '\n\t\t   E assim nasceu esta aplicação!'
+                        '\n\n\t\t   Esta aplicação tem como objetivo dar-lhe a oportunidade de adicionar facilmente as suas receitas à sua coleção e aceda a elas a qualquer momento, em qualquer lugar. E também para que mantenha todas as suas receitas favoritas organizadas num só lugar e nunca se esqueça de como fazer aquele prato especial novamente.'
+                        '\n\n\t\t   Espero que goste de usar esta aplicação para acompanhar todas as suas criações culinárias!',
                         textAlign: TextAlign.justify,
                         style: TextStyle(
                           fontSize: 26,
-                          height: 2.25,
+                          height: 1.7,
                         ),
                       ),
                       SizedBox(
