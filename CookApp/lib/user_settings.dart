@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/login_page.dart';
+import 'login_page.dart';
+import 'user_data.dart';
 
 class UserSettings extends StatefulWidget {
   const UserSettings({Key? key}) : super(key: key);
@@ -27,81 +28,7 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
     super.dispose();
   }
 
-  //Não implementado
-  nImpl(BuildContext context) {
-    return showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text(
-          'Não implementado',
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        content: const Text(
-          'Esta funcionalidade ainda não foi implementada',
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('OK', style: TextStyle(color: Colors.blue)),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget userSettings(BuildContext context) {
-    //Faz animação de entrada de estilo scroll
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        const Text(
-          'Credênciais',
-          style: TextStyle(fontSize: 36),
-        ),
-        const SizedBox(height: 10),
-        const Divider(thickness: 2, indent: 40, endIndent: 40),
-        const SizedBox(height: 20),
-        FilledButton(
-          onPressed: () async {
-            //* List<dynamic> users = await getUsers();
-            // *print(users[0]['name']);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const LoginPage(),
-              ),
-            );
-          },
-          child: const Text(
-            ' Login ',
-            style: TextStyle(fontSize: 26, color: Colors.white),
-          ),
-        ),
-        Column(
-          children: const [
-            SizedBox(height: 5),
-            SizedBox(child: Text('ou', style: TextStyle(fontSize: 20, color: Colors.black54))),
-          ],
-        ),
-        OutlinedButton(
-            onPressed: () {
-              nImpl(context);
-            },
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              side: const BorderSide(color: Colors.green, width: 1),
-            ),
-            child: const Text(' Registar ', style: TextStyle(fontSize: 26))),
-      ],
-    );
-  }
+  List<dynamic> user = [];
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +69,229 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
           //Mostra o que está dentro da função UserSettings
           Expanded(
             child: Center(
-              child: selectedItem[_selectedIndex.value] == "Perfil" ? userSettings(context) : null,
+              child: selectedItem[_selectedIndex.value] == "Perfil" ? await decisionPerfil(context) : null,
             ),
           ),
         ],
       ),
     );
   }
+}
+
+Future<Widget> decisionPerfil(BuildContext context) async {
+  List<dynamic> user = [];
+  loadUserLocal().then((value) {
+    print(value);
+    user = value;
+  });
+  return user != null ? display(context) : userSettings(context);
+}
+
+Widget userSettings(BuildContext context) {
+  //Faz animação de entrada de estilo scroll
+  return Column(
+    children: [
+      const SizedBox(height: 20),
+      const Text(
+        'Credênciais',
+        style: TextStyle(fontSize: 36),
+      ),
+      const SizedBox(height: 10),
+      const Divider(thickness: 2, indent: 40, endIndent: 40),
+      const SizedBox(height: 20),
+      FilledButton(
+        onPressed: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          );
+        },
+        child: const Text(
+          ' Login ',
+          style: TextStyle(fontSize: 26, color: Colors.white),
+        ),
+      ),
+      Column(
+        children: const [
+          SizedBox(height: 5),
+          SizedBox(child: Text('ou', style: TextStyle(fontSize: 20, color: Colors.black54))),
+        ],
+      ),
+      OutlinedButton(
+          onPressed: () {
+            nImpl(context);
+          },
+          style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            side: const BorderSide(color: Colors.green, width: 1),
+          ),
+          child: const Text(' Registar ', style: TextStyle(fontSize: 26))),
+    ],
+  );
+}
+
+//Não implementado
+nImpl(BuildContext context) {
+  return showCupertinoDialog(
+    context: context,
+    builder: (context) => CupertinoAlertDialog(
+      title: const Text(
+        'Não implementado',
+        style: TextStyle(
+          color: Colors.red,
+          fontSize: 20,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      content: const Text(
+        'Esta funcionalidade ainda não foi implementada',
+        style: TextStyle(
+          fontSize: 16,
+        ),
+      ),
+      actions: [
+        CupertinoDialogAction(
+          child: const Text('OK', style: TextStyle(color: Colors.blue)),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget display(BuildContext context) {
+  return FutureBuilder<List<dynamic>>(
+    future: loadUserLocal(),
+    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+      if (snapshot.hasData) {
+        final user = snapshot.data!;
+        TextEditingController nome = TextEditingController(text: user[0]['name']);
+        TextEditingController email = TextEditingController(text: user[0]['email']);
+        return Column(
+          children: [
+            const SizedBox(height: 20),
+            const Text(
+              'Credênciais',
+              style: TextStyle(fontSize: 36),
+            ),
+            const SizedBox(height: 10),
+            const Divider(thickness: 2, indent: 75, endIndent: 75),
+            const SizedBox(height: 20),
+            SizedBox(
+              //half of screen width - half of widget width
+              width: MediaQuery.of(context).size.width / 2 + 50,
+              height: 100,
+              child: TextFormField(
+                enabled: false,
+                controller: nome,
+                style: const TextStyle(fontSize: 20),
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Nome',
+                ),
+              ),
+            ),
+            SizedBox(
+              //half of screen width - half of widget width
+              width: MediaQuery.of(context).size.width / 2 + 50,
+              height: 100,
+              child: TextFormField(
+                enabled: false,
+                controller: email,
+                style: const TextStyle(fontSize: 20),
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Endereço de email',
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            OutlinedButton.icon(
+              //border color
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+              ),
+              onPressed: () {
+                showConfirmationDialog(context).then((value) {
+                  if (value) {
+                    saveUserLocal('none', 'none');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    );
+                  }
+                });
+              },
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.red,
+              ),
+              label: const Text(
+                'Logout',
+                style: TextStyle(fontSize: 26, color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      } else if (snapshot.hasError) {
+        return const Text('Erro ao carregar as credenciais do usuário');
+      } else {
+        return const CircularProgressIndicator();
+      }
+    },
+  );
+}
+
+Future<bool> showConfirmationDialog(BuildContext context) async {
+  bool confirm = false;
+  await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return Theme(
+        data: ThemeData(
+          brightness: Brightness.dark,
+          textTheme: const TextTheme(
+            titleMedium: TextStyle(
+              color: Colors.red,
+            ),
+          ),
+        ),
+        child: CupertinoAlertDialog(
+          title: const Text(
+            'Terminar sessão?',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: const Text(
+            'Tem a certeza que deseja terminar a sessão?',
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              isDestructiveAction: true,
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                confirm = true;
+                Navigator.pop(context);
+              },
+              child: const Text('Sim'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+  return confirm;
 }

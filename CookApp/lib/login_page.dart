@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:test_app/server_coms.dart';
+import 'user_data.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
             isUser
                 ? user.isEmpty
                     ? const Text(
-                        'Usuário não encontrado',
+                        'Utilizador não encontrado',
                         style: TextStyle(
                           color: Colors.red,
                           fontSize: 16,
@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                 key: _senhaKey,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, insira sua senha';
+                    return 'Por favor, insira sua palavra-passe';
                   }
                   return null;
                 },
@@ -128,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                       Radius.circular(10),
                     ),
                   ),
-                  labelText: 'Senha',
+                  labelText: 'Palavra-passe',
                 ),
               ),
             ),
@@ -171,28 +171,28 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: email == ''
                           ? null
                           : () {
-                              userExists('?email=$email&password=$password').then((value) {
-                                if (user[0]['email'] == email && user[0]['password'] == password) {
-                                  print('Login Yes');
-                                } else {
-                                  print('Login No');
-                                }
-                              });
                               userExists('?email=$email').then((value) {
                                 setState(() {
                                   user = value;
                                   isUser = true;
                                 });
                               });
-                              userExists('?password=$password').then(
-                                (value) {
-                                  setState(() {
-                                    _senhaKey.currentState!.validate();
-                                  });
-                                  // ignore: avoid_print
-                                  print(user[0]['name']);
-                                },
-                              );
+                              userExists('?password=$password').then((value) {
+                                setState(() {
+                                  _senhaKey.currentState!.validate();
+                                });
+                                // ignore: avoid_print
+                                print(user[0]['name']);
+                              });
+                              userExists('?email=$email&password=$password').then((value) {
+                                if (user[0]['email'] == email && user[0]['password'] == password) {
+                                  print('Login Yes');
+                                  saveUserLocal(user[0]['name'], email);
+                                  Navigator.pop(context);
+                                } else {
+                                  print('Login No');
+                                }
+                              });
                             },
                       child: const Text(
                         'Entrar',
