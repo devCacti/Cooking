@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:test_app/list_favoritas.dart';
 import 'login_page.dart';
 import 'user_data.dart';
 import 'register_page.dart';
@@ -89,7 +90,7 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
                   } else if (snapshot.hasError) {
                     // Handle the error
                     return Text('Error: ${snapshot.error}');
-                  } else {
+                  } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     // Use the user data to build your UI
                     List<dynamic> user = snapshot.data!;
                     return selectedItem[_selectedIndex.value] == "Perfil"
@@ -97,6 +98,9 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
                             ? display(context)
                             : userSettings(context)
                         : const SizedBox.shrink();
+                  } else {
+                    // Handle the case where the data is empty
+                    return const Text('No user data found');
                   }
                 },
               ),
@@ -248,12 +252,23 @@ Widget display(BuildContext context) {
                 showConfirmationDialog(context).then((value) {
                   if (value) {
                     saveUserLocal(false, 'none', 'none');
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const LoginPage(),
                       ),
-                    );
+                    ).then((value) {
+                      Navigator.popUntil(context, ModalRoute.withName('/user_settings'));
+
+                      refreshIndicatorKey.currentState!.show().then((value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Logout efetuado com sucesso'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      });
+                    });
                   }
                 });
               },

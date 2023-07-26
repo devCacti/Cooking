@@ -11,6 +11,11 @@ Future<List<dynamic>> userExists(String test) async {
   if (response.statusCode == 200) {
     print('Code: ${response.statusCode} - Accepted !');
     users = jsonDecode(response.body);
+    if (users.isNotEmpty) {
+      print('User exists !');
+    } else {
+      print('User does not exist !');
+    }
   } else {
     // ignore: avoid_print
     print('${response.statusCode} - FAILED to load users !');
@@ -19,8 +24,16 @@ Future<List<dynamic>> userExists(String test) async {
 }
 
 Future<File> get _localFile async {
+  String slash = Platform.isWindows ? '\\' : '/';
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/userInfoTests1.json');
+  //if file does not exist, create it
+  if (!await File('${directory.path}{$slash}userInfoTests1.json').exists()) {
+    final file = await File('${directory.path}{$slash}userInfoTests1.json').create(recursive: true);
+    await file.writeAsString(json.encode([
+      {'islogin': false, 'name': 'null', 'email': 'null'}
+    ]));
+  }
+  return File('${directory.path}{$slash}userInfoTests1.json');
 }
 
 //guardar dados do utilizador num ficheiro local
@@ -32,20 +45,27 @@ Future<void> saveUserLocal(bool? login, String? name, String? email) async {
       jsonList.add({'islogin': login, 'name': name, 'email': email});
     }
     await file.writeAsString(json.encode(jsonList));
+    print('Saved: $jsonList');
   } catch (e) {
     throw Exception('Failed to save recipe: $e');
   }
 }
 
-Future<List<dynamic>> loadUserLocal() {
+Future<List<dynamic>> loadUserLocal() async {
   try {
     return _localFile.then((file) async {
       final contents = await file.readAsString();
       final List<dynamic> jsonList = json.decode(contents);
+      print('Loaded: $jsonList');
+      //if the file is empty, write using saveUserLocal
+      if (jsonList.isEmpty) {
+        print('Empty file, writing...');
+        await saveUserLocal(false, 'null', 'null');
+      }
       return jsonList;
     });
   } catch (e) {
-    throw Exception('Failed to load recipe: $e');
+    throw Exception('Failed to load user: $e');
   }
 }
 

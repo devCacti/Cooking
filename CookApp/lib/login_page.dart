@@ -12,12 +12,16 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _senhaKey = GlobalKey<FormFieldState>();
+  final _emailKey = GlobalKey<FormFieldState>();
+  final TextEditingController emailController = TextEditingController();
   String login = '';
   String email = '';
   String password = '';
   List<dynamic> user = [];
   List<dynamic> userCrs = []; //Credenciais do utilizador
   bool isUser = false;
+  bool isPassword = true;
+  int tentativas = 0;
   //Não implementado
   nImpl(BuildContext context) {
     return showCupertinoDialog(
@@ -89,7 +93,9 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             SizedBox(
               width: 300,
-              child: TextField(
+              child: TextFormField(
+                key: _emailKey,
+                controller: emailController,
                 onChanged: (value) {
                   setState(() {
                     email = value;
@@ -103,6 +109,39 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   labelText: 'Email',
                 ),
+                // Add a validator to check if the email address is valid
+                // when the user submits the form
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an email address';
+                  } else if (!RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b').hasMatch(value)) {
+                    return 'Please enter a valid email address';
+                  } else {
+                    userExists('?email=$email').then((value) {
+                      setState(() {
+                        user = value;
+                        print(user);
+                        isUser = true;
+                        isPassword = true;
+                      });
+                    });
+                    userExists('?email=$email&password=$password').then((value) {
+                      if (user.isNotEmpty) {
+                        if (user[0]['email'] == email && user[0]['password'] == password) {
+                          print('Login Yes');
+                          saveUserLocal(true, user[0]['name'], email);
+                          Navigator.pop(context);
+                        } else {
+                          print('Login No');
+                          isPassword = false;
+                          _senhaKey.currentState!.validate();
+                          isPassword = true;
+                        }
+                      }
+                    });
+                  }
+                  return null;
+                },
               ),
             ),
             const SizedBox(height: 20),
@@ -112,7 +151,9 @@ class _LoginPageState extends State<LoginPage> {
                 key: _senhaKey,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor, insira sua palavra-passe';
+                    return 'Por favor, insira a sua palavra-passe';
+                  } else if (!isPassword) {
+                    return 'Palavra-passe incorreta';
                   }
                   return null;
                 },
@@ -171,28 +212,16 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: email == ''
                           ? null
                           : () {
-                              userExists('?email=$email').then((value) {
-                                setState(() {
-                                  user = value;
-                                  isUser = true;
-                                });
-                              });
+                              _emailKey.currentState!.validate();
+                              _senhaKey.currentState!.validate();
+                              /*
                               userExists('?password=$password').then((value) {
                                 setState(() {
                                   _senhaKey.currentState!.validate();
                                 });
                                 // ignore: avoid_print
                                 print(user[0]['name']);
-                              });
-                              userExists('?email=$email&password=$password').then((value) {
-                                if (user[0]['email'] == email && user[0]['password'] == password) {
-                                  print('Login Yes');
-                                  saveUserLocal(true, user[0]['name'], email);
-                                  Navigator.pop(context);
-                                } else {
-                                  print('Login No');
-                                }
-                              });
+                              });*/
                             },
                       child: const Text(
                         'Entrar',
