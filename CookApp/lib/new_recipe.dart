@@ -651,55 +651,75 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         Padding(
                           padding: const EdgeInsets.only(top: 32, bottom: 16),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                'Tempo (Mins):',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 25,
-                                height: 1,
-                              ),
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(
-                                  width: 75,
-                                  height: 1,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 25,
-                                height: 1,
-                              ),
-                              Semantics(
-                                label: 'tempo',
-                                child: SizedBox(
-                                  width: 48,
-                                  height: 48,
-                                  child: TextField(
-                                    style: const TextStyle(
-                                      color: Colors.black54,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    onChanged: (value) {
-                                      final newValue = double.tryParse(value);
-                                      if (newValue != null && newValue != tempoCozi) {
-                                        setState(() {
-                                          tempoCozi = newValue;
-                                        });
-                                      } else {
-                                        tempoCozi = 0;
-                                      }
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    controller: _tempoController,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: const Text(
+                                  'Tempo - Mins',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
                                   ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 1,
+                                    ),
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.grey,
+                                      ),
+                                      child: const SizedBox(
+                                        width: 50,
+                                        height: 1,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                height: 48,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 48,
+                                      child: Semantics(
+                                        label: 'tempo',
+                                        child: TextField(
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          onChanged: (value) {
+                                            final newValue = double.tryParse(value);
+                                            if (newValue != null && newValue != tempoCozi) {
+                                              setState(() {
+                                                tempoCozi = newValue;
+                                              });
+                                            } else {
+                                              tempoCozi = 0;
+                                            }
+                                          },
+                                          keyboardType: TextInputType.number,
+                                          controller: _tempoController,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -710,53 +730,73 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text(
-                                'Porções:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 25,
-                                height: 1,
-                              ),
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(
-                                  width: 75,
-                                  height: 1,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 25,
-                                height: 1,
-                              ),
-                              Semantics(
-                                label: 'porcao',
-                                child: SizedBox(
-                                  width: 48,
-                                  height: 48,
-                                  child: TextField(
-                                    style: const TextStyle(
-                                      color: Colors.black54,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    onChanged: (value) {
-                                      final newValue = double.tryParse(value);
-                                      if (newValue != null && newValue != porcoes) {
-                                        setState(() {
-                                          porcoes = newValue;
-                                        });
-                                      } else {
-                                        porcoes = 0;
-                                      }
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    controller: _porcoesController,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: const Text(
+                                  'Porções:',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
                                   ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 1,
+                                    ),
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.grey,
+                                      ),
+                                      child: const SizedBox(
+                                        width: 50,
+                                        height: 1,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                height: 48,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 48,
+                                      child: Semantics(
+                                        label: 'porcao',
+                                        child: TextField(
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          onChanged: (value) {
+                                            final newValue = double.tryParse(value);
+                                            if (newValue != null && newValue != porcoes) {
+                                              setState(() {
+                                                porcoes = newValue;
+                                              });
+                                            } else {
+                                              porcoes = 0;
+                                            }
+                                          },
+                                          keyboardType: TextInputType.number,
+                                          controller: _porcoesController,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

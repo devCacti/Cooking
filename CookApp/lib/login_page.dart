@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   List<dynamic> userCrs = []; //Credenciais do utilizador
   bool isUser = false;
   bool isPassword = true;
+  bool _obscureText = true;
   int tentativas = 0;
   //Não implementado
   nImpl(BuildContext context) {
@@ -163,13 +164,24 @@ class _LoginPageState extends State<LoginPage> {
                     password = value;
                   });
                 },
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
+                obscureText: _obscureText,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
                   labelText: 'Palavra-passe',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  ),
                 ),
               ),
             ),
