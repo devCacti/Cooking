@@ -73,7 +73,8 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
               (index) => NavigationRailDestination(
                 icon: Icon(selectedIcon[index], size: 30),
                 selectedIcon: Icon(selectedIcon[index], size: 35),
-                label: Text(selectedItem[index], style: const TextStyle(fontSize: 16)),
+                label: Text(selectedItem[index],
+                    style: const TextStyle(fontSize: 16)),
               ),
             ),
           ),
@@ -138,10 +139,15 @@ Widget userSettings(BuildContext context) {
           style: TextStyle(fontSize: 26, color: Colors.white),
         ),
       ),
-      Column(
-        children: const [
+      const Column(
+        children: [
           SizedBox(height: 5),
-          SizedBox(child: Text('ou', style: TextStyle(fontSize: 20, color: Colors.black54))),
+          SizedBox(
+            child: Text(
+              'ou',
+              style: TextStyle(fontSize: 20, color: Colors.black54),
+            ),
+          ),
           SizedBox(height: 5),
         ],
       ),
@@ -155,7 +161,8 @@ Widget userSettings(BuildContext context) {
             );
           },
           style: OutlinedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             side: const BorderSide(color: Colors.green, width: 1),
           ),
           child: const Text(' Registar ', style: TextStyle(fontSize: 26))),
@@ -198,8 +205,10 @@ Widget display(BuildContext context) {
     builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
       if (snapshot.hasData) {
         final user = snapshot.data!;
-        TextEditingController nome = TextEditingController(text: user[0]['name']);
-        TextEditingController email = TextEditingController(text: user[0]['email']);
+        TextEditingController nome =
+            TextEditingController(text: user[0]['name']);
+        TextEditingController email =
+            TextEditingController(text: user[0]['email']);
         return Column(
           children: [
             const SizedBox(height: 20),
@@ -246,7 +255,8 @@ Widget display(BuildContext context) {
             OutlinedButton.icon(
               //border color
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(Colors.transparent),
               ),
               onPressed: () {
                 showConfirmationDialog(context).then((value) {
@@ -258,7 +268,8 @@ Widget display(BuildContext context) {
                         builder: (context) => const LoginPage(),
                       ),
                     ).then((value) {
-                      Navigator.popUntil(context, ModalRoute.withName('/user_settings'));
+                      Navigator.popUntil(
+                          context, ModalRoute.withName('/user_settings'));
 
                       refreshIndicatorKey.currentState!.show().then((value) {
                         ScaffoldMessenger.of(context).showSnackBar(

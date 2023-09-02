@@ -78,11 +78,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 26, bottom: 8),
+          const Padding(
+            padding: EdgeInsets.only(top: 26, bottom: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Icon(
                   Icons.fastfood_rounded,
                   size: 40,
@@ -181,14 +181,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.black12,
                         ),
                         height: MediaQuery.of(context).size.width / 2,
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8),
                               child: Column(
-                                children: const [
+                                children:[
                                   Icon(
                                     Icons.dinner_dining,
                                     size: 100,
@@ -242,10 +242,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(fontSize: 36, height: 2),
                   textAlign: TextAlign.center,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 32, right: 32),
+                const Padding(
+                  padding: EdgeInsets.only(left: 32, right: 32),
                   child: Column(
-                    children: const [
+                    children: [
                       Text(
                         '\t\t   Bem-vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.'
                         '\n\n\t\t   Enquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.'
@@ -270,7 +270,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      //end Column
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         child: Row(
