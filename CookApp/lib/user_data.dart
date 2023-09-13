@@ -28,7 +28,8 @@ Future<File> get _localFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
   //if file does not exist, create it
   if (!await File('${directory.path}{$slash}userInfoTests1.json').exists()) {
-    final file = await File('${directory.path}{$slash}userInfoTests1.json').create(recursive: true);
+    final file = await File('${directory.path}{$slash}userInfoTests1.json')
+        .create(recursive: true);
     await file.writeAsString(json.encode([
       {'islogin': false, 'name': 'null', 'email': 'null'}
     ]));

@@ -57,23 +57,23 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const ListTile(
                 title: Text(
                   'ACESSO ANTECIPADO',
-                  style: TextStyle(fontSize: 28),
+                  style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
                 subtitle: Text(
-                  'Esta aplicação pode conter problemas e, por enquanto, não é fiável guardar as suas receitas apenas nesta aplicação!',
-                  style: TextStyle(fontSize: 20),
+                  'Esta aplicação contém alguns problemas conhecidos!',
+                  style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
                 leading: Icon(
                   Icons.info_outline,
-                  color: Colors.orange,
-                  size: 45,
+                  color: Colors.red,
+                  size: 25,
                 ),
                 trailing: Icon(
                   Icons.info_outline,
-                  color: Colors.orange,
-                  size: 45,
+                  color: Colors.red,
+                  size: 25,
                 ),
               ),
             ),
@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
               shrinkWrap: true,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  padding: const EdgeInsets.only(left: 8, right: 8),
                   child: FractionallySizedBox(
                     alignment: Alignment.center,
                     widthFactor: 0.5,
@@ -127,7 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           id: 0,
                           foto: null,
                           nome: "Massa cozida",
-                          descricao: "Preparação de massa para apenas uma pessoa.",
+                          descricao:
+                              "Preparação de massa para apenas uma pessoa.",
                           ingredientes: [
                             "Massa",
                             "Água",
@@ -188,13 +189,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             Padding(
                               padding: EdgeInsets.all(8),
                               child: Column(
-                                children:[
+                                children: [
                                   Icon(
                                     Icons.dinner_dining,
-                                    size: 100,
-                                  ),
-                                  SizedBox(
-                                    height: 5,
+                                    size: 75,
                                   ),
                                   Divider(
                                     color: Colors.black,
@@ -243,19 +241,47 @@ class _MyHomePageState extends State<MyHomePage> {
                   textAlign: TextAlign.center,
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(left: 32, right: 32),
+                  padding: EdgeInsets.only(left: 16, right: 16),
                   child: Column(
                     children: [
                       Text(
-                        '\t\t   Bem-vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.'
-                        '\n\n\t\t   Enquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.'
-                        '\n\t\t   E assim nasceu esta aplicação!'
-                        '\n\n\t\t   Esta aplicação tem como objetivo dar-lhe a oportunidade de adicionar facilmente as suas receitas à sua coleção e aceda a elas a qualquer momento, em qualquer lugar. E também para que mantenha todas as suas receitas favoritas organizadas num só lugar e nunca se esqueça de como fazer aquele prato especial novamente.'
-                        '\n\n\t\t   Espero que goste de usar esta aplicação para acompanhar todas as suas criações culinárias!',
+                        'Bem vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.',
                         textAlign: TextAlign.justify,
                         style: TextStyle(
-                          fontSize: 26,
-                          height: 1.7,
+                          fontSize: 22,
+                          height: 1.75,
+                        ),
+                      ),
+                      Text(
+                        '\nEnquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.',
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          fontSize: 22,
+                          height: 1.75,
+                        ),
+                      ),
+                      Text(
+                        '\nE assim nasceu esta aplicação!',
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          fontSize: 22,
+                          height: 1.75,
+                        ),
+                      ),
+                      Text(
+                        '\nEsta aplicação tem como objetivo dar-lhe a oportunidade de adicionar facilmente as suas receitas à sua coleção e aceda a elas a qualquer momento, em qualquer lugar. E também para que mantenha todas as suas receitas favoritas organizadas num só lugar e nunca se esqueça de como fazer aquele prato especial novamente.',
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          fontSize: 22,
+                          height: 1.75,
+                        ),
+                      ),
+                      Text(
+                        '\nEspero que goste de usar esta aplicação para acompanhar todas as suas criações culinárias!',
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          fontSize: 22,
+                          height: 1.75,
                         ),
                       ),
                       SizedBox(
@@ -317,7 +343,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             IconButton(
               icon: const Icon(Icons.settings_outlined),
-              tooltip: 'Conta',
+              tooltip: 'Definições',
               iconSize: 35,
               onPressed: () {
                 Navigator.push(

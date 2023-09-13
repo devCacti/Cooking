@@ -738,7 +738,7 @@ void editingDialog(
                             children: [
                               Container(
                                 alignment: Alignment.center,
-                                width: 150,
+                                width: 125,
                                 child: const Text(
                                   'Tempo:',
                                   style: TextStyle(
@@ -749,7 +749,7 @@ void editingDialog(
                               ),
                               Container(
                                 alignment: Alignment.center,
-                                width: 200,
+                                width: 125,
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     color: Colors.grey,
@@ -762,7 +762,7 @@ void editingDialog(
                               ),
                               Container(
                                 alignment: Alignment.center,
-                                width: 150,
+                                width: 125,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -793,9 +793,7 @@ void editingDialog(
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(
-                                      width: 2.5,
-                                    ),
+                                    const SizedBox(width: 10),
                                     const Text(
                                       'min',
                                       style: TextStyle(
@@ -808,66 +806,72 @@ void editingDialog(
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text(
-                                'Porções:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 25,
-                                height: 1,
-                              ),
                               Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(
-                                  width: 50,
-                                  height: 1,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 25,
-                                height: 1,
-                              ),
-                              Semantics(
-                                label: 'porcoes',
-                                child: SizedBox(
-                                  width: 48,
-                                  height: 48,
-                                  child: TextField(
-                                    style: const TextStyle(
-                                      color: Colors.black54,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    onChanged: (value) {
-                                      final newValue = double.tryParse(value);
-                                      if (newValue != null &&
-                                          newValue != porcs) {
-                                        setState(() {
-                                          porcs = newValue;
-                                        });
-                                      } else {
-                                        porcs = 0;
-                                      }
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    controller: _porcsController,
+                                alignment: Alignment.center,
+                                width: 125,
+                                child: const Text(
+                                  'Porções:',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 2.5,
+                              Container(
+                                alignment: Alignment.center,
+                                width: 125,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.grey,
+                                  ),
+                                  child: const SizedBox(
+                                    width: 75,
+                                    height: 1,
+                                  ),
+                                ),
                               ),
-                              const Icon(Icons.person),
+                              Container(
+                                alignment: Alignment.center,
+                                width: 125,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Semantics(
+                                      label: 'porcoes',
+                                      child: SizedBox(
+                                        width: 48,
+                                        height: 48,
+                                        child: TextField(
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          onChanged: (value) {
+                                            final newValue =
+                                                double.tryParse(value);
+                                            if (newValue != null &&
+                                                newValue != porcs) {
+                                              setState(() {
+                                                porcs = newValue;
+                                              });
+                                            } else {
+                                              porcs = 0;
+                                            }
+                                          },
+                                          keyboardType: TextInputType.number,
+                                          controller: _porcsController,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Icon(Icons.person),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(
@@ -876,29 +880,29 @@ void editingDialog(
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text(
-                                'Categoria:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black54,
+                              Container(
+                                alignment: Alignment.center,
+                                width: 125,
+                                child: const Text(
+                                  'Categoria:',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 15,
-                                height: 1,
                               ),
                               Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
+                                alignment: Alignment.center,
+                                width: 125,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.grey,
+                                  ),
+                                  child: const SizedBox(
+                                    width: 75,
+                                    height: 1,
+                                  ),
                                 ),
-                                child: const SizedBox(
-                                  width: 25,
-                                  height: 1,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 15,
-                                height: 1,
                               ),
                               DropdownButton<String>(
                                 value: categ,
@@ -932,38 +936,42 @@ void editingDialog(
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text(
-                                'Favorita',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black54,
+                              Container(
+                                alignment: Alignment.center,
+                                width: 125,
+                                child: const Text(
+                                  'Favorita:',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 30,
-                                height: 1,
                               ),
                               Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(
-                                  width: 75,
-                                  height: 1,
+                                alignment: Alignment.center,
+                                width: 125,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.grey,
+                                  ),
+                                  child: const SizedBox(
+                                    width: 75,
+                                    height: 1,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 20,
-                                height: 1,
+                              Container(
+                                alignment: Alignment.center,
+                                width: 125,
+                                child: Checkbox(
+                                  value: fav,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      fav = value!;
+                                    });
+                                  },
+                                ),
                               ),
-                              Checkbox(
-                                value: fav,
-                                onChanged: (value) {
-                                  setState(() {
-                                    fav = value!;
-                                  });
-                                },
-                              )
                             ],
                           ),
                         ],

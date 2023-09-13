@@ -45,7 +45,7 @@ class _DetailsFormState extends State<DetailsForm> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Miau'),
+        title: const Text('Detalhes da receita'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -56,7 +56,6 @@ class _DetailsFormState extends State<DetailsForm> {
               widget.name,
               style: const TextStyle(
                 fontSize: 30,
-                fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
@@ -79,7 +78,7 @@ class _DetailsFormState extends State<DetailsForm> {
                             ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 60),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -87,7 +86,8 @@ class _DetailsFormState extends State<DetailsForm> {
                         'Descrição:\n',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+                          fontSize: 28,
+                        ),
                       ),
                       Text(
                         widget.desc,
@@ -113,7 +113,8 @@ class _DetailsFormState extends State<DetailsForm> {
                         'Ingredientes:\n',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+                          fontSize: 28,
+                        ),
                       ),
                       widget.ings!.isEmpty
                           ? const Text(
@@ -187,8 +188,7 @@ class _DetailsFormState extends State<DetailsForm> {
                   const Text(
                     'Preparação',
                     style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -225,11 +225,11 @@ class _DetailsFormState extends State<DetailsForm> {
                                             'Passo N.º ${index + 1}',
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 20,
+                                              fontSize: 24,
                                             ),
                                           ),
                                           const SizedBox(
-                                            height: 10,
+                                            height: 20,
                                           ),
                                           Text(
                                             widget.prep![index],
@@ -239,7 +239,7 @@ class _DetailsFormState extends State<DetailsForm> {
                                             textAlign: TextAlign.justify,
                                           ),
                                           const SizedBox(
-                                            height: 10,
+                                            height: 20,
                                           ),
                                           index < widget.prep!.length - 1
                                               ? const Divider(
@@ -270,12 +270,12 @@ class _DetailsFormState extends State<DetailsForm> {
                         'Tempo de cozedura:\n',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         '${widget.prepTime!.toInt().toString()} min',
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 24,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -296,12 +296,12 @@ class _DetailsFormState extends State<DetailsForm> {
                         'Porções:  ',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         widget.porcoes!.toInt().toString(),
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 24,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -328,7 +328,7 @@ class _DetailsFormState extends State<DetailsForm> {
                       Text(
                         widget.category,
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 24,
                         ),
                         textAlign: TextAlign.center,
                       ),

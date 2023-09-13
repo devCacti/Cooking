@@ -86,21 +86,19 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
                 future: loadUserLocal(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    // Show a loading screen while the data is being loaded
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    // Handle the error
                     return Text('Error: ${snapshot.error}');
                   } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    // Use the user data to build your UI
                     List<dynamic> user = snapshot.data!;
                     return selectedItem[_selectedIndex.value] == "Perfil"
                         ? user[0]['islogin']
                             ? display(context)
                             : userSettings(context)
-                        : const SizedBox.shrink();
+                        : selectedItem[_selectedIndex.value] == "Definições"
+                            ? settings(context)
+                            : const SizedBox.shrink();
                   } else {
-                    // Handle the case where the data is empty
                     return const Text('No user data found');
                   }
                 },
@@ -113,8 +111,72 @@ class _UserSettingsState extends State<UserSettings> with RestorationMixin {
   }
 }
 
+Widget settings(BuildContext context) {
+  return Column(
+    children: [
+      const SizedBox(height: 20),
+      const Text(
+        'Definições',
+        style: TextStyle(fontSize: 36),
+      ),
+      const SizedBox(height: 10),
+      const Divider(thickness: 2, indent: 75, endIndent: 75),
+      const SizedBox(height: 20),
+      const Row(
+        children: [
+          SizedBox(width: 10),
+          Text(
+            'Notificações',
+            style: TextStyle(fontSize: 26),
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        children: [
+          const SizedBox(width: 5),
+          const Text(
+            'Receber notificações',
+            style: TextStyle(fontSize: 20),
+          ),
+          const SizedBox(width: 2.5),
+          Switch(
+            value: true,
+            onChanged: (value) {},
+          ),
+        ],
+      ),
+      const SizedBox(height: 40),
+      const Row(
+        children: [
+          SizedBox(width: 10),
+          Text(
+            'Informações',
+            style: TextStyle(fontSize: 22),
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      const Row(
+        children: [
+          SizedBox(width: 2.5),
+          Text(
+            'Versão',
+            style: TextStyle(fontSize: 20),
+          ),
+          SizedBox(width: 20),
+          Text(
+            '0.3.0.2',
+            style: TextStyle(fontSize: 20),
+          ),
+        ],
+      ),
+      const SizedBox(height: 20),
+    ],
+  );
+}
+
 Widget userSettings(BuildContext context) {
-  //Faz animação de entrada de estilo scroll
   return Column(
     children: [
       const SizedBox(height: 20),
@@ -123,7 +185,7 @@ Widget userSettings(BuildContext context) {
         style: TextStyle(fontSize: 36),
       ),
       const SizedBox(height: 10),
-      const Divider(thickness: 2, indent: 40, endIndent: 40),
+      const Divider(thickness: 2, indent: 75, endIndent: 75),
       const SizedBox(height: 20),
       FilledButton(
         onPressed: () async {
@@ -152,52 +214,29 @@ Widget userSettings(BuildContext context) {
         ],
       ),
       OutlinedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const RegisterPage(),
-              ),
-            );
-          },
-          style: OutlinedButton.styleFrom(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            side: const BorderSide(color: Colors.green, width: 1),
-          ),
-          child: const Text(' Registar ', style: TextStyle(fontSize: 26))),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RegisterPage(),
+            ),
+          );
+        },
+        style: OutlinedButton.styleFrom(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          side: const BorderSide(color: Colors.green, width: 1),
+        ),
+        child: const Text(
+          ' Registar ',
+          style: TextStyle(fontSize: 26),
+        ),
+      ),
     ],
   );
 }
 
 //Não implementado
-nImpl(BuildContext context) {
-  return showCupertinoDialog(
-    context: context,
-    builder: (context) => CupertinoAlertDialog(
-      title: const Text(
-        'Não implementado',
-        style: TextStyle(
-          color: Colors.red,
-          fontSize: 20,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      content: const Text(
-        'Esta funcionalidade ainda não foi implementada',
-        style: TextStyle(
-          fontSize: 16,
-        ),
-      ),
-      actions: [
-        CupertinoDialogAction(
-          child: const Text('OK', style: TextStyle(color: Colors.blue)),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ],
-    ),
-  );
-}
 
 Widget display(BuildContext context) {
   return FutureBuilder<List<dynamic>>(
