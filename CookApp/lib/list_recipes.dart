@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'edit_recipe.dart';
+import 'package:test_app/edit_recipe_page.dart';
 import 'receita.dart';
 import 'details_recipes.dart';
 
@@ -56,7 +56,14 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                 isDefaultAction: true,
                 onPressed: () {
                   Navigator.pop(context);
-                  editingDialog(context, _recipes[index], () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditForm(
+                        toEditR: _recipes[index],
+                      ),
+                    ),
+                  ).then((_) {
                     refreshIndicatorKey.currentState?.show();
                   });
                 },

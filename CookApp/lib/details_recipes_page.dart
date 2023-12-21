@@ -343,38 +343,34 @@ class _DetailsFormState extends State<DetailsForm> {
       ),
       //Bottom app bar with a radial menu, the button should be a circle in the center
       //of the screen
-      floatingActionButton: Align(
-        alignment: FractionalOffset.bottomCenter,
-        child: SpeedDial(
-          icon: Icons.menu,
-          buttonSize: 60.0,
-          visible: true,
-          closeManually: false,
-          children: [
-            SpeedDialChild(
-              child: const Icon(
-                Icons.list,
-                size: 35,
-              ),
-              label: 'Lista de compras',
-              onTap: (null),
+      floatingActionButton: SpeedDial(
+        icon: Icons.menu,
+        visible: true,
+        closeManually: false,
+        children: [
+          SpeedDialChild(
+            child: const Icon(
+              Icons.list,
+              size: 35,
             ),
-            SpeedDialChild(
-              child: const Icon(
-                Icons.edit,
-                size: 35,
-              ),
-              label: 'Editar receita',
+            label: 'Lista de compras',
+            onTap: null,
+          ),
+          SpeedDialChild(
+            child: const Icon(
+              Icons.edit,
+              size: 35,
             ),
-            SpeedDialChild(
-              child: const Icon(
-                Icons.delete,
-                size: 35,
-              ),
-              label: 'Eliminar receita',
+            label: 'Editar receita',
+          ),
+          SpeedDialChild(
+            child: const Icon(
+              Icons.delete,
+              size: 35,
             ),
-          ],
-        ),
+            label: 'Eliminar receita',
+          ),
+        ],
       ),
     );
   }
