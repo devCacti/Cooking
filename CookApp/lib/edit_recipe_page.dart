@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'edit_recipe.dart';
-import 'receita.dart';
+import 'Classes/receita.dart';
+import 'Functions/show_conf_dialog.dart';
 
 class EditForm extends StatefulWidget {
   final Recipe toEditR;
@@ -14,6 +14,7 @@ class EditForm extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _EditFormState createState() => _EditFormState();
 }
 
@@ -71,6 +72,9 @@ class _EditFormState extends State<EditForm> {
   String? ingsR;
   String procR = '';
 
+  Color cancelColor = Colors.white;
+  Color saveColor = Colors.white;
+
   late List<TextEditingController> hintControllers = List.generate(
     toEditR!.ingQuant!.length,
     (_) =>
@@ -87,7 +91,7 @@ class _EditFormState extends State<EditForm> {
     return WillPopScope(
       onWillPop: () async {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        return showConfirmationDialog(context);
+        return showConfDialog(context);
       },
       child: StatefulBuilder(
         builder: (context, setState) {
@@ -101,7 +105,7 @@ class _EditFormState extends State<EditForm> {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () async {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  if (await showConfirmationDialog(context)) {
+                  if (await showConfDialog(context)) {
                     // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   }
@@ -176,7 +180,7 @@ class _EditFormState extends State<EditForm> {
                                               },
                                               tooltip: 'Mudar Foto',
                                               iconSize: 40,
-                                              color: Colors.orange,
+                                              color: Colors.green,
                                             ),
                                           ),
                                         ],
@@ -409,7 +413,7 @@ class _EditFormState extends State<EditForm> {
                                   splashRadius: 35,
                                   iconSize: 50,
                                   splashColor: Colors.black12,
-                                  color: Colors.orange,
+                                  color: Colors.green,
                                   icon: const Icon(Icons.add),
                                   onPressed: () {
                                     setState(() {
@@ -500,130 +504,142 @@ class _EditFormState extends State<EditForm> {
                                                 );
                                               },
                                             ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            IconButton(
-                                              onPressed: index < 1
-                                                  ? null
-                                                  : () {
-                                                      String temp;
-                                                      setState(() {
-                                                        temp =
-                                                            procs![index - 1];
-                                                        procs![index - 1] =
-                                                            procs![index];
-                                                        procs![index] = temp;
+                                            const SizedBox(height: 20),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                //* Botões:
+                                                //* Mover para cima
+                                                //* Eliminar
+                                                //* Mover para baixo
+                                                IconButton(
+                                                  onPressed: index < 1
+                                                      ? null
+                                                      : () {
+                                                          String temp;
+                                                          setState(() {
+                                                            temp = procs![
+                                                                index - 1];
+                                                            procs![index - 1] =
+                                                                procs![index];
+                                                            procs![index] =
+                                                                temp;
 
-                                                        procsControllers[
-                                                                    index - 1]
-                                                                .text =
+                                                            procsControllers[
+                                                                        index - 1]
+                                                                    .text =
+                                                                procsControllers[
+                                                                        index]
+                                                                    .text;
                                                             procsControllers[
                                                                     index]
-                                                                .text;
-                                                        procsControllers[index]
-                                                            .text = temp;
-                                                      });
-                                                    },
-                                              icon: const Icon(
-                                                  Icons.arrow_upward),
-                                              tooltip: 'Mover para cima',
-                                            ),
-                                            IconButton(
-                                              tooltip: 'Eliminar',
-                                              icon: const Icon(
-                                                Icons.delete_outlined,
-                                                color: Colors.red,
-                                              ),
-                                              iconSize: 40,
-                                              onPressed: () {
-                                                showDialog<bool>(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return Theme(
-                                                      data: ThemeData(
-                                                        brightness:
-                                                            Brightness.light,
-                                                        textTheme:
-                                                            const TextTheme(
-                                                          titleMedium:
-                                                              TextStyle(
-                                                            color: Colors.blue,
+                                                                .text = temp;
+                                                          });
+                                                        },
+                                                  icon: const Icon(
+                                                      Icons.arrow_upward),
+                                                  tooltip: 'Mover para cima',
+                                                ),
+                                                IconButton(
+                                                  tooltip: 'Eliminar',
+                                                  icon: const Icon(
+                                                    Icons.delete_outlined,
+                                                    color: Colors.red,
+                                                  ),
+                                                  iconSize: 40,
+                                                  onPressed: () {
+                                                    showDialog<bool>(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Theme(
+                                                          data: ThemeData(
+                                                            brightness:
+                                                                Brightness
+                                                                    .light,
+                                                            textTheme:
+                                                                const TextTheme(
+                                                              titleMedium:
+                                                                  TextStyle(
+                                                                color:
+                                                                    Colors.blue,
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ),
-                                                      child:
-                                                          CupertinoAlertDialog(
-                                                        title: const Text(
-                                                            'Eliminar?'),
-                                                        content: const Text(
-                                                            'Deseja eliminar este procedimento permanentemente?'),
-                                                        actions: [
-                                                          CupertinoDialogAction(
-                                                            isDefaultAction:
-                                                                true,
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: const Text(
-                                                                'Cancelar'),
+                                                          child:
+                                                              CupertinoAlertDialog(
+                                                            title: const Text(
+                                                                'Eliminar?'),
+                                                            content: const Text(
+                                                                'Deseja eliminar este procedimento permanentemente?'),
+                                                            actions: [
+                                                              CupertinoDialogAction(
+                                                                isDefaultAction:
+                                                                    true,
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: const Text(
+                                                                    'Cancelar'),
+                                                              ),
+                                                              CupertinoDialogAction(
+                                                                isDestructiveAction:
+                                                                    true,
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    procs!.remove(
+                                                                        procs![
+                                                                            index]);
+                                                                    procsControllers
+                                                                        .remove(
+                                                                            procsControllers[index]);
+                                                                  });
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child: const Text(
+                                                                    'Eliminar'),
+                                                              )
+                                                            ],
                                                           ),
-                                                          CupertinoDialogAction(
-                                                            isDestructiveAction:
-                                                                true,
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                procs!.remove(
-                                                                    procs![
-                                                                        index]);
-                                                                procsControllers.remove(
-                                                                    procsControllers[
-                                                                        index]);
-                                                              });
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: const Text(
-                                                                'Eliminar'),
-                                                          )
-                                                        ],
-                                                      ),
+                                                        );
+                                                      },
                                                     );
                                                   },
-                                                );
-                                              },
-                                            ),
-                                            IconButton(
-                                              onPressed: index ==
-                                                      procs!.length - 1
-                                                  ? null
-                                                  : () {
-                                                      String temp;
-                                                      setState(() {
-                                                        temp =
-                                                            procs![index + 1];
-                                                        procs![index + 1] =
-                                                            procs![index];
-                                                        procs![index] = temp;
-                                                        procsControllers[
-                                                                    index + 1]
-                                                                .text =
+                                                ),
+                                                IconButton(
+                                                  onPressed: index ==
+                                                          procs!.length - 1
+                                                      ? null
+                                                      : () {
+                                                          String temp;
+                                                          setState(() {
+                                                            temp = procs![
+                                                                index + 1];
+                                                            procs![index + 1] =
+                                                                procs![index];
+                                                            procs![index] =
+                                                                temp;
+                                                            procsControllers[
+                                                                        index + 1]
+                                                                    .text =
+                                                                procsControllers[
+                                                                        index]
+                                                                    .text;
                                                             procsControllers[
                                                                     index]
-                                                                .text;
-                                                        procsControllers[index]
-                                                            .text = temp;
-                                                      });
-                                                    },
-                                              icon: const Icon(
-                                                  Icons.arrow_downward),
-                                              tooltip: 'Mover para cima',
+                                                                .text = temp;
+                                                          });
+                                                        },
+                                                  icon: const Icon(
+                                                      Icons.arrow_downward),
+                                                  tooltip: 'Mover para cima',
+                                                ),
+                                              ],
                                             ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
+                                            const SizedBox(height: 10),
                                             index < procs!.length - 1
                                                 ? const Divider(
                                                     thickness: 1,
@@ -672,7 +688,7 @@ class _EditFormState extends State<EditForm> {
                                   tooltip: 'Adicionar',
                                   splashRadius: 35,
                                   iconSize: 50,
-                                  color: Colors.orange,
+                                  color: Colors.green,
                                   icon: const Icon(Icons.add),
                                   onPressed: () {
                                     setState(() {
@@ -956,60 +972,107 @@ class _EditFormState extends State<EditForm> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      ElevatedButton(
-                        onPressed: () => Navigator.maybePop(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black54,
-                          elevation: 2,
-                        ),
-                        child: const Text(
-                          'Sair',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
+                      //! Sair Button
+                      Expanded(
+                        child: GestureDetector(
+                          onTapDown: (details) {
+                            setState(() {
+                              cancelColor = Colors.black12;
+                            });
+                          },
+                          onTapCancel: () {
+                            setState(() {
+                              cancelColor = Colors.white;
+                            });
+                          },
+                          onTapUp: (details) {
+                            setState(() {
+                              cancelColor = Colors.white;
+                            });
+                          },
+                          onTap: () => Navigator.maybePop(context),
+                          child: AnimatedContainer(
+                            decoration: BoxDecoration(
+                              color: cancelColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.red,
+                              ),
+                            ),
+                            height: 50,
+                            alignment: Alignment.center,
+                            duration: const Duration(milliseconds: 250),
+                            child: const Text(
+                              'Sair',
+                              style: TextStyle(fontSize: 22, color: Colors.red),
+                            ),
                           ),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_nameKey.currentState != null) {
-                            _nameKey.currentState!.validate();
-                          }
-                          if (_descKey.currentState != null) {
-                            _descKey.currentState!.validate();
-                          }
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTapDown: (details) {
+                            setState(() {
+                              saveColor = Colors.black12;
+                            });
+                          },
+                          onTapCancel: () {
+                            setState(() {
+                              saveColor = Colors.white;
+                            });
+                          },
+                          onTapUp: (details) {
+                            setState(() {
+                              saveColor = Colors.white;
+                            });
+                            if (_nameKey.currentState != null) {
+                              _nameKey.currentState!.validate();
+                            }
+                            if (_descKey.currentState != null) {
+                              _descKey.currentState!.validate();
+                            }
 
-                          if (nome.isNotEmpty && desc.isNotEmpty) {
-                            editRecipeById(
-                              id,
-                              Recipe(
-                                id: id,
-                                foto: foto,
-                                nome: nome,
-                                descricao: desc,
-                                ingredientes: ings,
-                                ingTipo: ingsT,
-                                ingQuant: ingsQ,
-                                procedimento: procs,
-                                tempo: tempo!,
-                                porcoes: porcs!,
-                                categoria: categ!,
-                                favorita: fav,
+                            if (nome.isNotEmpty && desc.isNotEmpty) {
+                              editRecipeById(
+                                id,
+                                Recipe(
+                                  id: id,
+                                  foto: foto,
+                                  nome: nome,
+                                  descricao: desc,
+                                  ingredientes: ings,
+                                  ingTipo: ingsT,
+                                  ingQuant: ingsQ,
+                                  procedimento: procs,
+                                  tempo: tempo!,
+                                  porcoes: porcs!,
+                                  categoria: categ!,
+                                  favorita: fav,
+                                ),
+                              );
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: AnimatedContainer(
+                            decoration: BoxDecoration(
+                              color: saveColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.green,
                               ),
-                            );
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: const Text(
-                          'Guardar & Sair',
-                          style: TextStyle(
-                            fontSize: 20,
+                            ),
+                            height: 50,
+                            alignment: Alignment.center,
+                            duration: const Duration(milliseconds: 250),
+                            child: const Text(
+                              'Guardar & Sair',
+                              style:
+                                  TextStyle(fontSize: 22, color: Colors.green),
+                            ),
                           ),
                         ),
                       ),

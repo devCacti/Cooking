@@ -1,4 +1,4 @@
-import 'user_data.dart';
+import '../Classes/user_data.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {

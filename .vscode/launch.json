@@ -25,21 +25,21 @@
             "flutterMode": "release"
         },
         {
-            "name": "test_app",
-            "cwd": "test_app",
+            "name": "cooking_app",
+            "cwd": "cooking_app",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "test_app (profile mode)",
-            "cwd": "test_app",
+            "name": "cooking_app (profile mode)",
+            "cwd": "cooking_app",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "test_app (release mode)",
-            "cwd": "test_app",
+            "name": "cooking_app (release mode)",
+            "cwd": "cooking_app",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
-import 'receita.dart';
+import '../Classes/receita.dart';
 
 class NewRecipeForm extends StatefulWidget {
   const NewRecipeForm({Key? key}) : super(key: key);

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'user_settings.dart';
-import 'shopping_list.dart';
-import 'receita.dart';
-import 'details_recipes.dart';
-import 'new_recipe.dart';
-import 'list_recipes.dart';
-import 'list_favoritas.dart';
+import 'Pages/details_recipes_page.dart';
+import 'Pages/user_settings.dart';
+import 'Pages/shopping_list.dart';
+import 'Classes/receita.dart';
+import 'Pages/new_recipe.dart';
+import 'Pages/list_recipes.dart';
+import 'Pages/list_favoritas.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -162,18 +162,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           categoria: "Pratos",
                           favorita: false,
                         );
-                        showBigDialog(
+                        Navigator.push(
                           context,
-                          receita.foto,
-                          receita.nome,
-                          receita.descricao,
-                          receita.ingredientes,
-                          receita.ingTipo!,
-                          receita.ingQuant!,
-                          receita.procedimento,
-                          receita.tempo,
-                          receita.porcoes,
-                          receita.categoria,
+                          MaterialPageRoute(
+                            builder: (context) => DetailsForm(
+                              detailRecipe: receita,
+                            ),
+                          ),
                         );
                       },
                       child: Container(

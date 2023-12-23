@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'edit_recipe.dart';
-import 'receita.dart';
-import 'details_recipes.dart';
+import '../edit_recipe_page.dart';
+import '../Classes/receita.dart';
+import 'details_recipes_page.dart';
 
 class ListFavoutiresForm extends StatefulWidget {
   const ListFavoutiresForm({Key? key}) : super(key: key);
@@ -51,9 +51,14 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                 isDefaultAction: true,
                 onPressed: () {
                   Navigator.pop(context);
-                  editingDialog(context, _recipes[index], () {
-                    refreshIndicatorKey.currentState?.show();
-                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditForm(
+                        toEditR: _recipes[index],
+                      ),
+                    ),
+                  );
                 },
                 child: const Text('Editar'),
               ),
@@ -201,18 +206,13 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                   ),
                                   child: ListTile(
                                     onTap: () {
-                                      showBigDialog(
+                                      Navigator.push(
                                         context,
-                                        _recipes[index].foto,
-                                        _recipes[index].nome,
-                                        _recipes[index].descricao,
-                                        _recipes[index].ingredientes,
-                                        _recipes[index].ingTipo!,
-                                        _recipes[index].ingQuant!,
-                                        _recipes[index].procedimento,
-                                        _recipes[index].tempo,
-                                        _recipes[index].porcoes,
-                                        _recipes[index].categoria,
+                                        MaterialPageRoute(
+                                          builder: (context) => DetailsForm(
+                                            detailRecipe: _recipes[index],
+                                          ),
+                                        ),
                                       );
                                     },
                                     onLongPress: () {

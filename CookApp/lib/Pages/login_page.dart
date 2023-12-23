@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'user_data.dart';
+import '../Classes/user_data.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -115,7 +115,9 @@ class _LoginPageState extends State<LoginPage> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an email address';
-                  } else if (!RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b').hasMatch(value)) {
+                  } else if (!RegExp(
+                          r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b')
+                      .hasMatch(value)) {
                     return 'Please enter a valid email address';
                   } else {
                     userExists('?email=$email').then((value) {
@@ -126,9 +128,11 @@ class _LoginPageState extends State<LoginPage> {
                         isPassword = true;
                       });
                     });
-                    userExists('?email=$email&password=$password').then((value) {
+                    userExists('?email=$email&password=$password')
+                        .then((value) {
                       if (user.isNotEmpty) {
-                        if (user[0]['email'] == email && user[0]['password'] == password) {
+                        if (user[0]['email'] == email &&
+                            user[0]['password'] == password) {
                           print('Login Yes');
                           saveUserLocal(true, user[0]['name'], email);
                           Navigator.pop(context);

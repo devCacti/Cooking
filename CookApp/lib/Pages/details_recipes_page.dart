@@ -3,29 +3,15 @@ import 'dart:io';
 
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
+import '../Classes/receita.dart';
+
 class DetailsForm extends StatefulWidget {
-  final String? foto;
-  final String name;
-  final String desc;
-  final List<String>? ings;
-  final List<String> ingsOpts;
-  final List<double> ingsQuant;
-  final List<String>? prep;
-  final double? prepTime;
-  final double? porcoes;
-  final String category;
+  final Recipe detailRecipe;
+  final bool? isEdit;
 
   const DetailsForm({
-    required this.foto,
-    required this.name,
-    required this.desc,
-    required this.ings,
-    required this.ingsOpts,
-    required this.ingsQuant,
-    required this.prep,
-    required this.prepTime,
-    required this.porcoes,
-    required this.category,
+    required this.detailRecipe,
+    this.isEdit,
     Key? key,
   }) : super(key: key);
 
@@ -53,7 +39,7 @@ class _DetailsFormState extends State<DetailsForm> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              widget.name,
+              widget.detailRecipe.nome,
               style: const TextStyle(
                 fontSize: 30,
               ),
@@ -67,14 +53,14 @@ class _DetailsFormState extends State<DetailsForm> {
                     padding: const EdgeInsets.only(left: 55, right: 55),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: widget.foto == null
+                      child: widget.detailRecipe.foto == null
                           ? const Icon(
                               Icons.image_not_supported,
                               size: 100,
                               color: Colors.grey,
                             )
                           : Image.file(
-                              File(widget.foto!),
+                              File(widget.detailRecipe.foto!),
                             ),
                     ),
                   ),
@@ -90,7 +76,7 @@ class _DetailsFormState extends State<DetailsForm> {
                         ),
                       ),
                       Text(
-                        widget.desc,
+                        widget.detailRecipe.descricao,
                         style: const TextStyle(
                           fontSize: 22,
                         ),
@@ -116,7 +102,7 @@ class _DetailsFormState extends State<DetailsForm> {
                           fontSize: 28,
                         ),
                       ),
-                      widget.ings!.isEmpty
+                      widget.detailRecipe.ingredientes!.isEmpty
                           ? const Text(
                               'Nenhum ingrediente',
                               style: TextStyle(
@@ -130,7 +116,8 @@ class _DetailsFormState extends State<DetailsForm> {
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: widget.ings!.length,
+                                itemCount:
+                                    widget.detailRecipe.ingredientes!.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Padding(
                                     padding: const EdgeInsets.all(8),
@@ -141,7 +128,8 @@ class _DetailsFormState extends State<DetailsForm> {
                                       ),
                                       child: ListTile(
                                         title: Text(
-                                          widget.ings![index],
+                                          widget.detailRecipe
+                                              .ingredientes![index],
                                           style: const TextStyle(
                                             fontSize: 20,
                                           ),
@@ -150,7 +138,8 @@ class _DetailsFormState extends State<DetailsForm> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text(
-                                              widget.ingsQuant[index]
+                                              widget
+                                                  .detailRecipe.ingQuant![index]
                                                   .toStringAsFixed(2)
                                                   .replaceAll(
                                                       RegExp(r'\.0+$'), ''),
@@ -162,7 +151,8 @@ class _DetailsFormState extends State<DetailsForm> {
                                               width: 5,
                                             ),
                                             Text(
-                                              widget.ingsOpts[index],
+                                              widget
+                                                  .detailRecipe.ingTipo![index],
                                               style: const TextStyle(
                                                 fontSize: 20,
                                               ),
@@ -201,7 +191,7 @@ class _DetailsFormState extends State<DetailsForm> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: widget.prep!.isEmpty
+                          child: widget.detailRecipe.procedimento!.isEmpty
                               ? const Center(
                                   child: Text(
                                     'Nenhum passo',
@@ -213,7 +203,8 @@ class _DetailsFormState extends State<DetailsForm> {
                               : ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: widget.prep!.length,
+                                  itemCount:
+                                      widget.detailRecipe.procedimento!.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Padding(
@@ -232,7 +223,8 @@ class _DetailsFormState extends State<DetailsForm> {
                                             height: 20,
                                           ),
                                           Text(
-                                            widget.prep![index],
+                                            widget.detailRecipe
+                                                .procedimento![index],
                                             style: const TextStyle(
                                               fontSize: 20,
                                             ),
@@ -241,7 +233,12 @@ class _DetailsFormState extends State<DetailsForm> {
                                           const SizedBox(
                                             height: 20,
                                           ),
-                                          index < widget.prep!.length - 1
+                                          index <
+                                                  widget
+                                                          .detailRecipe
+                                                          .procedimento!
+                                                          .length -
+                                                      1
                                               ? const Divider(
                                                   thickness: 1,
                                                   indent: 30,
@@ -273,7 +270,7 @@ class _DetailsFormState extends State<DetailsForm> {
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '${widget.prepTime!.toInt().toString()} min',
+                        '${widget.detailRecipe.tempo.toInt().toString()} min',
                         style: const TextStyle(
                           fontSize: 24,
                         ),
@@ -299,7 +296,7 @@ class _DetailsFormState extends State<DetailsForm> {
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        widget.porcoes!.toInt().toString(),
+                        widget.detailRecipe.porcoes.toInt().toString(),
                         style: const TextStyle(
                           fontSize: 24,
                         ),
@@ -326,7 +323,7 @@ class _DetailsFormState extends State<DetailsForm> {
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        widget.category,
+                        widget.detailRecipe.categoria,
                         style: const TextStyle(
                           fontSize: 24,
                         ),
@@ -343,35 +340,37 @@ class _DetailsFormState extends State<DetailsForm> {
       ),
       //Bottom app bar with a radial menu, the button should be a circle in the center
       //of the screen
-      floatingActionButton: SpeedDial(
-        icon: Icons.menu,
-        visible: true,
-        closeManually: false,
-        children: [
-          SpeedDialChild(
-            child: const Icon(
-              Icons.list,
-              size: 35,
-            ),
-            label: 'Lista de compras',
-            onTap: null,
-          ),
-          SpeedDialChild(
-            child: const Icon(
-              Icons.edit,
-              size: 35,
-            ),
-            label: 'Editar receita',
-          ),
-          SpeedDialChild(
-            child: const Icon(
-              Icons.delete,
-              size: 35,
-            ),
-            label: 'Eliminar receita',
-          ),
-        ],
-      ),
+      floatingActionButton: widget.isEdit == true
+          ? SpeedDial(
+              icon: Icons.menu,
+              visible: true,
+              closeManually: false,
+              children: [
+                SpeedDialChild(
+                  child: const Icon(
+                    Icons.list,
+                    size: 35,
+                  ),
+                  label: 'Lista de compras',
+                  onTap: null,
+                ),
+                SpeedDialChild(
+                  child: const Icon(
+                    Icons.edit,
+                    size: 35,
+                  ),
+                  label: 'Editar receita',
+                ),
+                SpeedDialChild(
+                  child: const Icon(
+                    Icons.delete,
+                    size: 35,
+                  ),
+                  label: 'Eliminar receita',
+                ),
+              ],
+            )
+          : null,
     );
   }
 }

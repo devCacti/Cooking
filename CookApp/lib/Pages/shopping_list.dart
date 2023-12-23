@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'lista_compra.dart';
+import '../Classes/lista_compra.dart';
 
 class ShoppingListForm extends StatefulWidget {
   const ShoppingListForm({Key? key}) : super(key: key);
@@ -9,13 +9,16 @@ class ShoppingListForm extends StatefulWidget {
   _ShoppingListFormState createState() => _ShoppingListFormState();
 }
 
-class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerProviderStateMixin {
+class _ShoppingListFormState extends State<ShoppingListForm>
+    with SingleTickerProviderStateMixin {
   List<LstItem> _items = [];
   List<bool> bools = [];
   int id = 1;
 
-  GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-  GlobalKey<_ShoppingListFormState> shoppingListFormKey = GlobalKey<_ShoppingListFormState>();
+  GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+  GlobalKey<_ShoppingListFormState> shoppingListFormKey =
+      GlobalKey<_ShoppingListFormState>();
 
   //?Novo item
   TextEditingController itemN = TextEditingController();
@@ -160,7 +163,9 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                           duration: const Duration(milliseconds: 500),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: _items[index].done == true ? Colors.grey[75] : Colors.grey[200],
+                            color: _items[index].done == true
+                                ? Colors.grey[75]
+                                : Colors.grey[200],
                           ),
                           child: ListTile(
                             leading: Transform.scale(
@@ -187,9 +192,13 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                             title: AnimatedDefaultTextStyle(
                               style: TextStyle(
                                 fontSize: 24,
-                                color: _items[index].done == true ? Colors.grey : Colors.black,
+                                color: _items[index].done == true
+                                    ? Colors.grey
+                                    : Colors.black,
                                 //mete o texto a riscado
-                                decoration: _items[index].done == true ? TextDecoration.lineThrough : null,
+                                decoration: _items[index].done == true
+                                    ? TextDecoration.lineThrough
+                                    : null,
                               ),
                               duration: const Duration(seconds: 1),
                               child: Text(
@@ -197,11 +206,14 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                               ),
                             ),
                             //?Aplicar animação ao bloco do id que foi alterado
-                            subtitle: _items[index].descricao != '' && _items[index].descricao != null
+                            subtitle: _items[index].descricao != '' &&
+                                    _items[index].descricao != null
                                 ? AnimatedDefaultTextStyle(
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: _items[index].done == true ? Colors.grey[400] : Colors.black,
+                                      color: _items[index].done == true
+                                          ? Colors.grey[400]
+                                          : Colors.black,
                                     ),
                                     duration: const Duration(milliseconds: 500),
                                     child: Text(
@@ -219,7 +231,8 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                                   : null,
                               child: AnimatedSwitcher(
                                 duration: const Duration(seconds: 1),
-                                transitionBuilder: (Widget child, Animation<double> animation) {
+                                transitionBuilder: (Widget child,
+                                    Animation<double> animation) {
                                   return FadeTransition(
                                     opacity: animation,
                                     child: child,
@@ -227,11 +240,16 @@ class _ShoppingListFormState extends State<ShoppingListForm> with SingleTickerPr
                                 },
                                 child: TweenAnimationBuilder(
                                   tween: ColorTween(
-                                    begin: _items[index].done! == true ? Colors.red : Colors.red[100],
-                                    end: !_items[index].done! == true ? Colors.red[100] : Colors.red,
+                                    begin: _items[index].done! == true
+                                        ? Colors.red
+                                        : Colors.red[100],
+                                    end: !_items[index].done! == true
+                                        ? Colors.red[100]
+                                        : Colors.red,
                                   ),
                                   duration: const Duration(milliseconds: 500),
-                                  builder: (BuildContext context, Color? color, Widget? child) {
+                                  builder: (BuildContext context, Color? color,
+                                      Widget? child) {
                                     return Icon(
                                       Icons.delete_outline,
                                       size: 40,

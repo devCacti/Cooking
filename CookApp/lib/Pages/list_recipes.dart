@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/edit_recipe_page.dart';
-import 'receita.dart';
-import 'details_recipes.dart';
+import '../Classes/receita.dart';
+import '../edit_recipe_page.dart';
+import 'details_recipes_page.dart';
 
 class ListRecipesForm extends StatefulWidget {
   const ListRecipesForm({Key? key}) : super(key: key);
@@ -212,18 +212,13 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                   ),
                                   child: ListTile(
                                     onTap: () {
-                                      showBigDialog(
+                                      Navigator.push(
                                         context,
-                                        _recipes[index].foto,
-                                        _recipes[index].nome,
-                                        _recipes[index].descricao,
-                                        _recipes[index].ingredientes,
-                                        _recipes[index].ingTipo!,
-                                        _recipes[index].ingQuant!,
-                                        _recipes[index].procedimento,
-                                        _recipes[index].tempo,
-                                        _recipes[index].porcoes,
-                                        _recipes[index].categoria,
+                                        MaterialPageRoute(
+                                          builder: (context) => DetailsForm(
+                                            detailRecipe: _recipes[index],
+                                          ),
+                                        ),
                                       );
                                     },
                                     onLongPress: () {

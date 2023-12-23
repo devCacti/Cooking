@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/list_favoritas.dart';
+import 'package:cooking_app/Pages/list_favoritas.dart';
 import 'login_page.dart';
-import 'user_data.dart';
+import '../Classes/user_data.dart';
 import 'register_page.dart';
 
 class UserSettings extends StatefulWidget {
