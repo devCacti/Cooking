@@ -1,7 +1,7 @@
+import 'package:cooking_app/Pages/Shopping%20Lists/shopping_lists.dart';
 import 'package:flutter/material.dart';
 import 'Pages/details_recipes_page.dart';
 import 'Pages/user_settings.dart';
-import 'Pages/shopping_list.dart';
 import 'Classes/receita.dart';
 import 'Pages/new_recipe.dart';
 import 'Pages/list_recipes.dart';
@@ -304,7 +304,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ShoppingListForm(),
+                    builder: (context) => const ShoppingLists(),
                   ),
                 );
               },
