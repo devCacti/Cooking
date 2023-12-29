@@ -138,25 +138,35 @@ class ListItem {
   }
 }
 
+class Loja {
+  String nome;
+  String? localizacao;
+
+  Loja({
+    required this.nome,
+    this.localizacao,
+  });
+}
+
 class ListClass {
-  int? id;
-  String? nome;
+  int id;
+  String nome;
   String? descricao;
   String? data;
-  List<ListItem>? items;
+  List<ListItem>? items = [];
   Color? color;
+  bool? detalhada = false; // False = Lista Simples, True = Lista Detalhada
 
   // This is the constructor
   ListClass({
-    this.id,
-    this.nome,
+    required this.id,
+    required this.nome,
     this.descricao,
     this.data,
-    this.items,
+    this.items = const [],
     this.color,
-  }) {
-    items = [];
-  }
+    this.detalhada = false,
+  });
 
   void addItem(ListItem item) {
     if (items!.isEmpty) {
@@ -195,9 +205,10 @@ class ListClass {
     items!.firstWhere((item) => item.id == id).descricao = description;
   }
 
-  String get dataString {
-    DateTime date = DateTime.now();
-    return '${date.day}/${date.month}/${date.year}';
+  String setData() {
+    final DateTime now = DateTime.now();
+    final String formattedDate = '${now.day}/${now.month}/${now.year}';
+    return formattedDate;
   }
 
   factory ListClass.fromJson(Map<String, dynamic> json) {
@@ -212,6 +223,7 @@ class ListClass {
       color: json['color'] != null
           ? Color(int.parse(json['color'], radix: 16))
           : const Color.fromARGB(255, 53, 140, 255),
+      detalhada: json['detalhada'],
     );
   }
 
@@ -219,16 +231,59 @@ class ListClass {
         'id': id,
         'nome': nome,
         'descricao': descricao,
-        'data': dataString,
+        'data': setData(),
         'items': items,
         'color': color!.value.toRadixString(16),
+        'detalhada': detalhada,
       };
 }
+
+class PartialList {
+  final int id;
+  final String nome;
+  final String? descricao;
+  final String? data;
+  final Color? color;
+  final bool? detalhada;
+
+  PartialList({
+    required this.id,
+    required this.nome,
+    this.descricao,
+    this.data,
+    this.color,
+    this.detalhada,
+  });
+
+  factory PartialList.fromJson(Map<String, dynamic> json) {
+    return PartialList(
+      id: json['id'],
+      nome: json['nome'],
+      descricao: json['descricao'],
+      data: json['data'],
+      color: json['color'] != null
+          ? Color(int.parse(json['color'], radix: 16))
+          : const Color.fromARGB(255, 53, 140, 255),
+      detalhada: json['detalhada'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'nome': nome,
+        'descricao': descricao,
+        'data': data,
+        'color': color!.value.toRadixString(16),
+        'detalhada': detalhada,
+      };
+}
+
+int nTry = 4;
 
 //Id file
 Future<File> get _localIdFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/last_id_03.json');
+  return File('${directory.path}/last_id_0$nTry.json');
 }
 
 //List file
@@ -240,7 +295,12 @@ Future<File> get _localIdFile async {
 */
 Future<File> get _localFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/testes_list_compras03.json');
+  return File('${directory.path}/testes_list_compras0$nTry.json');
+}
+
+Future<File> get _localSimpleFile async {
+  final directory = await path_provider.getApplicationDocumentsDirectory();
+  return File('${directory.path}/testes_list_compras0${nTry}_simple.json');
 }
 
 Future<int> nextId() async {
@@ -255,7 +315,9 @@ Future<int> nextId() async {
   }
 }
 
+//? Saves list in full and simple formats
 Future<void> saveList(ListClass list) async {
+  //Save Full List
   try {
     final file = await _localFile;
     List<dynamic> jsonList = [];
@@ -275,9 +337,33 @@ Future<void> saveList(ListClass list) async {
   } catch (e) {
     throw Exception('Failed to save items to file: $e');
   }
+
+  //Save Simple List
+  try {
+    final file = await _localSimpleFile;
+    List<dynamic> jsonList = [];
+    try {
+      final contents = await file.readAsString();
+      jsonList = json.decode(contents);
+    } catch (e) {
+      jsonList = [];
+    }
+    jsonList.add(PartialList(
+      id: list.id,
+      nome: list.nome,
+      descricao: list.descricao,
+      data: list.data,
+      color: list.color,
+      detalhada: list.detalhada,
+    ).toJson());
+    developer.log(jsonList.toString());
+    await file.writeAsString(json.encode(jsonList));
+  } catch (e) {
+    throw Exception('Failed to save items to file: $e');
+  }
 }
 
-//Load all lists
+//? Loads all lists
 Future<List<ListClass>> loadLists() async {
   try {
     developer.log('Trying to load lists');
@@ -308,7 +394,82 @@ Future<List<ListClass>> loadLists() async {
   }
 }
 
-//Delete list by id (default id)
+//? Loads necessary only (id, name, description, date, color) from local simple file
+Future<List<PartialList>> loadListsSimple() async {
+  try {
+    developer.log('Trying to load lists');
+    final file = await _localSimpleFile;
+
+    if (!await file.exists()) {
+      developer.log('File does not exist (yet)');
+      return [];
+    }
+
+    developer.log('Loaded file');
+
+    final contents = await file.readAsString();
+    developer.log('Contents: $contents');
+
+    final List<dynamic> jsonList = jsonDecode(contents);
+    developer.log('Decoded file');
+
+    final List<PartialList> lists =
+        jsonList.map((json) => PartialList.fromJson(json)).toList();
+    developer.log('Mapped file');
+
+    final List<PartialList> filteredList = lists
+        .map((list) => PartialList(
+              id: list.id,
+              nome: list.nome,
+              descricao: list.descricao,
+              data: list.data,
+              color: list.color,
+              detalhada: list.detalhada,
+            ))
+        .toList();
+    //developer.log('Filtered lists: ${filteredList.toList()}'); //! Useless
+    return filteredList;
+  } catch (e) {
+    developer.log('Error loading lists: $e');
+    return [];
+  }
+}
+
+//? Loads lists by id for individual loading
+Future<ListClass?> loadListById(int id) async {
+  try {
+    developer.log('Trying to load lists');
+    final file = await _localFile;
+
+    if (!await file.exists()) {
+      developer.log('File does not exist (yet)');
+      return null;
+    }
+
+    developer.log('Loaded file');
+
+    final contents = await file.readAsString();
+    developer.log('Contents: $contents');
+
+    final List<dynamic> jsonList = jsonDecode(contents);
+    developer.log('Decoded file');
+
+    final List<ListClass> lists =
+        jsonList.map((json) => ListClass.fromJson(json)).toList();
+    developer.log('Mapped file');
+
+    final ListClass filteredList = lists.firstWhere(
+      (list) => list.id == id,
+    );
+    developer.log('Filtered list: $filteredList');
+    return filteredList;
+  } catch (e) {
+    developer.log('Error loading lists: $e');
+    return null;
+  }
+}
+
+//? Deletes list by id (default id)
 Future<void> deleteListById(int id) async {
   try {
     final file = await _localFile;

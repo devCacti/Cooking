@@ -2,6 +2,8 @@ import 'package:cooking_app/Classes/lista_compra.dart';
 import 'package:cooking_app/Pages/Shopping%20Lists/create_shopping_list.dart';
 import 'package:flutter/material.dart';
 
+import 'view_shopping_list.dart';
+
 class ShoppingLists extends StatefulWidget {
   const ShoppingLists({Key? key}) : super(key: key);
 
@@ -12,7 +14,7 @@ class ShoppingLists extends StatefulWidget {
 }
 
 class _ShoppingListsState extends State<ShoppingLists> {
-  List<ListClass> lists = [];
+  List<PartialList> lists = [];
 
   @override
   void initState() {
@@ -21,7 +23,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
   }
 
   initializeDate() async {
-    await loadLists().then(((value) {
+    await loadListsSimple().then(((value) {
       setState(() {
         lists = value;
       });
@@ -78,73 +80,90 @@ class _ShoppingListsState extends State<ShoppingLists> {
                         child: ListView.builder(
                           itemCount: lists.length,
                           itemBuilder: (context, index) {
-                            return Card(
-                              child: ListTile(
-                                title: Text(
-                                  lists[index].nome!,
-                                  style: const TextStyle(fontSize: 20),
-                                ),
-                                leading: lists[index].color == null
-                                    ? const CircleAvatar(
-                                        backgroundColor: Colors.grey,
-                                        radius: 25,
-                                      )
-                                    : CircleAvatar(
-                                        backgroundColor:
-                                            Color(lists[index].color!.value),
-                                        radius: 25,
-                                      ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 10),
-                                    lists[index].descricao == null
-                                        ? const SizedBox()
-                                        : Text(lists[index].descricao!,
-                                            style:
-                                                const TextStyle(fontSize: 16)),
-                                    lists[index].descricao == null
-                                        ? const SizedBox()
-                                        : const SizedBox(height: 10),
-                                    Text(lists[index].dataString),
-                                  ],
-                                ),
-                                trailing: IconButton(
-                                  iconSize: 35,
-                                  icon: const Icon(
-                                    Icons.delete_forever_outlined,
-                                    color: Colors.red,
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ViewList(id: lists[index].id),
                                   ),
-                                  onPressed: () async {
-                                    try {
-                                      var confirmationResult =
-                                          await deleteConfirmationDialog(
-                                              context);
-                                      if (confirmationResult != null &&
-                                          confirmationResult) {
-                                        await deleteListById(lists[index].id!);
-                                        setState(() {
-                                          lists.removeAt(index);
-                                        });
-                                      }
-                                    } catch (e) {
-                                      // ignore: use_build_context_synchronously
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: const Text(
-                                            'Não foi possivel apagar a lista (ERRO conhecido - Erro 1)'),
-                                        //dismiss button
-                                        action: SnackBarAction(
-                                          label: 'OK',
-                                          textColor: Colors.red,
-                                          onPressed: () {
-                                            ScaffoldMessenger.of(context)
-                                                .hideCurrentSnackBar();
-                                          },
+                                );
+                              },
+                              child: Card(
+                                elevation: 1.5,
+                                child: ListTile(
+                                  title: Text(
+                                    lists[index].nome,
+                                    style: const TextStyle(fontSize: 20),
+                                  ),
+                                  leading: lists[index].color == null
+                                      ? const Icon(
+                                          Icons.dangerous,
+                                          color: Colors.grey,
+                                          size: 50,
+                                        )
+                                      : Icon(
+                                          lists[index].detalhada! &&
+                                                  lists[index].detalhada != null
+                                              ? Icons.settings
+                                              : Icons.circle,
+                                          color: lists[index].color,
+                                          size: 50,
                                         ),
-                                      ));
-                                    }
-                                  },
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 10),
+                                      lists[index].descricao == null
+                                          ? const SizedBox()
+                                          : Text(lists[index].descricao!,
+                                              style: const TextStyle(
+                                                  fontSize: 16)),
+                                      lists[index].descricao == null
+                                          ? const SizedBox()
+                                          : const SizedBox(height: 10),
+                                      Text(lists[index].data!),
+                                    ],
+                                  ),
+                                  trailing: IconButton(
+                                    iconSize: 35,
+                                    icon: const Icon(
+                                      Icons.delete_forever_outlined,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        var confirmationResult =
+                                            await deleteConfirmationDialog(
+                                                context);
+                                        if (confirmationResult != null &&
+                                            confirmationResult) {
+                                          await deleteListById(lists[index].id);
+                                          setState(() {
+                                            lists.removeAt(index);
+                                          });
+                                        }
+                                      } catch (e) {
+                                        // ignore: use_build_context_synchronously
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: const Text(
+                                              'Não foi possivel apagar a lista (ERRO conhecido - Erro 1)'),
+                                          //dismiss button
+                                          action: SnackBarAction(
+                                            label: 'OK',
+                                            textColor: Colors.red,
+                                            onPressed: () {
+                                              ScaffoldMessenger.of(context)
+                                                  .hideCurrentSnackBar();
+                                            },
+                                          ),
+                                        ));
+                                      }
+                                    },
+                                  ),
                                 ),
                               ),
                             );
@@ -153,16 +172,16 @@ class _ShoppingListsState extends State<ShoppingLists> {
                       ),
                     ),
                   )
-            //!const SizedBox(height: 20),
-            //!ElevatedButton(
-            //!  onPressed: () => Navigator.push(
-            //!    context,
-            //!    MaterialPageRoute(
-            //!      builder: (context) => const CreateList(),
-            //!    ),
-            //!  ),
-            //!  child: const Text('Criar Lista'),
-            //!),
+            //?const SizedBox(height: 20),
+            //?ElevatedButton(
+            //?  onPressed: () => Navigator.push(
+            //?    context,
+            //?    MaterialPageRoute(
+            //?      builder: (context) => const CreateList(),
+            //?    ),
+            //?  ),
+            //?  child: const Text('Criar Lista'),
+            //?),
           ],
         ),
       ),
