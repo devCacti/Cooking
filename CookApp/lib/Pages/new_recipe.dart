@@ -64,41 +64,31 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return Theme(
-          data: ThemeData(
-            brightness: Brightness.dark,
-            textTheme: const TextTheme(
-              titleMedium: TextStyle(
-                color: Colors.red,
-              ),
-            ),
+        return AlertDialog(
+          title: const Text(
+            'Sair!',
+            style: TextStyle(color: Colors.red),
           ),
-          child: CupertinoAlertDialog(
-            title: const Text(
-              'Sair?',
-              style: TextStyle(color: Colors.white),
-            ),
-            content: const Text(
-              'Esta ação é irrevertível.\nQualquer progresso feito será perdido!',
-              style: TextStyle(color: Colors.white),
-            ),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                isDestructiveAction: true,
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                onPressed: () {
-                  confirm = true;
-                  Navigator.pop(context);
-                },
-                child: const Text('Sim'),
-              ),
-            ],
+          content: const Text(
+            'Esta ação é irrevertível.\nQualquer progresso feito será perdido!',
+            style: TextStyle(color: Colors.black),
           ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                confirm = true;
+                Navigator.pop(context);
+              },
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              ),
+              child: const Text('Sim'),
+            ),
+          ],
         );
       },
     );

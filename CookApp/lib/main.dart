@@ -362,6 +362,7 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         },
         tooltip: 'Nova Receita',
+        shape: const CircleBorder(),
         child: const Icon(
           Icons.add,
           size: 40,

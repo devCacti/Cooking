@@ -27,6 +27,14 @@ class _ViewListState extends State<ViewList> {
     return total;
   }
 
+  double get totalQuantidade {
+    double total = 0;
+    for (var item in list.items!) {
+      total += item.quantidade;
+    }
+    return total;
+  }
+
   //Init State to load everything
   @override
   void initState() {
@@ -59,33 +67,39 @@ class _ViewListState extends State<ViewList> {
 
   //? Add Item Dialog
   Future<void> _addItemDialog() {
-    return showCupertinoDialog<void>(
+    return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
+        return AlertDialog(
           title: const Text('Adicionar Item'),
           content: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 10),
-              CupertinoTextField(
+              TextField(
                 controller: nomeController,
-                placeholder: 'Item',
+                decoration: const InputDecoration(
+                  hintText: 'Item',
+                ),
               ),
               const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
-                    child: CupertinoTextField(
+                    child: TextField(
                       controller: quantidadeController,
-                      placeholder: 'Quantidade',
+                      decoration: const InputDecoration(
+                        hintText: 'Quantidade',
+                      ),
                       keyboardType: TextInputType.number,
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: CupertinoTextField(
+                    child: TextField(
                       controller: precoController,
-                      placeholder: 'Preço',
+                      decoration: const InputDecoration(
+                        hintText: 'Preço',
+                      ),
                       keyboardType: TextInputType.number,
                     ),
                   ),
@@ -94,7 +108,7 @@ class _ViewListState extends State<ViewList> {
             ],
           ),
           actions: <Widget>[
-            CupertinoDialogAction(
+            TextButton(
               child: const Text('Cancelar'),
               onPressed: () {
                 nomeController.clear();
@@ -104,7 +118,7 @@ class _ViewListState extends State<ViewList> {
                 Navigator.of(context).pop();
               },
             ),
-            CupertinoDialogAction(
+            TextButton(
               child: const Text('Adicionar'),
               onPressed: () {
                 if (nomeController.text != '' &&
@@ -402,10 +416,15 @@ class _ViewListState extends State<ViewList> {
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 7,
-                  child: const Text(
-                    '0',
+                  child: Text(
+                    totalQuantidade
+                        .toStringAsFixed(totalQuantidade.truncateToDouble() ==
+                                totalQuantidade
+                            ? 0
+                            : totalQuantidade.toString().split('.').last.length)
+                        .replaceAll('.', ','),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
