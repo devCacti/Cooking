@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -965,6 +967,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             //! Processo que guarda a informação
                             final novaReceita = Recipe(
                               id: id,
+                              // ignore: prefer_null_aware_operators
                               foto: _image == null ? null : _image!.path,
                               nome: nomeR!,
                               descricao: descR!,

@@ -15,6 +15,12 @@ class ViewList extends StatefulWidget {
 class _ViewListState extends State<ViewList> {
   ListClass list = ListClass(id: 0, nome: '');
 
+  TextEditingController nomeController = TextEditingController(text: '');
+  TextEditingController quantidadeController = TextEditingController(text: '');
+  TextEditingController precoController = TextEditingController(text: '');
+
+  bool allChecked = false;
+
   double get totalValor {
     double total = 0;
     for (var item in list.items!) {
@@ -38,7 +44,15 @@ class _ViewListState extends State<ViewList> {
     });
   }
 
-  // ...
+  bool get allItemsChecked {
+    overwriteListById(list.id, list);
+    for (var item in list.items!) {
+      if (!item.checked) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   //? Add Item Dialog
   Future<void> _addItemDialog() {
@@ -47,24 +61,27 @@ class _ViewListState extends State<ViewList> {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: const Text('Adicionar Item'),
-          content: const Column(
+          content: Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               CupertinoTextField(
+                controller: nomeController,
                 placeholder: 'Item',
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
                     child: CupertinoTextField(
+                      controller: quantidadeController,
                       placeholder: 'Quantidade',
                       keyboardType: TextInputType.number,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: CupertinoTextField(
+                      controller: precoController,
                       placeholder: 'Preço',
                       keyboardType: TextInputType.number,
                     ),
@@ -77,12 +94,42 @@ class _ViewListState extends State<ViewList> {
             CupertinoDialogAction(
               child: const Text('Cancelar'),
               onPressed: () {
+                nomeController.clear();
+                quantidadeController.clear();
+                precoController.clear();
+
                 Navigator.of(context).pop();
               },
             ),
             CupertinoDialogAction(
               child: const Text('Adicionar'),
               onPressed: () {
+                if (nomeController.text != '' &&
+                    nomeController.text.isNotEmpty) {
+                  if (quantidadeController.text.isNotEmpty) {
+                    //replace , with . if it exists
+                    quantidadeController.text =
+                        quantidadeController.text.replaceAll(',', '.');
+                  }
+                  list.addItem(
+                    ListItem(
+                      nome: nomeController.text,
+                      quantidade: quantidadeController.text == '' ||
+                              quantidadeController.text == '1'
+                          ? 1
+                          : double.parse(quantidadeController.text),
+                      preco: precoController.text == ''
+                          ? 0
+                          : double.parse(
+                              precoController.text,
+                            ),
+                    ),
+                  );
+                }
+                overwriteListById(list.id, list);
+                nomeController.clear();
+                quantidadeController.clear();
+                precoController.clear();
                 Navigator.of(context).pop();
               },
             ),
@@ -93,6 +140,7 @@ class _ViewListState extends State<ViewList> {
   }
 
   // ...
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -100,12 +148,12 @@ class _ViewListState extends State<ViewList> {
         centerTitle: true,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: ListView(
           children: [
             const SizedBox(height: 20),
             Text(
               list.nome,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -118,6 +166,7 @@ class _ViewListState extends State<ViewList> {
                     children: [
                       Text(
                         list.descricao!,
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 20,
                         ),
@@ -127,6 +176,7 @@ class _ViewListState extends State<ViewList> {
                   ),
             Text(
               list.data == null ? 'Sem Data' : list.data!,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
               ),
@@ -144,8 +194,23 @@ class _ViewListState extends State<ViewList> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                //Checked
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
+                  width: MediaQuery.of(context).size.width / 10,
+                  child: Checkbox(
+                    value: allChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        allChecked = value!;
+                        for (var item in list.items!) {
+                          item.checked = value;
+                        }
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 2.5,
                   child: const Text(
                     'Item',
                     style: TextStyle(
@@ -178,14 +243,105 @@ class _ViewListState extends State<ViewList> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 5),
             //? Divider
             const Divider(
               height: 20,
               thickness: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.black26,
+              color: Colors.black12,
+            ),
+            const SizedBox(height: 5),
+
+            //Builder
+            list.items!.isEmpty
+                //? If there are no items
+                ? const Center(
+                    child: Text('Sem Items'),
+                  )
+                //? If there are items
+                : ListView.builder(
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              //Checked
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 10,
+                                child: Checkbox(
+                                  value: list.items![index].checked,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      list.items![index].checked = value!;
+                                      allChecked = allItemsChecked;
+                                    });
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: Text(
+                                  list.items![index].nome,
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 6,
+                                child: Text(
+                                  // Avoiding x.0 values instead just x
+                                  list.items![index].quantidade == 0
+                                      ? '0'
+                                      : list.items![index].quantidade
+                                          .toStringAsFixed(list
+                                                      .items![index].quantidade
+                                                      .truncateToDouble() ==
+                                                  list.items![index].quantidade
+                                              ? 0
+                                              : 2)
+                                          .replaceAll('.', ','),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 6,
+                                child: Text(
+                                  list.items![index].preco == 0
+                                      ? '0€'
+                                      : '${list.items![index].preco.toStringAsFixed(2).replaceAll('.', ',')}€',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    },
+                    itemCount: list.items!.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                  ),
+            const SizedBox(height: 10),
+            //? Divider
+            const Divider(
+              height: 20,
+              thickness: 1,
+              indent: 20,
+              endIndent: 20,
+              color: Colors.black12,
             ),
 
             const SizedBox(height: 20),
@@ -229,6 +385,7 @@ class _ViewListState extends State<ViewList> {
                 ),
               ],
             ),
+
             const SizedBox(height: 10),
             const Divider(
               height: 20,

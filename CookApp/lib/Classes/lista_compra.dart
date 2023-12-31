@@ -112,7 +112,6 @@ Future<void> deleteItemById(int id) async {
 class ListItem {
   int? id;
   String nome;
-  String? descricao;
   double preco = 0;
   double quantidade = 1;
   bool checked = false;
@@ -120,7 +119,6 @@ class ListItem {
   ListItem({
     this.id,
     required this.nome,
-    this.descricao,
     this.preco = 0,
     this.quantidade = 1,
     this.checked = false,
@@ -130,7 +128,6 @@ class ListItem {
     return ListItem(
       id: json['id'],
       nome: json['nome'],
-      descricao: json['descricao'],
       preco: json['preco'],
       quantidade: json['quantidade'],
       checked: json['checked'],
@@ -179,30 +176,6 @@ class ListClass {
 
   void removeItem(int id) {
     items!.removeWhere((item) => item.id == id);
-  }
-
-  void markChecked(int id) {
-    items!.firstWhere((item) => item.id == id).checked = true;
-  }
-
-  void markUnchecked(int id) {
-    items!.firstWhere((item) => item.id == id).checked = false;
-  }
-
-  void changeQuantity(int id, double quantity) {
-    items!.firstWhere((item) => item.id == id).quantidade = quantity;
-  }
-
-  void changePrice(int id, double price) {
-    items!.firstWhere((item) => item.id == id).preco = price;
-  }
-
-  void changeName(int id, String name) {
-    items!.firstWhere((item) => item.id == id).nome = name;
-  }
-
-  void changeDescription(int id, String description) {
-    items!.firstWhere((item) => item.id == id).descricao = description;
   }
 
   String setData() {
@@ -469,7 +442,7 @@ Future<ListClass?> loadListById(int id) async {
   }
 }
 
-//? Deletes list by id (default id)
+//? Deletes list by id
 Future<void> deleteListById(int id) async {
   try {
     final file = await _localFile;
@@ -481,6 +454,33 @@ Future<void> deleteListById(int id) async {
     await file.writeAsString(json.encode(updatedLists));
   } catch (e) {
     throw Exception('Failed to delete list: $e');
+  }
+  try {
+    final file = await _localSimpleFile;
+    final contents = await file.readAsString();
+    final List<dynamic> jsonList = json.decode(contents);
+    final List<PartialList> lists =
+        jsonList.map((json) => PartialList.fromJson(json)).toList();
+    final updatedLists = lists.where((list) => list.id != id).toList();
+    await file.writeAsString(json.encode(updatedLists));
+  } catch (e) {
+    throw Exception('Failed to delete list: $e');
+  }
+}
+
+//? Overwrite list by id
+Future<void> overwriteListById(int id, ListClass newList) async {
+  try {
+    final file = await _localFile;
+    final contents = await file.readAsString();
+    final List<dynamic> jsonList = json.decode(contents);
+    final List<ListClass> lists =
+        jsonList.map((json) => ListClass.fromJson(json)).toList();
+    final updatedLists = lists.where((list) => list.id != id).toList();
+    updatedLists.add(newList);
+    await file.writeAsString(json.encode(updatedLists));
+  } catch (e) {
+    throw Exception('Failed to overwrite list: $e');
   }
 }
 

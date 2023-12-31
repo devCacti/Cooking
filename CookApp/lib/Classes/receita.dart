@@ -84,7 +84,7 @@ Future<List<Recipe>> loadRecipes() async {
         jsonList.map((json) => Recipe.fromJson(json)).toList();
     return recipes;
   } catch (e) {
-    //* Caso a receita não exista ou tenha ocorrido algum erro, vai retornar uma lista vazia.
+    // Caso a receita não exista ou tenha ocorrido algum erro, vai retornar uma lista vazia.
     return [];
   }
 }

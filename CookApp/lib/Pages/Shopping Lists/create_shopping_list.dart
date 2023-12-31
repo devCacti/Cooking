@@ -193,16 +193,29 @@ class _CreateListState extends State<CreateList> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Simples', style: TextStyle(fontSize: 20)),
-                    Switch(
-                      value: list.detalhada!,
-                      onChanged: (value) {
-                        setState(() {
-                          list.detalhada = value;
-                        });
-                      },
+                    SizedBox(
+                      // Width of the screen divided by 3
+                      width: MediaQuery.of(context).size.width / 4,
+                      child:
+                          const Text('Simples', style: TextStyle(fontSize: 20)),
                     ),
-                    const Text('Detalhada', style: TextStyle(fontSize: 20)),
+                    SizedBox(
+                      // Width of the screen divided by 3
+                      width: MediaQuery.of(context).size.width / 4,
+                      child: Switch(
+                        value: list.detalhada!,
+                        onChanged: (value) {
+                          setState(() {
+                            list.detalhada = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 4,
+                      child: const Text('Detalhada',
+                          style: TextStyle(fontSize: 20)),
+                    )
                   ],
                 ),
                 const SizedBox(height: 20),
