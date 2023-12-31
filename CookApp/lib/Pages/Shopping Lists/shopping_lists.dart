@@ -137,7 +137,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                                       try {
                                         var confirmationResult =
                                             await deleteConfirmationDialog(
-                                                context);
+                                                context, 'lista de compras');
                                         if (confirmationResult != null &&
                                             confirmationResult) {
                                           await deleteListById(lists[index].id);

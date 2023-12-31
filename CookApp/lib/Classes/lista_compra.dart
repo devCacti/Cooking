@@ -492,31 +492,29 @@ Future<void> updateListById(ListClass list) async {
   }
 }
 
-//Delete confirmation dialog
-Future<bool?> deleteConfirmationDialog(BuildContext context) async {
-  return await showCupertinoDialog<bool>(
+// Delete confirmation dialog
+Future<bool?> deleteConfirmationDialog(
+    BuildContext context, String keyWord) async {
+  return await showDialog<bool?>(
     context: context,
-    builder: (context) => Theme(
-      data: ThemeData.from(
-        colorScheme: const ColorScheme.dark(),
-      ),
-      child: CupertinoAlertDialog(
-        title: const Text('Apagar lista'),
-        content: const Text('Tem a certeza que quer apagar esta lista?'),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar',
-                style: TextStyle(color: Color.fromARGB(255, 53, 140, 255))),
+    builder: (context) => AlertDialog(
+      title: Text('Apagar $keyWord'),
+      content: Text('Tem a certeza que quer apagar: $keyWord?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text(
+            'Cancelar',
           ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Apagar'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text(
+            'Apagar',
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
           ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
 }

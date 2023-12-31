@@ -48,7 +48,7 @@ class _ViewListState extends State<ViewList> {
         return false;
       }
     }
-    return true;
+    return list.items!.isNotEmpty;
   }
 
   set allItemsChecked(bool value) {
@@ -224,23 +224,23 @@ class _ViewListState extends State<ViewList> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 6,
+                  width: MediaQuery.of(context).size.width / 7,
                   child: const Text(
-                    'Quant.',
+                    'Quant',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 6,
+                  width: MediaQuery.of(context).size.width / 4,
                   child: const Text(
                     'Valor',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -263,74 +263,111 @@ class _ViewListState extends State<ViewList> {
             list.items!.isEmpty
                 //? If there are no items
                 ? const Center(
-                    child: Text('Sem Items'),
+                    child: Text(
+                      'Esta lista não tem itens',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
                   )
                 //? If there are items
                 : ListView.builder(
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              //Checked
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width / 10,
-                                child: Checkbox(
-                                  value: list.items![index].checked,
-                                  onChanged: (value) {
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            child: GestureDetector(
+                              onLongPress: () {
+                                deleteConfirmationDialog(context, 'item')
+                                    .then((value) {
+                                  if (value != null && value) {
                                     setState(() {
-                                      list.items![index].checked = value!;
+                                      list.items!.removeAt(index);
                                       updateListById(list);
                                     });
-                                  },
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width / 2.5,
-                                child: Text(
-                                  list.items![index].nome,
-                                  textAlign: TextAlign.start,
-                                  style: const TextStyle(
-                                    fontSize: 20,
+                                  }
+                                });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.black12,
+                                    width: 1,
                                   ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    //Checked
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width /
+                                          10,
+                                      child: Checkbox(
+                                        value: list.items![index].checked,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            list.items![index].checked = value!;
+                                            updateListById(list);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width /
+                                          2.5,
+                                      child: Text(
+                                        list.items![index].nome,
+                                        textAlign: TextAlign.start,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width:
+                                          MediaQuery.of(context).size.width / 7,
+                                      child: Text(
+                                        // Avoiding x.0 values instead just x
+                                        list.items![index].quantidade
+                                            .toStringAsFixed(list.items![index]
+                                                        .quantidade
+                                                        .truncateToDouble() ==
+                                                    list.items![index]
+                                                        .quantidade
+                                                ? 0
+                                                : list.items![index].quantidade
+                                                    .toString()
+                                                    .split('.')
+                                                    .last
+                                                    .length)
+                                            .replaceAll('.', ','),
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width:
+                                          MediaQuery.of(context).size.width / 4,
+                                      child: Text(
+                                        '${list.items![index].preco.toStringAsFixed(list.items![index].preco.truncateToDouble() == list.items![index].preco ? 0 : list.items![index].preco.toString().split('.').last.length).replaceAll('.', ',')}€',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width / 6,
-                                child: Text(
-                                  // Avoiding x.0 values instead just x
-                                  list.items![index].quantidade == 0
-                                      ? '0'
-                                      : list.items![index].quantidade
-                                          .toStringAsFixed(list
-                                                      .items![index].quantidade
-                                                      .truncateToDouble() ==
-                                                  list.items![index].quantidade
-                                              ? 0
-                                              : 2)
-                                          .replaceAll('.', ','),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width / 6,
-                                child: Text(
-                                  list.items![index].preco == 0
-                                      ? '0€'
-                                      : '${list.items![index].preco.toStringAsFixed(2).replaceAll('.', ',')}€',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                         ],
                       );
                     },
@@ -338,7 +375,6 @@ class _ViewListState extends State<ViewList> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                   ),
-            const SizedBox(height: 10),
             //? Divider
             const Divider(
               height: 20,
@@ -348,12 +384,13 @@ class _ViewListState extends State<ViewList> {
               color: Colors.black12,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                SizedBox(width: MediaQuery.of(context).size.width / 10),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
+                  width: MediaQuery.of(context).size.width / 2.5,
                   child: const Text(
                     'Total',
                     textAlign: TextAlign.start,
@@ -364,7 +401,7 @@ class _ViewListState extends State<ViewList> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 6,
+                  width: MediaQuery.of(context).size.width / 7,
                   child: const Text(
                     '0',
                     textAlign: TextAlign.center,
@@ -375,11 +412,9 @@ class _ViewListState extends State<ViewList> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 6,
+                  width: MediaQuery.of(context).size.width / 4,
                   child: Text(
-                    totalValor == 0
-                        ? '0€'
-                        : '${totalValor.toStringAsFixed(2).replaceAll('.', ',')}€',
+                    '${totalValor.toStringAsFixed(totalValor.truncateToDouble() == totalValor ? 0 : totalValor.toString().split('.').last.length).replaceAll('.', ',')}€',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 20,
@@ -389,7 +424,6 @@ class _ViewListState extends State<ViewList> {
                 ),
               ],
             ),
-
             const SizedBox(height: 10),
             const Divider(
               height: 20,
