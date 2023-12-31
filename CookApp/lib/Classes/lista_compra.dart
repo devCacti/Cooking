@@ -133,6 +133,14 @@ class ListItem {
       checked: json['checked'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'nome': nome,
+        'preco': preco,
+        'quantidade': quantidade,
+        'checked': checked,
+      };
 }
 
 class Loja {
@@ -190,13 +198,13 @@ class ListClass {
       nome: json['nome'],
       descricao: json['descricao'],
       data: json['data'],
-      items: (json['items'] as List<dynamic>)
-          .map((item) => ListItem.fromJson(item))
-          .toList(),
       color: json['color'] != null
           ? Color(int.parse(json['color'], radix: 16))
           : const Color.fromARGB(255, 53, 140, 255),
       detalhada: json['detalhada'],
+      items: (json['items'] as List<dynamic>)
+          .map((item) => ListItem.fromJson(item))
+          .toList(),
     );
   }
 
@@ -204,10 +212,10 @@ class ListClass {
         'id': id,
         'nome': nome,
         'descricao': descricao,
-        'data': setData(),
-        'items': items,
+        'data': data,
         'color': color!.value.toRadixString(16),
         'detalhada': detalhada,
+        'items': items!.map((item) => item.toJson()).toList(),
       };
 }
 
@@ -468,19 +476,19 @@ Future<void> deleteListById(int id) async {
   }
 }
 
-//? Overwrite list by id
-Future<void> overwriteListById(int id, ListClass newList) async {
+//? Updates list by id
+Future<void> updateListById(ListClass list) async {
   try {
     final file = await _localFile;
     final contents = await file.readAsString();
     final List<dynamic> jsonList = json.decode(contents);
     final List<ListClass> lists =
         jsonList.map((json) => ListClass.fromJson(json)).toList();
-    final updatedLists = lists.where((list) => list.id != id).toList();
-    updatedLists.add(newList);
+    final updatedLists = lists.where((list) => list.id != list.id).toList();
+    updatedLists.add(list);
     await file.writeAsString(json.encode(updatedLists));
   } catch (e) {
-    throw Exception('Failed to overwrite list: $e');
+    throw Exception('Failed to update list: $e');
   }
 }
 

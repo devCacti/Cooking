@@ -19,8 +19,6 @@ class _ViewListState extends State<ViewList> {
   TextEditingController quantidadeController = TextEditingController(text: '');
   TextEditingController precoController = TextEditingController(text: '');
 
-  bool allChecked = false;
-
   double get totalValor {
     double total = 0;
     for (var item in list.items!) {
@@ -45,13 +43,18 @@ class _ViewListState extends State<ViewList> {
   }
 
   bool get allItemsChecked {
-    overwriteListById(list.id, list);
     for (var item in list.items!) {
       if (!item.checked) {
         return false;
       }
     }
     return true;
+  }
+
+  set allItemsChecked(bool value) {
+    for (var item in list.items!) {
+      item.checked = value;
+    }
   }
 
   //? Add Item Dialog
@@ -126,7 +129,7 @@ class _ViewListState extends State<ViewList> {
                     ),
                   );
                 }
-                overwriteListById(list.id, list);
+                updateListById(list);
                 nomeController.clear();
                 quantidadeController.clear();
                 precoController.clear();
@@ -198,13 +201,14 @@ class _ViewListState extends State<ViewList> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 10,
                   child: Checkbox(
-                    value: allChecked,
+                    value: allItemsChecked,
                     onChanged: (value) {
                       setState(() {
-                        allChecked = value!;
+                        allItemsChecked = value!;
                         for (var item in list.items!) {
                           item.checked = value;
                         }
+                        updateListById(list);
                       });
                     },
                   ),
@@ -277,7 +281,7 @@ class _ViewListState extends State<ViewList> {
                                   onChanged: (value) {
                                     setState(() {
                                       list.items![index].checked = value!;
-                                      allChecked = allItemsChecked;
+                                      updateListById(list);
                                     });
                                   },
                                 ),
