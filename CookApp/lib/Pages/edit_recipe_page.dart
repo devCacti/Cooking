@@ -1,9 +1,8 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'Classes/receita.dart';
-import 'Functions/show_conf_dialog.dart';
+import '../Classes/receita.dart';
+import '../Functions/show_conf_dialog.dart';
 
 class EditForm extends StatefulWidget {
   final Recipe toEditR;
@@ -88,6 +87,7 @@ class _EditFormState extends State<EditForm> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -553,57 +553,37 @@ class _EditFormState extends State<EditForm> {
                                                       context: context,
                                                       builder: (BuildContext
                                                           context) {
-                                                        return Theme(
-                                                          data: ThemeData(
-                                                            brightness:
-                                                                Brightness
-                                                                    .light,
-                                                            textTheme:
-                                                                const TextTheme(
-                                                              titleMedium:
-                                                                  TextStyle(
-                                                                color:
-                                                                    Colors.blue,
-                                                              ),
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Eliminar?'),
+                                                          content: const Text(
+                                                              'Deseja eliminar este procedimento permanentemente?'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: const Text(
+                                                                  'Cancelar'),
                                                             ),
-                                                          ),
-                                                          child:
-                                                              CupertinoAlertDialog(
-                                                            title: const Text(
-                                                                'Eliminar?'),
-                                                            content: const Text(
-                                                                'Deseja eliminar este procedimento permanentemente?'),
-                                                            actions: [
-                                                              CupertinoDialogAction(
-                                                                isDefaultAction:
-                                                                    true,
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: const Text(
-                                                                    'Cancelar'),
-                                                              ),
-                                                              CupertinoDialogAction(
-                                                                isDestructiveAction:
-                                                                    true,
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    procs!.remove(
-                                                                        procs![
-                                                                            index]);
-                                                                    procsControllers
-                                                                        .remove(
-                                                                            procsControllers[index]);
-                                                                  });
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: const Text(
-                                                                    'Eliminar'),
-                                                              )
-                                                            ],
-                                                          ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  procs!.remove(
+                                                                      procs![
+                                                                          index]);
+                                                                  procsControllers.remove(
+                                                                      procsControllers[
+                                                                          index]);
+                                                                });
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: const Text(
+                                                                  'Eliminar'),
+                                                            ),
+                                                          ],
                                                         );
                                                       },
                                                     );

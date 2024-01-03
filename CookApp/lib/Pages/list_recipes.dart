@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Classes/receita.dart';
-import '../edit_recipe_page.dart';
+import 'edit_recipe_page.dart';
 import 'details_recipes_page.dart';
 
 class ListRecipesForm extends StatefulWidget {
@@ -38,47 +38,35 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return Theme(
-          data: ThemeData(
-            brightness: Brightness.light,
-            textTheme: const TextTheme(
-              titleMedium: TextStyle(
-                color: Colors.blue,
-              ),
-            ),
-          ),
-          child: CupertinoAlertDialog(
-            title: const Text('Editar ou Eliminar'),
-            content: const Text(
-                'Deseja editar esta receita ou elimina-la permanentemente?'),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditForm(
-                        toEditR: _recipes[index],
-                      ),
+        return AlertDialog(
+          title: const Text('Editar ou Eliminar'),
+          content: const Text(
+              'Deseja editar esta receita ou eliminá-la permanentemente?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditForm(
+                      toEditR: _recipes[index],
                     ),
-                  ).then((_) {
-                    refreshIndicatorKey.currentState?.show();
-                  });
-                },
-                child: const Text('Editar'),
-              ),
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                onPressed: () {
-                  Navigator.pop(context);
-                  showConfirmationDialog(context, id);
-                },
-                child: const Text('Eliminar'),
-              )
-            ],
-          ),
+                  ),
+                ).then((_) {
+                  refreshIndicatorKey.currentState?.show();
+                });
+              },
+              child: const Text('Editar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                showConfirmationDialog(context, id);
+              },
+              child: const Text('Eliminar'),
+            ),
+          ],
         );
       },
     );
@@ -89,45 +77,35 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
     await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return Theme(
-          data: ThemeData(
-              brightness: Brightness.dark,
-              textTheme: const TextTheme(
-                  titleMedium: TextStyle(
-                color: Colors.red,
-              ))),
-          child: CupertinoAlertDialog(
-            title: const Text(
-              'Eliminar?',
-              style: TextStyle(color: Colors.white),
+        return AlertDialog(
+          title: const Text(
+            'Eliminar?',
+          ),
+          content: const Text(
+            'Esta ação é irrevertível!',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
             ),
-            content: const Text(
-              'Esta ação é irrevertível!',
-              style: TextStyle(color: Colors.white),
-            ),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                isDestructiveAction: true,
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                onPressed: () {
-                  confirm = true;
-                  deleteRecipeById(id).then((_) {
-                    loadRecipes().then((recipes) {
-                      setState(() {
-                        _recipes = recipes;
-                      });
+            TextButton(
+              onPressed: () {
+                confirm = true;
+                deleteRecipeById(id).then((_) {
+                  loadRecipes().then((recipes) {
+                    setState(() {
+                      _recipes = recipes;
                     });
                   });
-                  Navigator.pop(context);
-                },
-                child: const Text('Sim'),
-              ),
-            ],
+                });
+                Navigator.pop(context);
+              },
+              child: const Text('Sim'),
+            ),
+          ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         );
       },

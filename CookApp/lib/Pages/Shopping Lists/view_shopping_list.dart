@@ -1,5 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:cooking_app/Classes/lista_compra.dart';
+import '../../Classes/lista_compra.dart';
 import 'package:flutter/material.dart';
 
 class ViewList extends StatefulWidget {

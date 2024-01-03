@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../edit_recipe_page.dart';
+import 'edit_recipe_page.dart';
 import '../Classes/receita.dart';
 import 'details_recipes_page.dart';
 
@@ -33,45 +33,33 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return Theme(
-          data: ThemeData(
-            brightness: Brightness.light,
-            textTheme: const TextTheme(
-              titleMedium: TextStyle(
-                color: Colors.blue,
-              ),
-            ),
-          ),
-          child: CupertinoAlertDialog(
-            title: const Text('Editar ou Eliminar'),
-            content: const Text(
-                'Deseja editar esta receita ou elimina-la permanentemente?'),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditForm(
-                        toEditR: _recipes[index],
-                      ),
+        return AlertDialog(
+          title: const Text('Editar ou Eliminar'),
+          content: const Text(
+              'Deseja editar esta receita ou eliminá-la permanentemente?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditForm(
+                      toEditR: _recipes[index],
                     ),
-                  );
-                },
-                child: const Text('Editar'),
-              ),
-              CupertinoDialogAction(
-                isDestructiveAction: true,
-                onPressed: () {
-                  Navigator.pop(context);
-                  showConfirmationDialog(context, id);
-                },
-                child: const Text('Eliminar'),
-              )
-            ],
-          ),
+                  ),
+                );
+              },
+              child: const Text('Editar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                showConfirmationDialog(context, id);
+              },
+              child: const Text('Eliminar'),
+            ),
+          ],
         );
       },
     );
