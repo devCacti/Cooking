@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: unnecessary_const
+
 import 'package:flutter/material.dart';
-import 'package:cooking_app/Pages/list_favoritas.dart';
+
 import 'login_page.dart';
-import '../Classes/user_data.dart';
 import 'register_page.dart';
 
 class UserSettings extends StatefulWidget {
@@ -13,377 +13,98 @@ class UserSettings extends StatefulWidget {
   _UserSettingsState createState() => _UserSettingsState();
 }
 
-class _UserSettingsState extends State<UserSettings> with RestorationMixin {
-  final RestorableInt _selectedIndex = RestorableInt(0);
-
-  @override
-  String get restorationId => 'user_settings';
-
-  @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(_selectedIndex, 'selected_index');
-  }
-
-  List<dynamic> user = [];
-
-  @override
-  void initState() {
-    super.initState();
-    loadUserLocal().then((userData) {
-      setState(() {
-        user = userData;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _selectedIndex.dispose();
-    super.dispose();
-  }
+class _UserSettingsState extends State<UserSettings> {
+  bool isLogged = false;
 
   @override
   Widget build(BuildContext context) {
-    final selectedItem = <String>[
-      'Perfil',
-      'Definições',
-      'Privacidade',
-    ];
-    final selectedIcon = <IconData>[
-      Icons.person,
-      Icons.settings,
-      Icons.privacy_tip,
-    ];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(selectedItem[_selectedIndex.value]),
+    const drawerHeader = UserAccountsDrawerHeader(
+      accountName: Text("User Name"),
+      accountEmail: Text("User Email"),
+      currentAccountPicture: CircleAvatar(
+        child: FlutterLogo(size: 42.0),
       ),
-      body: Row(
-        children: [
-          NavigationRail(
-            selectedIndex: _selectedIndex.value,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _selectedIndex.value = index;
-              });
-            },
-            labelType: NavigationRailLabelType.selected,
-            destinations: List.generate(
-              selectedItem.length,
-              (index) => NavigationRailDestination(
-                icon: Icon(selectedIcon[index], size: 30),
-                selectedIcon: Icon(selectedIcon[index], size: 35),
-                label: Text(selectedItem[index],
-                    style: const TextStyle(fontSize: 16)),
-              ),
-            ),
-          ),
-          const VerticalDivider(thickness: 1, width: 1),
-          //Mostra o que está dentro da função UserSettings
-          Expanded(
-            child: Center(
-              child: FutureBuilder<List<dynamic>>(
-                future: loadUserLocal(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    List<dynamic> user = snapshot.data!;
-                    return selectedItem[_selectedIndex.value] == "Perfil"
-                        ? user[0]['islogin']
-                            ? display(context)
-                            : userSettings(context)
-                        : selectedItem[_selectedIndex.value] == "Definições"
-                            ? settings(context)
-                            : const SizedBox.shrink();
-                  } else {
-                    return const Text('No user data found');
-                  }
+    );
+
+    const anonymousDrawerHeader = UserAccountsDrawerHeader(
+      decoration: BoxDecoration(
+        color: Colors.blueGrey,
+      ),
+      accountName: Text("Utilizador Anónimo"),
+      accountEmail: Text("Faça logon para aceder aos serviços",
+          style: TextStyle(color: Colors.orange)),
+      currentAccountPicture: CircleAvatar(
+        child: Icon(Icons.person, size: 42.0),
+      ),
+    );
+
+    final drawerItems = isLogged
+        ? ListView(
+            children: [
+              drawerHeader,
+              ListTile(
+                title: const Text("Item 1"),
+                leading: const Icon(Icons.favorite),
+                onTap: () {
+                  Navigator.pop(context);
                 },
               ),
-            ),
+              ListTile(
+                title: const Text("Item 2"),
+                leading: const Icon(Icons.comment),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          )
+        : ListView(
+            children: [
+              anonymousDrawerHeader,
+              ListTile(
+                title: const Text("Entrar"),
+                leading: const Icon(Icons.login),
+                onTap: () {
+                  //LoginPage is the page that we want to open on click.
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginPage(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                title: const Text("Registar"),
+                leading: const Icon(Icons.app_registration),
+                onTap: () {
+                  //RegisterPage is the page that we want to open on click.
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RegisterPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("User Settings"),
+      ),
+      body: Semantics(
+        container: true,
+        child: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(50.0),
+            child: const Text("User Settings"),
           ),
-        ],
+        ),
+      ),
+      drawer: Drawer(
+        child: drawerItems,
       ),
     );
   }
-}
-
-Widget settings(BuildContext context) {
-  return Column(
-    children: [
-      const SizedBox(height: 20),
-      const Text(
-        'Definições',
-        style: TextStyle(fontSize: 36),
-      ),
-      const SizedBox(height: 10),
-      const Divider(thickness: 2, indent: 75, endIndent: 75),
-      const SizedBox(height: 20),
-      const Row(
-        children: [
-          SizedBox(width: 10),
-          Text(
-            'Notificações',
-            style: TextStyle(fontSize: 26),
-          ),
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        children: [
-          const SizedBox(width: 5),
-          const Text(
-            'Receber notificações',
-            style: TextStyle(fontSize: 20),
-          ),
-          const SizedBox(width: 2.5),
-          Switch(
-            value: true,
-            onChanged: (value) {},
-          ),
-        ],
-      ),
-      const SizedBox(height: 40),
-      const Row(
-        children: [
-          SizedBox(width: 10),
-          Text(
-            'Informações',
-            style: TextStyle(fontSize: 22),
-          ),
-        ],
-      ),
-      const SizedBox(height: 10),
-      const Row(
-        children: [
-          SizedBox(width: 2.5),
-          Text(
-            'Versão',
-            style: TextStyle(fontSize: 20),
-          ),
-          SizedBox(width: 20),
-          Text(
-            '0.3.0.2',
-            style: TextStyle(fontSize: 20),
-          ),
-        ],
-      ),
-      const SizedBox(height: 20),
-    ],
-  );
-}
-
-Widget userSettings(BuildContext context) {
-  return Column(
-    children: [
-      const SizedBox(height: 20),
-      const Text(
-        'Credênciais',
-        style: TextStyle(fontSize: 36),
-      ),
-      const SizedBox(height: 10),
-      const Divider(thickness: 2, indent: 75, endIndent: 75),
-      const SizedBox(height: 20),
-      FilledButton(
-        onPressed: () async {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginPage(),
-            ),
-          );
-        },
-        child: const Text(
-          ' Login ',
-          style: TextStyle(fontSize: 26, color: Colors.white),
-        ),
-      ),
-      const Column(
-        children: [
-          SizedBox(height: 5),
-          SizedBox(
-            child: Text(
-              'ou',
-              style: TextStyle(fontSize: 20, color: Colors.black54),
-            ),
-          ),
-          SizedBox(height: 5),
-        ],
-      ),
-      OutlinedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RegisterPage(),
-            ),
-          );
-        },
-        style: OutlinedButton.styleFrom(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          side: const BorderSide(color: Colors.green, width: 1),
-        ),
-        child: const Text(
-          ' Registar ',
-          style: TextStyle(fontSize: 26),
-        ),
-      ),
-    ],
-  );
-}
-
-//Não implementado
-
-Widget display(BuildContext context) {
-  return FutureBuilder<List<dynamic>>(
-    future: loadUserLocal(),
-    builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-      if (snapshot.hasData) {
-        final user = snapshot.data!;
-        TextEditingController nome =
-            TextEditingController(text: user[0]['name']);
-        TextEditingController email =
-            TextEditingController(text: user[0]['email']);
-        return Column(
-          children: [
-            const SizedBox(height: 20),
-            const Text(
-              'Credênciais',
-              style: TextStyle(fontSize: 36),
-            ),
-            const SizedBox(height: 10),
-            const Divider(thickness: 2, indent: 75, endIndent: 75),
-            const SizedBox(height: 20),
-            SizedBox(
-              //half of screen width - half of widget width
-              width: MediaQuery.of(context).size.width / 2 + 50,
-              height: 100,
-              child: TextFormField(
-                enabled: false,
-                controller: nome,
-                style: const TextStyle(fontSize: 20),
-                textAlign: TextAlign.center,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Nome',
-                ),
-              ),
-            ),
-            SizedBox(
-              //half of screen width - half of widget width
-              width: MediaQuery.of(context).size.width / 2 + 50,
-              height: 100,
-              child: TextFormField(
-                enabled: false,
-                controller: email,
-                style: const TextStyle(fontSize: 20),
-                textAlign: TextAlign.center,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Endereço de email',
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            OutlinedButton.icon(
-              //border color
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.transparent),
-              ),
-              onPressed: () {
-                showConfirmationDialog(context).then((value) {
-                  if (value) {
-                    saveUserLocal(false, 'none', 'none');
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    ).then((value) {
-                      Navigator.popUntil(
-                          context, ModalRoute.withName('/user_settings'));
-
-                      refreshIndicatorKey.currentState!.show().then((value) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Logout efetuado com sucesso'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                      });
-                    });
-                  }
-                });
-              },
-              icon: const Icon(
-                Icons.logout,
-                color: Colors.red,
-              ),
-              label: const Text(
-                'Logout',
-                style: TextStyle(fontSize: 26, color: Colors.red),
-              ),
-            ),
-          ],
-        );
-      } else if (snapshot.hasError) {
-        return const Text('Erro ao carregar as credenciais do usuário');
-      } else {
-        return const CircularProgressIndicator();
-      }
-    },
-  );
-}
-
-Future<bool> showConfirmationDialog(BuildContext context) async {
-  bool confirm = false;
-  await showDialog<bool>(
-    context: context,
-    builder: (BuildContext context) {
-      return Theme(
-        data: ThemeData(
-          brightness: Brightness.dark,
-          textTheme: const TextTheme(
-            titleMedium: TextStyle(
-              color: Colors.red,
-            ),
-          ),
-        ),
-        child: CupertinoAlertDialog(
-          title: const Text(
-            'Terminar sessão?',
-            style: TextStyle(color: Colors.white),
-          ),
-          content: const Text(
-            'Tem a certeza que deseja terminar a sessão?',
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: <Widget>[
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              isDestructiveAction: true,
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
-            ),
-            CupertinoDialogAction(
-              isDestructiveAction: true,
-              onPressed: () {
-                confirm = true;
-                Navigator.pop(context);
-              },
-              child: const Text('Sim'),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-  return confirm;
 }

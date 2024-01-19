@@ -2,9 +2,9 @@ import '../../Classes/lista_compra.dart';
 import 'package:flutter/material.dart';
 
 class ViewList extends StatefulWidget {
-  final int id;
+  final ListClass list;
 
-  const ViewList({Key? key, required this.id}) : super(key: key);
+  const ViewList({Key? key, required this.list}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -12,15 +12,13 @@ class ViewList extends StatefulWidget {
 }
 
 class _ViewListState extends State<ViewList> {
-  ListClass list = ListClass(id: 0, nome: '');
-
   TextEditingController nomeController = TextEditingController(text: '');
   TextEditingController quantidadeController = TextEditingController(text: '');
   TextEditingController precoController = TextEditingController(text: '');
 
   double get totalValor {
     double total = 0;
-    for (var item in list.items!) {
+    for (var item in widget.list.items!) {
       total += item.preco * item.quantidade;
     }
     return total;
@@ -28,7 +26,7 @@ class _ViewListState extends State<ViewList> {
 
   double get totalQuantidade {
     double total = 0;
-    for (var item in list.items!) {
+    for (var item in widget.list.items!) {
       total += item.quantidade;
     }
     return total;
@@ -38,28 +36,19 @@ class _ViewListState extends State<ViewList> {
   @override
   void initState() {
     super.initState();
-    initializeData();
-  }
-
-  void initializeData() async {
-    await loadListById(widget.id).then((value) {
-      setState(() {
-        list = value!;
-      });
-    });
   }
 
   bool get allItemsChecked {
-    for (var item in list.items!) {
+    for (var item in widget.list.items!) {
       if (!item.checked) {
         return false;
       }
     }
-    return list.items!.isNotEmpty;
+    return widget.list.items!.isNotEmpty;
   }
 
   set allItemsChecked(bool value) {
-    for (var item in list.items!) {
+    for (var item in widget.list.items!) {
       item.checked = value;
     }
   }
@@ -127,7 +116,7 @@ class _ViewListState extends State<ViewList> {
                     quantidadeController.text =
                         quantidadeController.text.replaceAll(',', '.');
                   }
-                  list.addItem(
+                  widget.list.addItem(
                     ListItem(
                       nome: nomeController.text,
                       quantidade: quantidadeController.text == '' ||
@@ -142,7 +131,7 @@ class _ViewListState extends State<ViewList> {
                     ),
                   );
                 }
-                updateListById(list);
+                updateListById(widget.list);
                 nomeController.clear();
                 quantidadeController.clear();
                 precoController.clear();
@@ -168,7 +157,7 @@ class _ViewListState extends State<ViewList> {
           children: [
             const SizedBox(height: 20),
             Text(
-              list.nome,
+              widget.list.nome,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 30,
@@ -176,12 +165,12 @@ class _ViewListState extends State<ViewList> {
               ),
             ),
             const SizedBox(height: 20),
-            list.descricao == null
+            widget.list.descricao == null
                 ? const SizedBox()
                 : Column(
                     children: [
                       Text(
-                        list.descricao!,
+                        widget.list.descricao!,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 20,
@@ -191,7 +180,7 @@ class _ViewListState extends State<ViewList> {
                     ],
                   ),
             Text(
-              list.data == null ? 'Sem Data' : list.data!,
+              widget.list.data == null ? 'Sem Data' : widget.list.data!,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
@@ -218,10 +207,10 @@ class _ViewListState extends State<ViewList> {
                     onChanged: (value) {
                       setState(() {
                         allItemsChecked = value!;
-                        for (var item in list.items!) {
+                        for (var item in widget.list.items!) {
                           item.checked = value;
                         }
-                        updateListById(list);
+                        updateListById(widget.list);
                       });
                     },
                   ),
@@ -273,7 +262,7 @@ class _ViewListState extends State<ViewList> {
             const SizedBox(height: 5),
 
             //Builder
-            list.items!.isEmpty
+            widget.list.items!.isEmpty
                 //? If there are no items
                 ? const Center(
                     child: Text(
@@ -297,8 +286,8 @@ class _ViewListState extends State<ViewList> {
                                     .then((value) {
                                   if (value != null && value) {
                                     setState(() {
-                                      list.items!.removeAt(index);
-                                      updateListById(list);
+                                      widget.list.items!.removeAt(index);
+                                      updateListById(widget.list);
                                     });
                                   }
                                 });
@@ -320,11 +309,13 @@ class _ViewListState extends State<ViewList> {
                                       width: MediaQuery.of(context).size.width /
                                           10,
                                       child: Checkbox(
-                                        value: list.items![index].checked,
+                                        value:
+                                            widget.list.items![index].checked,
                                         onChanged: (value) {
                                           setState(() {
-                                            list.items![index].checked = value!;
-                                            updateListById(list);
+                                            widget.list.items![index].checked =
+                                                value!;
+                                            updateListById(widget.list);
                                           });
                                         },
                                       ),
@@ -333,7 +324,7 @@ class _ViewListState extends State<ViewList> {
                                       width: MediaQuery.of(context).size.width /
                                           2.5,
                                       child: Text(
-                                        list.items![index].nome,
+                                        widget.list.items![index].nome,
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(
                                           fontSize: 20,
@@ -345,14 +336,17 @@ class _ViewListState extends State<ViewList> {
                                           MediaQuery.of(context).size.width / 7,
                                       child: Text(
                                         // Avoiding x.0 values instead just x
-                                        list.items![index].quantidade
-                                            .toStringAsFixed(list.items![index]
+                                        widget.list.items![index].quantidade
+                                            .toStringAsFixed(widget
+                                                        .list
+                                                        .items![index]
                                                         .quantidade
                                                         .truncateToDouble() ==
-                                                    list.items![index]
+                                                    widget.list.items![index]
                                                         .quantidade
                                                 ? 0
-                                                : list.items![index].quantidade
+                                                : widget.list.items![index]
+                                                    .quantidade
                                                     .toString()
                                                     .split('.')
                                                     .last
@@ -368,7 +362,7 @@ class _ViewListState extends State<ViewList> {
                                       width:
                                           MediaQuery.of(context).size.width / 4,
                                       child: Text(
-                                        '${list.items![index].preco.toStringAsFixed(list.items![index].preco.truncateToDouble() == list.items![index].preco ? 0 : list.items![index].preco.toString().split('.').last.length).replaceAll('.', ',')}€',
+                                        '${widget.list.items![index].preco.toStringAsFixed(widget.list.items![index].preco.truncateToDouble() == widget.list.items![index].preco ? 0 : widget.list.items![index].preco.toString().split('.').last.length).replaceAll('.', ',')}€',
                                         textAlign: TextAlign.center,
                                         style: const TextStyle(
                                           fontSize: 20,
@@ -384,7 +378,7 @@ class _ViewListState extends State<ViewList> {
                         ],
                       );
                     },
-                    itemCount: list.items!.length,
+                    itemCount: widget.list.items!.length,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                   ),

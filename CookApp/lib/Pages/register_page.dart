@@ -10,258 +10,94 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _senhaKey = GlobalKey<FormFieldState>();
-  final _confirmarSenhaKey = GlobalKey<FormFieldState>();
-  final _emailKey = GlobalKey<FormFieldState>();
-  final _confirmarEmailKey = GlobalKey<FormFieldState>();
-  final _userName = GlobalKey<FormFieldState>();
-  String login = '';
-  String email = '';
-  String confirmEmail = '';
-  String password = '';
-  String confirmPassword = '';
-  List<dynamic> user = [];
-  List<dynamic> userCrs = []; //Credenciais do utilizador
-  bool isUser = false;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _isRegistering = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Registo'), centerTitle: true),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              const Icon(
-                Icons.person_rounded,
-                size: 100,
-                color: Colors.grey,
+      appBar: AppBar(
+        title: const Text("Registo"),
+        centerTitle: true,
+      ),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            TextFormField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                hintText: "Nome",
               ),
-              isUser
-                  ? user.isEmpty
-                      ? const Text(
-                          'Utilizador não encontrado',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                          ),
-                        )
-                      : Text(
-                          '${user[0]['name']}',
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontSize: 18,
-                          ),
-                        )
-                  : const Text(
-                      'Bem vindo!',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 20,
-                      ),
-                    ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: 300,
-                child: TextFormField(
-                  key: _userName,
-                  validator: (value) {
-                    print('Validator: $value : $user');
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira um email';
-                    } else if (user[0]['name'] != '') {
-                      return 'Email já registado';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      email = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    labelText: 'Username',
-                  ),
-                ),
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return "Por favor insira o seu nome";
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                hintText: "Email",
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 300,
-                child: TextFormField(
-                  key: _emailKey,
-                  validator: (value) {
-                    print('Validator: $value : $user');
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira um email';
-                    } else if (user[0]['name'] != '') {
-                      return 'Email já registado';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      email = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    labelText: 'Email',
-                  ),
-                ),
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return "Por favor insira o seu email";
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _passwordController,
+              decoration: const InputDecoration(
+                hintText: "Password",
               ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: 300,
-                child: TextFormField(
-                  key: _confirmarEmailKey,
-                  validator: (value) {
-                    print('Validator: $value : $user');
-                    if (value != email) {
-                      return 'Email não coincide';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      confirmEmail = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    labelText: 'Cofirmar Email',
-                  ),
-                ),
-              ),
-              const SizedBox(height: 25),
-              SizedBox(
-                width: 300,
-                child: TextFormField(
-                  key: _senhaKey,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira uma palavra-passe';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    _senhaKey.currentState!.validate();
-                    setState(() {
-                      password = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    labelText: 'Palavra-passe',
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: 300,
-                child: TextFormField(
-                  key: _confirmarSenhaKey,
-                  validator: (value) {
-                    if (value != password) {
-                      return 'Palavra-passe não coincide';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    _confirmarSenhaKey.currentState!.validate();
-                    setState(() {
-                      confirmPassword = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    labelText: 'Confirmar Palavra-passe',
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 300,
-                height: 50,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      height: 40,
-                      child: TextButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () {
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return "Por favor insira a sua password";
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: _isRegistering
+                  ? null
+                  : () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          _isRegistering = true;
+                        });
+                        final String name = _nameController.text;
+                        final String email = _emailController.text;
+                        final String password = _passwordController.text;
+                        final bool isRegistered =
+                            await UserData.register(name, email, password);
+                        setState(() {
+                          _isRegistering = false;
+                        });
+                        if (isRegistered) {
+                          // ignore: use_build_context_synchronously
                           Navigator.pop(context);
-                        },
-                        child: const Text(
-                          'Voltar',
-                          style: TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 100,
-                      height: 40,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: email == ''
-                            ? null
-                            : () {
-                                userExists('?email=$email').then((value) {
-                                  setState(() {
-                                    user = value;
-                                    print('User: $user');
-                                    isUser = true;
-                                    _emailKey.currentState!.validate();
-                                  });
-                                });
-                              },
-                        child: const Text(
-                          'Criar',
-                          style: TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+                        } else {
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Erro no registo"),
+                            ),
+                          );
+                        }
+                      }
+                    },
+              child: const Text("Registar"),
+            ),
+          ],
         ),
       ),
     );

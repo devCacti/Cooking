@@ -81,14 +81,33 @@ class _ShoppingListsState extends State<ShoppingLists> {
                           itemCount: lists.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ViewList(id: lists[index].id),
-                                  ),
-                                );
+                              onTap: () async {
+                                loadListById(lists[index].id).then((value) {
+                                  if (value == null) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: const Text(
+                                          'Não foi possivel carregar a lista (ERRO conhecido - Erro 1)'),
+                                      //dismiss button
+                                      action: SnackBarAction(
+                                        label: 'OK',
+                                        textColor: Colors.red,
+                                        onPressed: () {
+                                          ScaffoldMessenger.of(context)
+                                              .hideCurrentSnackBar();
+                                        },
+                                      ),
+                                    ));
+                                    return;
+                                  }
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ViewList(list: value),
+                                    ),
+                                  );
+                                });
                               },
                               child: Card(
                                 elevation: 1.5,

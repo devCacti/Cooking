@@ -143,13 +143,102 @@ class ListItem {
 }
 
 class Loja {
+  int id;
   String nome;
   String? localizacao;
 
   Loja({
+    this.id = 0,
     required this.nome,
     this.localizacao,
   });
+
+  factory Loja.fromJson(Map<String, dynamic> json) {
+    return Loja(
+      id: json['id'],
+      nome: json['nome'],
+      localizacao: json['localizacao'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'nome': nome,
+        'localizacao': localizacao,
+      };
+
+  Future<File> get _localFile async {
+    final directory = await path_provider.getApplicationDocumentsDirectory();
+    return File('${directory.path}/testes_lojas0$nTry.json');
+  }
+
+  //? Saves new stores to file
+  Future<void> save() async {
+    try {
+      final file = await _localFile;
+      List<dynamic> jsonList = [];
+      try {
+        final contents = await file.readAsString();
+        jsonList = json.decode(contents);
+      } catch (e) {
+        jsonList = [];
+      }
+      jsonList.add(toJson());
+      file.writeAsStringSync(json.encode(jsonList));
+    } catch (e) {
+      throw Exception('Failed to save items to file: $e');
+    }
+  }
+
+  //? Loads all stores
+  Future<List<Loja>> load() async {
+    try {
+      final file = await _localFile;
+
+      if (!await file.exists()) {
+        return [];
+      }
+
+      final contents = await file.readAsString();
+      final List<dynamic> jsonList = jsonDecode(contents);
+      final List<Loja> stores =
+          jsonList.map((json) => Loja.fromJson(json)).toList();
+      return stores;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  //? Deletes store by id
+  Future<void> deleteById(int id) async {
+    try {
+      final file = await _localFile;
+      final contents = await file.readAsString();
+      final List<dynamic> jsonList = json.decode(contents);
+      final List<Loja> stores =
+          jsonList.map((json) => Loja.fromJson(json)).toList();
+      final updatedStores = stores.where((store) => store.id != id).toList();
+      await file.writeAsString(json.encode(updatedStores));
+    } catch (e) {
+      throw Exception('Failed to delete store: $e');
+    }
+  }
+
+  //? Updates store by id
+  Future<void> updateById(Loja store) async {
+    try {
+      final file = await _localFile;
+      final contents = await file.readAsString();
+      final List<dynamic> jsonList = json.decode(contents);
+      final List<Loja> stores =
+          jsonList.map((json) => Loja.fromJson(json)).toList();
+      final updatedStores = stores.where((s) => s.id != store.id).toList();
+      updatedStores.add(store);
+      await file.writeAsString(json.encode(updatedStores));
+    } catch (e) {
+      throw Exception('Failed to update store: $e');
+    }
+  }
 }
 
 class ListClass {
@@ -158,6 +247,7 @@ class ListClass {
   String? descricao;
   String? data;
   List<ListItem>? items = [];
+  Loja? loja;
   Color? color;
   bool? detalhada = false; // False = Lista Simples, True = Lista Detalhada
 
@@ -167,9 +257,10 @@ class ListClass {
     required this.nome,
     this.descricao,
     this.data,
-    this.items = const [],
+    this.loja,
     this.color,
     this.detalhada = false,
+    this.items = const [],
   });
 
   void addItem(ListItem item) {
@@ -197,6 +288,7 @@ class ListClass {
       nome: json['nome'],
       descricao: json['descricao'],
       data: json['data'],
+      loja: json['loja'],
       color: json['color'] != null
           ? Color(int.parse(json['color'], radix: 16))
           : const Color.fromARGB(255, 53, 140, 255),
@@ -212,6 +304,7 @@ class ListClass {
         'nome': nome,
         'descricao': descricao,
         'data': data,
+        'loja': loja,
         'color': color!.value.toRadixString(16),
         'detalhada': detalhada,
         'items': items!.map((item) => item.toJson()).toList(),
@@ -304,12 +397,14 @@ Future<void> saveList(ListClass list) async {
     try {
       final contents = await file.readAsString();
       jsonList = json.decode(contents);
+      developer.log('Contents: $contents');
+
+      jsonList.add(list.toJson());
+      developer.log(jsonList.toString());
+      await file.writeAsString(json.encode(jsonList));
     } catch (e) {
       jsonList = [];
     }
-    jsonList.add(list.toJson());
-    developer.log(jsonList.toString());
-    await file.writeAsString(json.encode(jsonList));
 
     final idFile = await _localIdFile;
     final newId = await nextId();
@@ -428,25 +523,29 @@ Future<ListClass?> loadListById(int id) async {
 
     developer.log('Loaded file');
 
-    final contents = await file.readAsString();
-    developer.log('Contents: $contents');
+    //Nesta parte do Código, o resto do código só é executado quando as o ficheiro é acabado de ser lido.
+    return file.readAsString().then((v) {
+      var value = v;
+      developer.log('Contents: ${value.toString()}');
 
-    final List<dynamic> jsonList = jsonDecode(contents);
-    developer.log('Decoded file');
+      final List<dynamic> jsonList = jsonDecode(value);
+      developer.log('Decoded file');
 
-    final List<ListClass> lists =
-        jsonList.map((json) => ListClass.fromJson(json)).toList();
-    developer.log('Mapped file');
+      final List<ListClass> lists =
+          jsonList.map((json) => ListClass.fromJson(json)).toList();
+      developer.log('Mapped file');
 
-    final ListClass filteredList = lists.firstWhere(
-      (list) => list.id == id,
-    );
-    developer.log('Filtered list: $filteredList');
-    return filteredList;
+      final ListClass filteredList = lists.firstWhere(
+        (list) => list.id == id,
+      );
+      developer.log('Filtered list: $filteredList');
+
+      return filteredList;
+    });
   } catch (e) {
     developer.log('Error loading lists: $e');
-    return null;
   }
+  return null;
 }
 
 //? Deletes list by id
@@ -483,7 +582,7 @@ Future<void> updateListById(ListClass list) async {
     final List<dynamic> jsonList = json.decode(contents);
     final List<ListClass> lists =
         jsonList.map((json) => ListClass.fromJson(json)).toList();
-    final updatedLists = lists.where((list) => list.id != list.id).toList();
+    final updatedLists = lists.where((l) => l.id != list.id).toList();
     updatedLists.add(list);
     await file.writeAsString(json.encode(updatedLists));
   } catch (e) {

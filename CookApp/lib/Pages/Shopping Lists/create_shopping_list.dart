@@ -18,6 +18,10 @@ class _CreateListState extends State<CreateList> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   ListClass list = ListClass(id: 0, nome: '');
+
+  String loja = "Escolher Loja";
+  List<String> lojas = [];
+
   Color pickerColor = Colors.grey;
   int id = 0;
 
@@ -29,9 +33,17 @@ class _CreateListState extends State<CreateList> {
 
   void initializeData() async {
     id = await nextId();
+    Loja lojaInstance = Loja(nome: 'Escolher Loja');
+    List<Loja> lojasTemp = await lojaInstance.load();
     list.data = list.setData();
     setState(() {
       list.id = id;
+
+      for (var loja in lojasTemp) {
+        lojas.add(loja.nome);
+      }
+
+      lojas.add('Nova Loja');
     });
 
     //? if the list is not updated, change from null to false to avoid errors
@@ -98,7 +110,7 @@ class _CreateListState extends State<CreateList> {
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        Colors.white.withOpacity(0.4)),
+                        Colors.white.withOpacity(0.9)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -138,6 +150,85 @@ class _CreateListState extends State<CreateList> {
                       },
                     );
                   },
+                ),
+                const SizedBox(height: 20),
+                //Stores dropdown
+                DropdownButtonFormField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    labelText: 'Escolher Loja',
+                  ),
+                  value: loja == 'Escolher Loja'
+                      ? null
+                      : loja, // set value to null if loja is 'Escolher Loja'
+                  onChanged: (value) {
+                    setState(() {
+                      if (value != null) {
+                        if (value != 'Nova Loja') {
+                          loja = value;
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Nova Loja'),
+                                content: TextFormField(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10))),
+                                    labelText: 'Nome da Loja',
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      loja = value;
+                                    });
+                                  },
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text('Cancelar'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('Criar'),
+                                    onPressed: () async {
+                                      Loja lojaInstance = Loja(nome: loja);
+                                      await lojaInstance.save();
+                                      List<Loja> lojasTemp =
+                                          await lojaInstance.load();
+                                      setState(() {
+                                        lojas = [];
+                                        for (var loja in lojasTemp) {
+                                          lojas.add(loja.nome);
+                                        }
+                                        lojas.add('Nova Loja');
+                                        loja = 'Escolher Loja';
+                                      });
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      } else {
+                        // set loja to 'Escolher Loja' if value is null
+                        loja = 'Escolher Loja';
+                      }
+                    });
+                  },
+                  items: lojas.map((String store) {
+                    return DropdownMenuItem(
+                      value: store,
+                      child: Text(store),
+                    );
+                  }).toList(),
                 ),
                 const SizedBox(height: 20),
                 //Name text box
