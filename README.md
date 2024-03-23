@@ -3,8 +3,9 @@ App made for storing your own recipes.
 Why go look for your notebook when you can simply take out your device and start cooking?
 
 ## Objectives
-My objective with the development of this application is to learn more about programming so that I know a good variety of programming languages.
-And it's also meant to help my reputation when I go look for a job without only having the school certification.
+My objective with the development of this application is to help people with storing recipes. With it, people should be able to save their recipes on their phone, and, when the online service is available, use it in any device. Having a web version and a mobile version to make it more versatile and accessible to everyone.
+By making this, I am able to develop my programming skills so that I code more and more efficientely.
+My knowledge in GitHub is limited so that is also a way of me getting to know this tool more.
 
-## How was it made
+## How I am making it
 I made this project using Flutter as the main resource (https://flutter.dev)
