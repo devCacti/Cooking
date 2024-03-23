@@ -53,21 +53,23 @@ class UserData {
   }
 
   static Future<bool> register(
-      String name, String email, String password) async {
-    final http.Response response = await http.post(
-      Uri.parse('${sv}Account/Register'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<dynamic, dynamic>{
-        'name': name,
-        'email': email,
-        'password': password,
-      }),
-    );
+      String username, String email, String password) async {
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('https://localhost:44322/Account/AppRegister'));
+    request.fields.addAll({
+      'email': email,
+      'username': username,
+      'password': password,
+      'confirmPassword': password,
+      'name': 'Tiago',
+      'surname': 'Laim Rodrigues'
+    });
+
+    var response = await request.send();
+
     if (response.statusCode == 200) {
-      final Map<String, dynamic> body = jsonDecode(response.body);
-      await setToken(body['token']);
+      final String body = await response.stream.bytesToString();
+      print("Response: $body");
       return true;
     }
     return false;

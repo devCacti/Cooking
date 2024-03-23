@@ -32,11 +32,11 @@ class _RegisterPageState extends State<RegisterPage> {
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
-                hintText: "Nome",
+                hintText: "Username",
               ),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
-                  return "Por favor insira o seu nome";
+                  return "Por favor insira o seu nome de utilizador";
                 }
                 return null;
               },
