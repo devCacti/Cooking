@@ -19,8 +19,13 @@ class _CreateListState extends State<CreateList> {
 
   ListClass list = ListClass(id: 0, nome: '');
 
-  String loja = "Escolher Loja";
-  List<String> lojas = [];
+  // Option selected in the dropdown
+  String loja = "Nova Loja";
+  // List of stores
+  List<String> lojas = ["Nova Loja"];
+
+  //New Store Name
+  String newStore = '';
 
   Color pickerColor = Colors.grey;
   int id = 0;
@@ -33,25 +38,23 @@ class _CreateListState extends State<CreateList> {
 
   void initializeData() async {
     id = await nextId();
-    Loja lojaInstance = Loja(nome: 'Escolher Loja');
+    Loja lojaInstance = Loja(nome: 'Nova Loja');
     List<Loja> lojasTemp = await lojaInstance.load();
     list.data = list.setData();
     setState(() {
       list.id = id;
 
       for (var loja in lojasTemp) {
-        lojas.add(loja.nome);
+        if (loja.nome != 'Nova Loja' && loja.nome.isNotEmpty) {
+          lojas.add(loja.nome);
+          print(loja.nome);
+        }
       }
 
-      lojas.add('Nova Loja');
+      list.detalhada ??= false;
     });
 
     //? if the list is not updated, change from null to false to avoid errors
-    if (list.detalhada == null) {
-      setState(() {
-        list.detalhada = false;
-      });
-    }
   }
 
   void changeColor(Color color) {
@@ -140,7 +143,7 @@ class _CreateListState extends State<CreateList> {
                           ),
                           actions: <Widget>[
                             TextButton(
-                              child: const Text('Got it'),
+                              child: const Text('Escolher'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
@@ -153,82 +156,57 @@ class _CreateListState extends State<CreateList> {
                 ),
                 const SizedBox(height: 20),
                 //Stores dropdown
-                DropdownButtonFormField(
+                DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
-                    labelText: 'Escolher Loja',
+                    labelText: 'Loja',
                   ),
-                  value: loja == 'Escolher Loja'
-                      ? null
-                      : loja, // set value to null if loja is 'Escolher Loja'
-                  onChanged: (value) {
-                    setState(() {
-                      if (value != null) {
-                        if (value != 'Nova Loja') {
-                          loja = value;
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Nova Loja'),
-                                content: TextFormField(
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    labelText: 'Nome da Loja',
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      loja = value;
-                                    });
-                                  },
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: const Text('Cancelar'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: const Text('Criar'),
-                                    onPressed: () async {
-                                      Loja lojaInstance = Loja(nome: loja);
-                                      await lojaInstance.save();
-                                      List<Loja> lojasTemp =
-                                          await lojaInstance.load();
-                                      setState(() {
-                                        lojas = [];
-                                        for (var loja in lojasTemp) {
-                                          lojas.add(loja.nome);
-                                        }
-                                        lojas.add('Nova Loja');
-                                        loja = 'Escolher Loja';
-                                      });
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      } else {
-                        // set loja to 'Escolher Loja' if value is null
-                        loja = 'Escolher Loja';
-                      }
-                    });
-                  },
-                  items: lojas.map((String store) {
-                    return DropdownMenuItem(
-                      value: store,
-                      child: Text(store),
+                  items: lojas.map((String value) {
+                    print("Stores: $value");
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
                     );
                   }).toList(),
+                  value: loja == 'Escolher Loja' ? null : loja,
+                  onChanged: (value) {
+                    if (value == 'Nova Loja') {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Adicionar Loja'),
+                            content: TextField(
+                              onChanged: (value) {
+                                setState(() {
+                                  newStore = value;
+                                });
+                              },
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Adicionar'),
+                                onPressed: () async {
+                                  Loja lojaInstance = Loja(nome: newStore);
+                                  await lojaInstance.save();
+                                  setState(() {
+                                    lojas.add(newStore);
+                                    loja = newStore;
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      setState(() {
+                        loja = value!;
+                      });
+                    }
+                  },
                 ),
                 const SizedBox(height: 20),
                 //Name text box

@@ -351,13 +351,12 @@ class PartialList {
       };
 }
 
-int nTry = 4;
-
-//Id file
-Future<File> get _localIdFile async {
-  final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/last_id_0$nTry.json');
-}
+//? >TODO: Arranjar o problema de não dar para abrir receitas.
+//* DONE
+/*
+!I/flutter (16831): /data/user/0/com.example.cooking_app/app_flutter/testes_list_compras0_2.json
+![log] Error loading lists: PathNotFoundException: Cannot open file, path = '/data/user/0/com.example.cooking_app/app_flutter/testes_list_compras0_2.json' (OS Error: No such file or directory, errno = 2)
+*/
 
 //List file
 /* [?, !, *, TO/DO: : From the Better Comments extension]
@@ -366,14 +365,40 @@ Future<File> get _localIdFile async {
  !     ...ah","data":"25/12/2023","items":[]}][{"nome":"miau","descricao":"vroom",...
  !                                            ^
 */
-Future<File> get _localFile async {
+
+// Final_AttemptNumber
+String nTry = "0_5";
+
+//Id file
+Future<File> get _localIdFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/testes_list_compras0$nTry.json');
+  final file = File('${directory.path}/last_id_${nTry.toString()}.json');
+  if (!await file.exists()) {
+    await file.create();
+  }
+  return file;
 }
 
+//List file
+Future<File> get _localFile async {
+  final directory = await path_provider.getApplicationDocumentsDirectory();
+  final file =
+      File('${directory.path}/testes_list_compras${nTry.toString()}.json');
+  if (!await file.exists()) {
+    await file.create();
+  }
+  return file;
+}
+
+//Simple list file
 Future<File> get _localSimpleFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  return File('${directory.path}/testes_list_compras0${nTry}_simple.json');
+  final file = File(
+      '${directory.path}/testes_list_compras${nTry.toString()}_simple.json');
+  if (!await file.exists()) {
+    await file.create();
+  }
+  return file;
 }
 
 Future<int> nextId() async {
@@ -391,18 +416,25 @@ Future<int> nextId() async {
 //? Saves list in full and simple formats
 Future<void> saveList(ListClass list) async {
   //Save Full List
+  developer.log('Trying to save FULL list - saveList()', name: 'saveList');
   try {
     final file = await _localFile;
     List<dynamic> jsonList = [];
     try {
       final contents = await file.readAsString();
-      jsonList = json.decode(contents);
-      developer.log('Contents: $contents');
+      if (contents.isNotEmpty && contents != '[]' && contents != '') {
+        jsonList = json.decode(contents);
+        developer.log('Contents: $contents');
+      } else {
+        jsonList = [];
+        developer.log('Contents: $contents');
+      }
 
       jsonList.add(list.toJson());
       developer.log(jsonList.toString());
       await file.writeAsString(json.encode(jsonList));
     } catch (e) {
+      developer.log('Error: $e - saveList()');
       jsonList = [];
     }
 
@@ -413,6 +445,7 @@ Future<void> saveList(ListClass list) async {
     throw Exception('Failed to save items to file: $e');
   }
 
+  developer.log('Trying to save SIMPLE list - saveList()', name: 'saveList');
   //Save Simple List
   try {
     final file = await _localSimpleFile;
@@ -441,11 +474,13 @@ Future<void> saveList(ListClass list) async {
 //? Loads all lists
 Future<List<ListClass>> loadLists() async {
   try {
-    developer.log('Trying to load lists');
-    final file = await _localFile;
+    developer.log('Trying to load lists - loadLists()');
+    final file = await _localFile.then((value) {
+      developer.log('File: $value');
+    });
 
     if (!await file.exists()) {
-      developer.log('File does not exist (yet)');
+      developer.log('File does not exist - loadLists()');
       return [];
     }
 
@@ -472,11 +507,11 @@ Future<List<ListClass>> loadLists() async {
 //? Loads necessary only (id, name, description, date, color) from local simple file
 Future<List<PartialList>> loadListsSimple() async {
   try {
-    developer.log('Trying to load lists');
+    developer.log('Trying to load lists - loadListsSimple()');
     final file = await _localSimpleFile;
 
     if (!await file.exists()) {
-      developer.log('File does not exist (yet)');
+      developer.log('File does not exist (yet) - loadListsSimple()');
       return [];
     }
 
@@ -513,39 +548,34 @@ Future<List<PartialList>> loadListsSimple() async {
 //? Loads lists by id for individual loading
 Future<ListClass?> loadListById(int id) async {
   try {
-    developer.log('Trying to load lists');
-    final file = await _localFile;
+    developer.log('Trying to load lists - loadListById()');
 
+    final file = await _localFile;
     if (!await file.exists()) {
-      developer.log('File does not exist (yet)');
+      developer.log('File  > ${file.path} <  DOESN\'T EXIST');
       return null;
     }
 
-    developer.log('Loaded file');
+    final contents = await file.readAsString();
+    developer.log('Contents: $contents');
 
-    //Nesta parte do Código, o resto do código só é executado quando as o ficheiro é acabado de ser lido.
-    return file.readAsString().then((v) {
-      var value = v;
-      developer.log('Contents: ${value.toString()}');
+    final List<dynamic> jsonList = jsonDecode(contents);
+    developer.log('Decoded file');
 
-      final List<dynamic> jsonList = jsonDecode(value);
-      developer.log('Decoded file');
+    final List<ListClass> lists =
+        jsonList.map((json) => ListClass.fromJson(json)).toList();
+    developer.log('Mapped file');
 
-      final List<ListClass> lists =
-          jsonList.map((json) => ListClass.fromJson(json)).toList();
-      developer.log('Mapped file');
+    final filteredList = lists.firstWhere(
+      (list) => list.id == id,
+    );
+    developer.log('Filtered list: $filteredList');
 
-      final ListClass filteredList = lists.firstWhere(
-        (list) => list.id == id,
-      );
-      developer.log('Filtered list: $filteredList');
-
-      return filteredList;
-    });
+    return filteredList;
   } catch (e) {
     developer.log('Error loading lists: $e');
+    return null;
   }
-  return null;
 }
 
 //? Deletes list by id

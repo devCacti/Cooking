@@ -82,7 +82,10 @@ class _ShoppingListsState extends State<ShoppingLists> {
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () async {
-                                loadListById(lists[index].id).then((value) {
+                                var listId = lists[index].id;
+                                print(
+                                    "Attempting to load list with id: $listId");
+                                await loadListById(listId).then((value) {
                                   if (value == null) {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(SnackBar(

@@ -380,15 +380,19 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           icon: const Icon(Icons.add),
                           onPressed: () {
                             setState(() {
-                              if (ingsR != '') {
-                                //* Parte principal
-                                ingredientes.add(ingsR!);
-                                _ingsController.text = '';
-                                ingsR = '';
+                              try {
+                                if (ingsR != '') {
+                                  //* Parte principal
+                                  ingredientes.add(ingsR!);
+                                  _ingsController.text = '';
+                                  ingsR = '';
 
-                                //* Parte das opções
-                                ingsOpts.add('g');
-                                ingsQaunt.add(0);
+                                  //* Parte das opções
+                                  ingsOpts.add('g');
+                                  ingsQaunt.add(0);
+                                }
+                              } catch (e) {
+                                print('Erro: $e');
                               }
                             });
                           },
@@ -613,12 +617,16 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           icon: const Icon(Icons.add),
                           onPressed: () {
                             setState(() {
-                              if (procR != '') {
-                                procedimentos.add(procR!);
-                                _procController.text = '';
-                                procsControllers
-                                    .add(TextEditingController(text: procR));
-                                procR = '';
+                              try {
+                                if (procR != '') {
+                                  procedimentos.add(procR!);
+                                  _procController.text = '';
+                                  procsControllers
+                                      .add(TextEditingController(text: procR));
+                                  procR = '';
+                                }
+                              } catch (e) {
+                                print('Erro: $e');
                               }
                             });
                           },
