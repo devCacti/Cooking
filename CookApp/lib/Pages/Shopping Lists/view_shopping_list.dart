@@ -203,12 +203,36 @@ class _ViewListState extends State<ViewList> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 10,
                   child: Checkbox(
-                    value: allItemsChecked,
-                    onChanged: (value) {
+                    tristate: true,
+                    value: allItemsChecked
+                        ? true
+                        : widget.list.items!.any((item) => item.checked)
+                            ? null
+                            : false,
+                    onChanged: (bool? value) {
                       setState(() {
-                        allItemsChecked = value!;
-                        for (var item in widget.list.items!) {
-                          item.checked = value;
+                        if (value == null) {
+                          // Handle the indeterminate state if needed, for example, by checking all items
+                          allItemsChecked = true;
+                          for (var item in widget.list.items!) {
+                            item.checked = true;
+                          }
+                        }
+
+                        if (allItemsChecked) {
+                          allItemsChecked = false;
+                          for (var item in widget.list.items!) {
+                            item.checked = false;
+                          }
+                        } else if (value!) {
+                          allItemsChecked = true;
+                          for (var item in widget.list.items!) {
+                            item.checked = true;
+                          }
+                        } else {
+                          for (var item in widget.list.items!) {
+                            item.checked = true;
+                          }
                         }
                         updateListById(widget.list);
                       });

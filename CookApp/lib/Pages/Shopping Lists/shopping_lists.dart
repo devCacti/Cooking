@@ -90,6 +90,8 @@ class _ShoppingListsState extends State<ShoppingLists> {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(SnackBar(
                                       content: const Text(
+                                          // When there is an error with the database usually
+                                          //* when the id doesn't correspond to any list or the simple list is not empty but the main one is
                                           'Não foi possivel carregar a lista (ERRO conhecido - Erro 1)'),
                                       //dismiss button
                                       action: SnackBarAction(
