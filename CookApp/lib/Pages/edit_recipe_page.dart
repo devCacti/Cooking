@@ -954,106 +954,62 @@ class _EditFormState extends State<EditForm> {
                   ),
                   const SizedBox(height: 10),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      //! Sair Button
-                      Expanded(
-                        child: GestureDetector(
-                          onTapDown: (details) {
-                            setState(() {
-                              cancelColor = Colors.black12;
-                            });
-                          },
-                          onTapCancel: () {
-                            setState(() {
-                              cancelColor = Colors.white;
-                            });
-                          },
-                          onTapUp: (details) {
-                            setState(() {
-                              cancelColor = Colors.white;
-                            });
-                          },
-                          onTap: () => Navigator.maybePop(context),
-                          child: AnimatedContainer(
-                            decoration: BoxDecoration(
-                              color: cancelColor,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Colors.red,
-                              ),
-                            ),
-                            height: 50,
-                            alignment: Alignment.center,
-                            duration: const Duration(milliseconds: 250),
-                            child: const Text(
-                              'Sair',
-                              style: TextStyle(fontSize: 22, color: Colors.red),
-                            ),
-                          ),
+                      //! Close Button
+                      IconButton(
+                        onPressed: () => Navigator.maybePop(context),
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.red,
+                          size: 75,
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Expanded(
-                        child: GestureDetector(
-                          onTapDown: (details) {
-                            setState(() {
-                              saveColor = Colors.black12;
-                            });
-                          },
-                          onTapCancel: () {
-                            setState(() {
-                              saveColor = Colors.white;
-                            });
-                          },
-                          onTapUp: (details) {
-                            setState(() {
-                              saveColor = Colors.white;
-                            });
-                            if (_nameKey.currentState != null) {
-                              _nameKey.currentState!.validate();
-                            }
-                            if (_descKey.currentState != null) {
-                              _descKey.currentState!.validate();
-                            }
+                      //! Save Button
+                      IconButton(
+                        onPressed: (() {
+                          if (_nameKey.currentState != null) {
+                            _nameKey.currentState!.validate();
+                          }
+                          if (_descKey.currentState != null) {
+                            _descKey.currentState!.validate();
+                          }
 
-                            if (nome.isNotEmpty && desc.isNotEmpty) {
-                              editRecipeById(
-                                id,
-                                Recipe(
-                                  id: id,
-                                  foto: foto,
-                                  nome: nome,
-                                  descricao: desc,
-                                  ingredientes: ings,
-                                  ingTipo: ingsT,
-                                  ingQuant: ingsQ,
-                                  procedimento: procs,
-                                  tempo: tempo!,
-                                  porcoes: porcs!,
-                                  categoria: categ!,
-                                  favorita: fav,
-                                ),
-                              );
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: AnimatedContainer(
-                            decoration: BoxDecoration(
-                              color: saveColor,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Colors.green,
+                          if (nome.isNotEmpty && desc.isNotEmpty) {
+                            editRecipeById(
+                              id,
+                              Recipe(
+                                id: id,
+                                foto: foto,
+                                nome: nome,
+                                descricao: desc,
+                                ingredientes: ings,
+                                ingTipo: ingsT,
+                                ingQuant: ingsQ,
+                                procedimento: procs,
+                                tempo: tempo!,
+                                porcoes: porcs!,
+                                categoria: categ!,
+                                favorita: fav,
                               ),
-                            ),
-                            height: 50,
-                            alignment: Alignment.center,
-                            duration: const Duration(milliseconds: 250),
-                            child: const Text(
-                              'Guardar & Sair',
-                              style:
-                                  TextStyle(fontSize: 22, color: Colors.green),
-                            ),
-                          ),
+                            );
+                            Navigator.pop(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Por favor preencha todos os campos obrigatórios.',
+                                ),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        }),
+                        icon: const Icon(
+                          Icons.save,
+                          color: Colors.green,
+                          size: 75,
                         ),
                       ),
                     ],

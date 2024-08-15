@@ -13,7 +13,7 @@ Future<bool> showConfDialog(BuildContext context) {
         ),
       ),
       content: const Text(
-        'Tem a certeza que pretende sair?',
+        'Tem a certeza que pretende sair? Qualquer alteração não guardada será perdida.',
         style: TextStyle(
           fontSize: 16,
         ),

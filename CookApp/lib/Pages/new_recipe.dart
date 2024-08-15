@@ -183,7 +183,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     decoration: const InputDecoration(
                       labelText: 'Nome',
                       hintText: 'Escreva um nome',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
                     ),
                     onChanged: (value) {
                       _nameKey.currentState!.validate();
@@ -207,7 +209,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     decoration: const InputDecoration(
                       labelText: 'Descrição',
                       hintText: 'Escreva uma descrição',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
                     ),
                     onChanged: (value) {
                       _descKey.currentState!.validate();
@@ -359,7 +363,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           decoration: const InputDecoration(
                             labelText: 'Ingredientes',
                             hintText: 'Insira um ingrediente',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
                           onChanged: (value) {
                             ingsR = value;
@@ -451,6 +458,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       ),
                                       decoration: const InputDecoration(
                                         label: Text('Procedimento'),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
                                       ),
                                       textAlign: TextAlign.justify,
                                       onChanged: (value) {
@@ -595,7 +606,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           decoration: const InputDecoration(
                             labelText: 'Preparação',
                             hintText: 'Descreva o procedimento',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
                           onChanged: (value) {
                             setState(() {
@@ -671,7 +685,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       border: Border.all(
                         color: Colors.grey,
                       ),
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
                       children: [
@@ -757,12 +771,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.3,
                                 child: const Text(
-                                  'Porções:',
+                                  'Porções',
                                   style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.black54,
@@ -833,96 +847,130 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             ],
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const Text(
-                              'Categoria:',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.black54,
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: const Text(
+                                  'Categoria',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 25,
-                              height: 1,
-                            ),
-                            Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.grey,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 1,
+                                    ),
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.grey,
+                                      ),
+                                      child: const SizedBox(
+                                        width: 50,
+                                        height: 1,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 1,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              child: const SizedBox(
-                                width: 75,
-                                height: 1,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: DropdownButton<String>(
+                                  value: _selectedValue,
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 16.8,
+                                  ),
+                                  items: <String>[
+                                    'Geral',
+                                    'Bolos',
+                                    'Tartes',
+                                    'Sobremesas',
+                                    'Pratos'
+                                  ].map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedValue = newValue!;
+                                    });
+                                  },
+                                ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 25,
-                              height: 1,
-                            ),
-                            DropdownButton<String>(
-                              value: _selectedValue,
-                              style: const TextStyle(
-                                color: Colors.black54,
-                                fontSize: 18,
-                              ),
-                              items: <String>[
-                                'Geral',
-                                'Bolos',
-                                'Tartes',
-                                'Sobremesas',
-                                'Pratos'
-                              ].map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedValue = newValue!;
-                                });
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.only(bottom: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              const Text(
-                                'Favorita',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black54,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: const Text(
+                                  'Favorita',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                              const SizedBox(
-                                width: 30,
-                                height: 1,
-                              ),
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 1,
+                                    ),
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.grey,
+                                      ),
+                                      child: const SizedBox(
+                                        width: 50,
+                                        height: 1,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 20,
+                                      height: 1,
+                                    ),
+                                  ],
                                 ),
-                                child: const SizedBox(
-                                  width: 75,
-                                  height: 1,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                child: Checkbox(
+                                  value: favorita,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      favorita = value;
+                                    });
+                                  },
                                 ),
                               ),
-                              const SizedBox(
-                                width: 20,
-                                height: 1,
-                              ),
-                              Checkbox(
-                                value: favorita,
-                                onChanged: (value) {
-                                  setState(() {
-                                    favorita = value;
-                                  });
-                                },
-                              )
                             ],
                           ),
                         ),
