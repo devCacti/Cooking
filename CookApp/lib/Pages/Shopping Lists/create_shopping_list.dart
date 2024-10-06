@@ -194,6 +194,7 @@ class _CreateListState extends State<CreateList> {
                                     lojas.add(newStore);
                                     loja = newStore;
                                   });
+                                  // ignore: use_build_context_synchronously
                                   Navigator.of(context).pop();
                                 },
                               ),
