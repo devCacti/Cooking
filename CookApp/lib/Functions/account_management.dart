@@ -34,8 +34,17 @@ Future<void> login(String email, String password) async {
   http.StreamedResponse response = await request.send();
 
   if (response.statusCode == 200) {
-    var token = response.headers['token'];
-    loginToken = token!;
+    var cookies = response.headers['set-cookie'];
+    if (cookies != null) {
+      var cookieList = cookies.split(', ');
+      var appCookie = cookieList.firstWhere(
+        (cookie) => cookie.startsWith('.AspNet.ApplicationCookie'),
+        orElse: () => '');
+      if (appCookie.isNotEmpty) {
+      await _storage.write(key: "cookies", value: appCookie);
+      print("Cookies: $appCookie");
+      }
+    }
   } else {
     print(response.reasonPhrase);
   }
