@@ -139,8 +139,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                    left: 100.0,
-                    right: 100.0,
+                    left: 10.0,
+                    right: 10.0,
                     top: 32,
                     bottom: 32,
                   ),

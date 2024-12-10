@@ -2,12 +2,22 @@
 
 //import 'package:flutter/material.dart';
 
+// TODO: Remake the storage system
+//! Instead of using files, use a secure storage system
+//! At least sensitive data should be stored in a secure way
+//? https://pub.dev/packages/flutter_secure_storage
+//* The cookie is important to be stored in a secure way
+//* If possible storing the most ammount of user data in a secure way is the best option
+//* Recipes can be stored in files, but the user data should be stored in a secure way
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+
+//! This is the local server url
+String url = 'https://localhost:44322';
 
 class Login {
   String email;
@@ -26,45 +36,23 @@ class Login {
     //this.phone,
   });
 
-  // Do an API call to the server to login
-  //var request = http.MultipartRequest('POST', Uri.parse('https://localhost:44322/Account/AppLogin'));
-  //request.fields.addAll({
-  //		'email': 'bigmousetlr@gmail.com',
-  //		'password': '@Bigmouse1',
-  //		'remember me': 'true'
-  //});
-  //
-  //request.headers.addAll(headers);
-  //
-  //http.StreamedResponse response = await request.send();
-  //
-  //if (response.statusCode == 200) {
-  //		print(await response.stream.bytesToString());
-  //}
-  //else {
-  //		print(response.reasonPhrase);
-  //}
-
-  Future<bool> login(BuildContext context) async {
+  Future<bool> login() async {
     print('Logging in with email: $email and password: $password');
 
     // Do an API call to the server to login
-    var request = http.MultipartRequest('POST', Uri.parse('https://localhost:44322/Account/AppLogin'));
-    request.fields.addAll({
-      'email': email,
-      'password': password,
-      'remember me': 'true'
-    });
+    var request =
+        http.MultipartRequest('POST', Uri.parse('$url/Account/AppLogin'));
+    request.fields
+        .addAll({'email': email, 'password': password, 'remember me': 'true'});
 
     //request.headers.addAll(headers); // no headers needed, we only need to get the cookie from the response
 
     var response = await request.send();
     if (response.statusCode == 200) {
-      //print(" ---> ${await response.stream.bytesToString()}");
-
       // if success field is true, save the user data
-
       var responseBody = await response.stream.bytesToString();
+
+      // Check if it contains the success field and if it has the value true
       if (responseBody.contains('success":true')) {
         print('Login successful');
 
@@ -72,6 +60,7 @@ class Login {
         var cookie = response.headers['set-cookie'];
         print('Cookie: $cookie');
 
+        // Get the user data from the response
         var username = responseBody.split('username":"')[1].split('"')[0];
         var name = responseBody.split('name":"')[1].split('"')[0];
         var surname = responseBody.split('surname":"')[1].split('"')[0];
@@ -79,7 +68,14 @@ class Login {
 
         // Save the user data to user.json
         // ignore: use_build_context_synchronously
-        User user = User(cookie: cookie!, guid: guid, email: email, username: username, name: name, surname: surname, context: context);
+        User user = User(
+          cookie: cookie!,
+          guid: guid,
+          email: email,
+          username: username,
+          name: name,
+          surname: surname,
+        );
         user.save();
 
         return true;
@@ -105,7 +101,6 @@ class User {
   String? surname;
   int type = 3;
 
-  BuildContext? context;
   //String? phone; //! Not sent
 
   User({
@@ -115,9 +110,7 @@ class User {
     required this.username,
     required this.name,
     this.surname,
-    this.context,
     //this.phone,
-
   }) {
     checkFiles();
   }
@@ -141,7 +134,9 @@ class User {
     if (!file.existsSync() || file.lengthSync() == 0) {
       //print('File does not exist or is empty');
 
-      return User(cookie: '', guid: '', email: '', username: '', name: '', surname: '');
+      // Returns an empty user signaling that there is no user logged in or saved
+      return User(
+          cookie: '', guid: '', email: '', username: '', name: '', surname: '');
     }
 
     // Read the user data from user.json with json format using the fromJson method
@@ -149,16 +144,18 @@ class User {
     var decodedJson = jsonDecode(json);
     var user = User.fromJson(decodedJson);
 
+    // Returns the information about the user that is saved in the user.json file
     return User(
       cookie: user.cookie,
       guid: user.guid,
       email: user.email,
       username: user.username,
       name: user.name,
-      surname: user.surname
+      surname: user.surname,
     );
   }
 
+  // Get the user data from a json object
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       cookie: json['cookie'],
@@ -170,6 +167,7 @@ class User {
     );
   }
 
+  // Convert the user data to a json object
   Map<String, dynamic> toJson() {
     return {
       'cookie': cookie,
@@ -181,12 +179,11 @@ class User {
     };
   }
 
+  // Validates the cookie by sending a request to the server asking if it is valid, the server returns a response with a success field
   Future<bool> validateCookie() async {
     // Do an API call to the server to validate the cookie, the cookie is set to a header on the request and no body is needed
-    var request = http.Request('GET', Uri.parse('https://localhost:44322/Account/AmILoggedIn'));
-    request.headers.addAll({
-      'cookie': cookie
-    });
+    var request = http.Request('GET', Uri.parse('$url/Account/AmILoggedIn'));
+    request.headers.addAll({'cookie': cookie});
 
     try {
       var response = await request.send();
@@ -218,7 +215,8 @@ class User {
     file.deleteSync();
 
     print('Deleted user.json');
-    return User(cookie: '', guid: '', email: '', username: '', name: '', surname: '');
+    return User(
+        cookie: '', guid: '', email: '', username: '', name: '', surname: '');
   }
 
   void checkFiles() {
@@ -227,8 +225,7 @@ class User {
     if (!file.existsSync()) {
       print('File does not exist');
       createFiles();
-    }
-    else {
+    } else {
       //print('File exists');
     }
   }
@@ -245,7 +242,8 @@ class User {
   void save() {
     // Save the user data to user.json
     var file = File('user.json');
-    file.writeAsStringSync('{"cookie": "$cookie","guid": "$guid","email": "$email", "username": "$username", "name": "$name", "surname": "$surname"}');
+    file.writeAsStringSync(
+        '{"cookie": "$cookie","guid": "$guid","email": "$email", "username": "$username", "name": "$name", "surname": "$surname"}');
 
     print('Saved user data to user.json');
   }
@@ -287,14 +285,20 @@ class Recipe {
       title: json['Title'],
       description: json['Description'] ?? '',
       bridges: (json['Ingredients'] is List)
-        ? (json['Ingredients'] as List<dynamic>?)
-            ?.map<IngBridge>((bridge) => IngBridge.fromJson(bridge))
-            .toList()
-        : [IngBridge.fromJson(json['Ingredients'])],
+          ? (json['Ingredients'] as List<dynamic>?)
+              ?.map<IngBridge>((bridge) => IngBridge.fromJson(bridge))
+              .toList()
+          : [IngBridge.fromJson(json['Ingredients'])],
       steps: json['Steps'].toString(),
-      time: (json['Time'] is int) ? (json['Time'] as int).toDouble() : (json['Time'] ?? 0.0) as double,
-      servings: (json['Portions'] is int) ? (json['Portions'] as int).toDouble() : (json['Portions'] ?? 0.0) as double,
-      type: (json['Type'] is int) ? json['Type'] : (json['Type'] as double).toInt(),
+      time: (json['Time'] is int)
+          ? (json['Time'] as int).toDouble()
+          : (json['Time'] ?? 0.0) as double,
+      servings: (json['Portions'] is int)
+          ? (json['Portions'] as int).toDouble()
+          : (json['Portions'] ?? 0.0) as double,
+      type: (json['Type'] is int)
+          ? json['Type']
+          : (json['Type'] as double).toInt(),
       //isAllowed: json['isAllowed'],
       isPublic: json['isPublic'],
     );
@@ -316,7 +320,6 @@ class Recipe {
     };
   }
 
-
   bool saveAsNew() {
     // save the recipe to the application files
     String name = 'myrecipe$id.json';
@@ -327,7 +330,7 @@ class Recipe {
     }
 
     file.writeAsStringSync(jsonEncode(this));
-  
+
     return true;
   }
 
@@ -414,8 +417,9 @@ class Recipe {
       // request to /Recipes/RecipeImage
       // The image is received as an actual image file, not a string
       // To receive it, a id needs to be sent in the arguments
-      // Example: https://localhost:44322/Recipes/RecipeImage?id=630fd198-beba-4f57-944d-8eb7907d8f65
-      var request = http.Request('GET', Uri.parse('https://localhost:44322/Recipes/RecipeImage?id=$id'));
+      // Example: $url/Recipes/RecipeImage?id=630fd198-beba-4f57-944d-8eb7907d8f65
+      var request =
+          http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
 
       try {
         var response = await request.send();
@@ -461,95 +465,19 @@ class Recipe {
   }
 }
 
-  Future<File> loadImage(String id) async {
-    // Load the image from the application files
-    String name = '${id}main.jpg';
+Future<File> loadImage(String id) async {
+  // Load the image from the application files
+  String name = '${id}main.jpg';
 
-    var file = File(name);
-    if (!file.existsSync()) {
-      // If the file does not exist, get the image from the server
-      // request to /Recipes/RecipeImage
-      // The image is received as an actual image file, not a string
-      // To receive it, a id needs to be sent in the arguments
-      // Example: https://localhost:44322/Recipes/RecipeImage?id=630fd198-beba-4f57-944d-8eb7907d8f65
-      var request = http.Request('GET', Uri.parse('https://localhost:44322/Recipes/RecipeImage?id=$id'));
-
-      try {
-        var response = await request.send();
-        if (response.statusCode == 200) {
-          //print(" ---> ${await response.stream.bytesToString()}");
-
-          // if success field is true, save the user data
-          var responseBody = await response.stream.bytesToString();
-          if (responseBody.contains('"error":""')) {
-            print('Got image');
-
-            // Save the image to the application files
-            file.writeAsBytesSync(responseBody.codeUnits);
-
-            return file;
-          } else {
-            print('Failed to get image');
-            print('Response: $responseBody');
-            return file;
-          }
-        } else {
-          print(" ---> (0008) ${response.reasonPhrase}");
-          return file;
-        }
-      } catch (e) {
-        print('Error: $e');
-        return file;
-      }
-    }
-    return file;
-  }
-
-
-  Future<Image> getRecipeImage(String id, Map<String,Image> imageCache) async {
-    var request = http.Request('GET', Uri.parse('https://localhost:44322/Recipes/RecipeImage?id=$id'));
-    request.headers.addAll({
-      'Cookie': User.getInstance().cookie
-    });
-
-    if (imageCache.containsKey(id)) {
-      return imageCache[id]!;
-    }
-
-    try {
-      var response = await request.send();
-      if (response.statusCode == 200) {
-        var bytes = await response.stream.toBytes();
-        var contentType = response.headers['content-type'];
-
-        if (contentType != null && contentType.startsWith('image/')) {
-          // Save the image to the application files
-          //! var file = File('images/$id.jpg');
-          //! file.writeAsBytesSync(bytes);
-
-          //?imageCache[id] = Image.memory(bytes);
-
-          return Image.memory(bytes);
-        } else {
-          print('Failed to get image: Invalid content type');
-          return Image.asset('assets/images/placeholder.png');
-        }
-      } else {
-        print(" ---> (0009) ${response.reasonPhrase}");
-        return Image.asset('assets/images/placeholder.png');
-      }
-    } catch (e) {
-      print('Error: $e');
-      return Image.asset('assets/images/placeholder.png');
-    }
-  }
-
-  Future<List<Recipe>> getMyRecipes() async {
-    // Get the user's recipes from the server
-    var request = http.Request('GET', Uri.parse('https://localhost:44322/Recipes/GetMyRecipes'));
-    request.headers.addAll({
-      'cookie': User.getInstance().cookie
-    });
+  var file = File(name);
+  if (!file.existsSync()) {
+    // If the file does not exist, get the image from the server
+    // request to /Recipes/RecipeImage
+    // The image is received as an actual image file, not a string
+    // To receive it, a id needs to be sent in the arguments
+    // Example: $url/Recipes/RecipeImage?id=630fd198-beba-4f57-944d-8eb7907d8f65
+    var request =
+        http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
 
     try {
       var response = await request.send();
@@ -559,50 +487,121 @@ class Recipe {
         // if success field is true, save the user data
         var responseBody = await response.stream.bytesToString();
         if (responseBody.contains('"error":""')) {
-          print('Got recipes');
+          print('Got image');
 
-          // Parse the JSON response and return the recipes
-          var json = jsonDecode(responseBody);
-          var recipeinfos = json['recipes'];
+          // Save the image to the application files
+          file.writeAsBytesSync(responseBody.codeUnits);
 
-          print(recipeinfos);
-
-          // TODO: Complete this function in order to return a list of recipes
-          List<Recipe> recipeList = [];
-          for (var recipe in recipeinfos) {
-            try {
-              Recipe rcp = Recipe.fromJson(recipe);
-
-              print('Recipe: $rcp');
-
-              for (var ingredient in recipe['Ingredients']) {
-                var ing = Ingredient.fromJson(ingredient);
-                ing.save();
-              }
-
-              recipeList.add(rcp);
-            } catch (e) {
-              print('Error: $e');
-            }
-
-          }
-
-          return recipeList;
+          return file;
         } else {
-          print('Failed to get recipes');
+          print('Failed to get image');
           print('Response: $responseBody');
-          return [];
+          return file;
         }
       } else {
-        print(" ---> (0011) ${response.reasonPhrase}");
-        return [];
+        print(" ---> (0008) ${response.reasonPhrase}");
+        return file;
       }
     } catch (e) {
       print('Error: $e');
-      return [];
+      return file;
     }
   }
+  return file;
+}
 
+Future<Image> getRecipeImage(String id, Map<String, Image> imageCache) async {
+  var request =
+      http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
+  request.headers.addAll({'Cookie': User.getInstance().cookie});
+
+  if (imageCache.containsKey(id)) {
+    return imageCache[id]!;
+  }
+
+  try {
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      var bytes = await response.stream.toBytes();
+      var contentType = response.headers['content-type'];
+
+      if (contentType != null && contentType.startsWith('image/')) {
+        // Save the image to the application files
+        //! var file = File('images/$id.jpg');
+        //! file.writeAsBytesSync(bytes);
+
+        //?imageCache[id] = Image.memory(bytes);
+
+        return Image.memory(bytes);
+      } else {
+        print('Failed to get image: Invalid content type');
+        return Image.asset('assets/images/placeholder.png');
+      }
+    } else {
+      print(" ---> (0009) ${response.reasonPhrase}");
+      return Image.asset('assets/images/placeholder.png');
+    }
+  } catch (e) {
+    print('Error: $e');
+    return Image.asset('assets/images/placeholder.png');
+  }
+}
+
+Future<List<Recipe>> getMyRecipes() async {
+  // Get the user's recipes from the server
+  var request = http.Request('GET', Uri.parse('$url/Recipes/GetMyRecipes'));
+  request.headers.addAll({'cookie': User.getInstance().cookie});
+
+  try {
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      //print(" ---> ${await response.stream.bytesToString()}");
+
+      // if success field is true, save the user data
+      var responseBody = await response.stream.bytesToString();
+      if (responseBody.contains('"error":""')) {
+        print('Got recipes');
+
+        // Parse the JSON response and return the recipes
+        var json = jsonDecode(responseBody);
+        var recipeinfos = json['recipes'];
+
+        print(recipeinfos);
+
+        // TODO: Complete this function in order to return a list of recipes
+        List<Recipe> recipeList = [];
+        for (var recipe in recipeinfos) {
+          try {
+            Recipe rcp = Recipe.fromJson(recipe);
+
+            print('Recipe: $rcp');
+
+            for (var ingredient in recipe['Ingredients']) {
+              var ing = Ingredient.fromJson(ingredient);
+              ing.save();
+            }
+
+            recipeList.add(rcp);
+          } catch (e) {
+            print('Error: $e');
+          }
+        }
+
+        return recipeList;
+      } else {
+        print('Failed to get recipes');
+        print('Response: $responseBody');
+        return [];
+      }
+    } else {
+      print(" ---> (0011) ${response.reasonPhrase}");
+      return [];
+    }
+  } catch (e) {
+    print('Error: $e');
+    return [];
+  }
+}
 
 class Ingredient {
   String id;
@@ -691,12 +690,14 @@ class IngBridge {
     return IngBridge(
       id: json['GUID'],
       ingredient: json['IngGUID'],
-      amount: (json['Amount'] is int) ? (json['Amount'] as int).toDouble() : (json['Amount'] ?? 0.0) as double,
+      amount: (json['Amount'] is int)
+          ? (json['Amount'] as int).toDouble()
+          : (json['Amount'] ?? 0.0) as double,
       customUnit: json['CustomUnit'],
     );
   }
 
-    // Override equality operator to compare based on the `ingredient` field
+  // Override equality operator to compare based on the `ingredient` field
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -707,14 +708,12 @@ class IngBridge {
   int get hashCode => ingredient.hashCode;
 }
 
-
 // Other functions
 
 Future<Recipe> fetchRecipe(String id) async {
-
   // Check if there is a file with the recipe id
   var file = File('recipes/$id.json');
-  
+
   if (!Directory("recipes").existsSync()) {
     Directory("recipes").createSync();
   }
@@ -730,15 +729,22 @@ Future<Recipe> fetchRecipe(String id) async {
 
       // Return the recipe
       return recipe;
-    }
-    catch (e) {
+    } catch (e) {
       print('Error fetching the recipe $id: $e');
-      return Recipe(id: id, title: 'Recipe', description: 'Description', steps: 'Steps', time: 0.0, servings: 0.0, type: 0, isPublic: false);
+      return Recipe(
+          id: id,
+          title: 'Recipe',
+          description: 'Description',
+          steps: 'Steps',
+          time: 0.0,
+          servings: 0.0,
+          type: 0,
+          isPublic: false);
     }
-  }
-  else {
+  } else {
     // Fetch the recipe from the server
-    var request = http.Request('GET', Uri.parse('https://localhost:44322/Recipes/GetRecipe?id=$id'));
+    var request =
+        http.Request('GET', Uri.parse('$url/Recipes/GetRecipe?id=$id'));
 
     try {
       var response = await request.send();
@@ -786,7 +792,6 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
 
   // Check if the file exists and check if the directory exists
   if (file.existsSync()) {
-
     try {
       // Read the contents
       var json = file.readAsStringSync();
@@ -824,20 +829,16 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
       }
 
       return ingredientList;
-
-    }
-    catch (e) {
+    } catch (e) {
       print('Error fetching the ingredient $id: $e');
       return [Ingredient(id: id, name: 'Ingredient', unit: 'Unit')];
     }
-  }
-  else {
+  } else {
     // Fetch the recipe from the server
     ////~TODO: Server is refusing to allow the request, always returning 404 (Not Found)
-    var request = http.Request('GET', Uri.parse('https://localhost:44322/Recipes/GetIngredientsByRecipe?Id=$id'));
-    request.headers.addAll({
-      'cookie': User.getInstance().cookie
-    });
+    var request = http.Request(
+        'GET', Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$id'));
+    request.headers.addAll({'cookie': User.getInstance().cookie});
 
     print("Cookie: ${User.getInstance().cookie}");
 
@@ -858,7 +859,8 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
           // The list is then mapped to a list of Ingredient objects
           var ingredients = json['ingredients'];
 
-          List<Ingredient> ingredientList = List<Ingredient>.empty(growable: true);
+          List<Ingredient> ingredientList =
+              List<Ingredient>.empty(growable: true);
 
           for (var ingredient in ingredients) {
             try {
