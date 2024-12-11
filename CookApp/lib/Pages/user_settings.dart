@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../Functions/data_structures.dart';
 import 'login_page.dart';
 import 'register_page.dart';
+import '../Functions/show_conf_dialog.dart';
 
 class UserSettings extends StatefulWidget {
   const UserSettings({Key? key}) : super(key: key);
@@ -15,6 +16,8 @@ class UserSettings extends StatefulWidget {
 
 class _UserSettingsState extends State<UserSettings> {
   User user = User.getInstance();
+
+  String page = "details";
 
   bool isLogged = false;
 
@@ -46,35 +49,56 @@ class _UserSettingsState extends State<UserSettings> {
     });
 
     final drawerItems = isLogged
-        ? ListView(
+        ? Column(
             children: [
               drawerHeader,
+              //* Likes, Comments and Visibility
               ListTile(
-                title: const Text("Item 1"),
+                title: const Text("Gostos"),
                 leading: const Icon(Icons.favorite),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                title: const Text("Item 2"),
+                title: const Text("Comentários"),
                 leading: const Icon(Icons.comment),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
+              ListTile(
+                title: const Text("Visibilidade"),
+                leading: const Icon(Icons.remove_red_eye),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+
               //* Divider
               const Divider(),
-              //* Change isLogged state
+              //* Account Details
               ListTile(
-                title: isLogged
-                    ? const Text("Simular Anónimo")
-                    : const Text("Simular Logado"),
-                leading: const Icon(Icons.person),
+                title: const Text("Detalhes da Conta"),
+                leading: const Icon(Icons.account_circle),
                 onTap: () {
-                  setState(() {
-                    isLogged = !isLogged;
-                  });
+                  Navigator.pop(context);
+                },
+              ),
+              //* Settings
+              ListTile(
+                title: const Text("Definições"),
+                leading: const Icon(Icons.settings),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              //* Notifications
+              ListTile(
+                title: const Text("Notificações"),
+                leading: const Icon(Icons.notifications),
+                onTap: () {
+                  Navigator.pop(context);
                 },
               ),
               //* Divider
@@ -88,6 +112,41 @@ class _UserSettingsState extends State<UserSettings> {
                   Navigator.pop(context); // Close the drawer
                   Navigator.pop(context); // Close the page
                 },
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ListTile(
+                    title: const Text("Terminar sessão"),
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Colors.red,
+                    ),
+                    onTap: () async {
+                      await showConfDialog(
+                        context,
+                        "Tem a certeza que quer terminar sessão?",
+                      ).then((value) {
+                        setState(() {
+                          //? This "Sets the state" although it doesn't update anything
+                          //* If the user confirms to log out
+                          if (value) {
+                            // Sets the user as not logged in
+                            isLogged = false;
+
+                            // 'Deletes' the user, only in the files
+                            User.delete();
+
+                            // Updates the user variable
+                            user = User.getInstance();
+                          }
+                        });
+                      }).then(
+                        (value) => setState,
+                      ); //? This triggers the setState method so that the ui updates
+                    },
+                  ),
+                ),
               ),
             ],
           )
@@ -105,7 +164,10 @@ class _UserSettingsState extends State<UserSettings> {
                     MaterialPageRoute(
                       builder: (context) => const LoginPage(),
                     ),
-                  );
+                  ).then((value) => setState(() {
+                        user = User.getInstance();
+                        isLogged = user.guid != "";
+                      }));
                 },
               ),
               ListTile(
@@ -119,20 +181,6 @@ class _UserSettingsState extends State<UserSettings> {
                       builder: (context) => const RegisterPage(),
                     ),
                   );
-                },
-              ),
-              //* Divider
-              const Divider(),
-              //* Change isLogged state
-              ListTile(
-                title: isLogged
-                    ? const Text("Simular Anónimo")
-                    : const Text("Simular Logado"),
-                leading: const Icon(Icons.person),
-                onTap: () {
-                  setState(() {
-                    isLogged = !isLogged;
-                  });
                 },
               ),
               //* Divider
@@ -151,7 +199,7 @@ class _UserSettingsState extends State<UserSettings> {
           );
     return Scaffold(
       appBar: AppBar(
-        title: const Text("User Settings"),
+        title: const Text("A Minha Conta"),
       ),
       body: Semantics(
         container: true,

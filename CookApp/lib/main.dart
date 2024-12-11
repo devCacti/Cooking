@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   textAlign: TextAlign.center,
                 ),
                 subtitle: Text(
-                  'Esta aplicação contém alguns problemas conhecidos!',
+                  'Esta aplicação contém alguns problemas desconhecidos!',
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
