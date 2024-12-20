@@ -1,4 +1,4 @@
-import '../Classes/user_data.dart';
+import '../Functions/data_structures.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -241,11 +241,17 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() {
                             _isRegistering = true;
                           });
-                          final String name = _userNameController.text;
-                          final String email = _emailController.text;
-                          final String password = _passwordController.text;
-                          final bool isRegistered =
-                              await UserData.register(name, email, password);
+                          final Register newUser = Register(
+                            name: _nameController.text,
+                            surname: _surnamesController.text,
+                            username: _userNameController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            confirmPassword: _confPasswordController.text,
+                          );
+
+                          final bool isRegistered = await newUser.register();
+
                           setState(() {
                             _isRegistering = false;
                           });

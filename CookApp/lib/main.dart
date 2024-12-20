@@ -1,8 +1,8 @@
-import 'package:cooking_app/Pages/Shopping%20Lists/shopping_lists.dart';
 import 'package:flutter/material.dart';
-import 'Pages/details_recipes_page.dart';
+import '../../Pages/Shopping%20Lists/shopping_lists.dart';
+import 'Functions/data_structures.dart';
+import 'Pages/Recipe Pages/recipe_detail.dart';
 import 'Pages/user_settings.dart';
-import 'Classes/receita.dart';
 import 'Pages/new_recipe.dart';
 import 'Pages/list_recipes.dart';
 import 'Pages/list_favoritas.dart';
@@ -18,13 +18,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cook',
+      title: 'Cooking',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
       debugShowCheckedModeBanner: false,
       home: const MyHomePage(
-        title: 'Miau',
+        title: 'Cooking',
       ),
     );
   }
@@ -40,12 +40,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<Recipe> recommended = [];
+  bool rLoaded = false;
+
+  //TODO: Load the recommended recipes
+  //? The recommended Recipes are the ones from the getPopularRecipes() Future<List<Recipes>> function
+
+  @override
+  void initState() {
+    super.initState();
+
+    getPopularRecipes().then((value) {
+      setState(() {
+        recommended = value;
+        rLoaded = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 40),
+          const SizedBox(height: 10),
           //*Early Access
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
@@ -54,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 borderRadius: BorderRadius.circular(10),
                 color: Colors.grey[200],
               ),
+              // Early Access Warning
               child: const ListTile(
                 title: Text(
                   'ACESSO ANTECIPADO',
@@ -79,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           const Padding(
-            padding: EdgeInsets.only(top: 26, bottom: 8),
+            padding: EdgeInsets.only(top: 10, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -112,183 +131,94 @@ class _MyHomePageState extends State<MyHomePage> {
             endIndent: 50,
             color: Colors.black,
           ),
-          Expanded(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8),
-                  child: FractionallySizedBox(
-                    alignment: Alignment.center,
-                    widthFactor: 0.5,
-                    child: InkWell(
+
+          //* Recommended Recipes
+          Padding(
+              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    child: const Text(
+                      'Tendências',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    height: 1,
+                    child: const Divider(
+                      color: Colors.black45,
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.1,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            rLoaded = false;
+                          });
+                          getPopularRecipes().then((value) {
+                            setState(() {
+                              recommended = value;
+                              rLoaded = true;
+                            });
+                          });
+                        },
+                        icon: const Icon(Icons.refresh),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+
+          recommended.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        rLoaded
+                            ? recommended.isEmpty
+                                ? const Text(
+                                    'Não existem receitas recomendadas')
+                                : const Text(
+                                    'Aqui estão as receitas recomendadas')
+                            : const CircularProgressIndicator(),
+                        const Text(
+                          'Este processo tem problemas de execução',
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: ListView.builder(itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(recommended[index].title),
+                      subtitle: Text(recommended[index].description),
                       onTap: () {
-                        Recipe receita = Recipe(
-                          id: 0,
-                          foto: null,
-                          nome: "Massa cozida",
-                          descricao:
-                              "Preparação de massa para apenas uma pessoa.",
-                          ingredientes: [
-                            "Massa",
-                            "Água",
-                            "Óleo",
-                            "Sal grosso",
-                            "Panela",
-                          ],
-                          ingTipo: [
-                            "g",
-                            "L",
-                            "mL",
-                            "colh.",
-                            "unid.",
-                          ],
-                          ingQuant: [
-                            20,
-                            0.7,
-                            5,
-                            0.5,
-                            1,
-                          ],
-                          procedimento: [
-                            "Meter o Litro de água dentro da panela.",
-                            "Ligar o fogão no máximo.",
-                            "Meter um fio de óleo e a metade de colher de sal, colher não maior que o pulgar.",
-                            "Esperar que a água comece a borbulhar.",
-                            "Colocar a massa. (Medir fazendo um circulo com o indicador e o pulgar).",
-                          ],
-                          tempo: 20,
-                          porcoes: 1,
-                          categoria: "Pratos",
-                          favorita: false,
-                        );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailsForm(
-                              detailRecipe: receita,
+                            builder: (context) => RecipeDetail(
+                              recipe: recommended[index],
                             ),
                           ),
                         );
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.black12,
-                        ),
-                        height: MediaQuery.of(context).size.width / 2,
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.dinner_dining,
-                                    size: 75,
-                                  ),
-                                  Divider(
-                                    color: Colors.black,
-                                    indent: 20,
-                                    endIndent: 20,
-                                  ),
-                                  Text(
-                                    'Massa',
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    'Preparação de massa para apenas uma pessoa.',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    maxLines: 1,
-                                    textAlign: TextAlign.justify,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                    );
+                  }),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Divider(
-                  indent: 100,
-                  endIndent: 100,
-                  color: Colors.black,
-                ),
-                const Text(
-                  'Sobre',
-                  style: TextStyle(fontSize: 36, height: 2),
-                  textAlign: TextAlign.center,
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Bem vindo à minha aplicação de receitas! O meu nome é Tiago Laim e sou um estudante que adora programar e estou entusiasmado por partilhar o meu primeiro projeto consigo.',
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                          fontSize: 22,
-                          height: 1.75,
-                        ),
-                      ),
-                      Text(
-                        '\nEnquanto pensava em ideias para a minha PAP, a minha mãe perguntou-me se conseguia criar uma aplicação onde pudesse guardar as suas próprias receitas.',
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                          fontSize: 22,
-                          height: 1.75,
-                        ),
-                      ),
-                      Text(
-                        '\nE assim nasceu esta aplicação!',
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                          fontSize: 22,
-                          height: 1.75,
-                        ),
-                      ),
-                      Text(
-                        '\nEsta aplicação tem como objetivo dar-lhe a oportunidade de adicionar facilmente as suas receitas à sua coleção e aceda a elas a qualquer momento, em qualquer lugar. E também para que mantenha todas as suas receitas favoritas organizadas num só lugar e nunca se esqueça de como fazer aquele prato especial novamente.',
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                          fontSize: 22,
-                          height: 1.75,
-                        ),
-                      ),
-                      Text(
-                        '\nEspero que goste de usar esta aplicação para acompanhar todas as suas criações culinárias!',
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                          fontSize: 22,
-                          height: 1.75,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40,
-                        width: 100,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
@@ -296,6 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            //Shopping List Button
             IconButton(
               icon: const Icon(Icons.list),
               tooltip: 'Lista de Compras',
@@ -309,6 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             ),
+            //Recipes       Button
             IconButton(
               icon: const Icon(Icons.book_outlined),
               tooltip: 'Receitas',
@@ -322,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             ),
-            const SizedBox(),
+            //Favourites    Button
             IconButton(
               icon: const Icon(Icons.favorite_outline),
               tooltip: 'Favoritas',
@@ -336,9 +268,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             ),
+            //Profile       Button
             IconButton(
-              icon: const Icon(Icons.settings_outlined),
-              tooltip: 'Definições',
+              icon: const Icon(Icons.account_circle_outlined),
+              tooltip: 'Perfil',
               iconSize: 35,
               onPressed: () {
                 Navigator.push(

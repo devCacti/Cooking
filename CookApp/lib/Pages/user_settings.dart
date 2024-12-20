@@ -103,6 +103,24 @@ class _UserSettingsState extends State<UserSettings> {
               ),
               //* Divider
               const Divider(),
+              //* Help
+              ListTile(
+                title: const Text("Ajuda"),
+                leading: const Icon(Icons.help),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              //* About
+              ListTile(
+                title: const Text("Sobre"),
+                leading: const Icon(Icons.info),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              //* Divider
+              const Divider(),
               //* Go back button
               ListTile(
                 title: const Text("Voltar"),

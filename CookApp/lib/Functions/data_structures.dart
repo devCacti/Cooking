@@ -10,8 +10,11 @@
 //* If possible storing the most ammount of user data in a secure way is the best option
 //* Recipes can be stored in files, but the user data should be stored in a secure way
 
-import 'dart:convert';
+// TODO: Add the number of likes property to the recipe class and to the recipe json enconder and decoder
+//? The server returns a property per recipe called NumLikes, this property should be added to the recipe class
 
+//* Imports
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -86,6 +89,90 @@ class Login {
       }
     } else {
       print(" ---> (0002) ${response.reasonPhrase}");
+      return false;
+    }
+  }
+}
+
+class Register {
+  String email;
+  String username;
+  String password;
+  String confirmPassword;
+  String name;
+  String? surname;
+  //String? phone; //! Not sent
+
+  Register({
+    required this.email,
+    required this.username,
+    required this.password,
+    required this.confirmPassword,
+    required this.name,
+    this.surname,
+    //this.phone,
+  });
+
+  Future<bool> register() async {
+    if (password != confirmPassword) {
+      print('Passwords do not match');
+      return false;
+    }
+    print('Registering with email: $email, username: $username, name: $name');
+
+    // Do an API call to the server to register
+    var request =
+        http.MultipartRequest('POST', Uri.parse('$url/Account/AppRegister'));
+    request.fields.addAll({
+      'email': email,
+      'username': username,
+      'password': password,
+      'name': name,
+      'surname': surname ?? '',
+      //'phone': phone ?? '',
+    });
+
+    //request.headers.addAll(headers); // no headers needed, we only need to get the cookie from the response
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      // if success field is true, save the user data
+      var responseBody = await response.stream.bytesToString();
+
+      // Check if it contains the success field and if it has the value true
+      if (responseBody.contains('success":true')) {
+        print('Register successful');
+
+        // Get the cookie from the response
+        var cookie = response.headers['set-cookie'];
+        print('Cookie: $cookie');
+
+        // Get the user data from the response
+        var username = responseBody.split('username":"')[1].split('"')[0];
+        var name = responseBody.split('name":"')[1].split('"')[0];
+        var surname = responseBody.split('surname":"')[1].split('"')[0];
+        var guid = responseBody.split('id":"')[1].split('"')[0];
+
+        // Save the user data to user.json
+        // ignore: use_build_context_synchronously
+        User user = User(
+          cookie: cookie!,
+          guid: guid,
+          email: email,
+          username: username,
+          name: name,
+          surname: surname,
+        );
+        user.save();
+
+        return true;
+      } else {
+        print('Register failed');
+        print('Response: $responseBody');
+        return false;
+      }
+    } else {
+      print(" ---> (0003) ${response.reasonPhrase}");
       return false;
     }
   }
@@ -262,6 +349,8 @@ class Recipe {
   int type = 0;
   bool isAllowed = false;
   bool isPublic = false;
+  String authorId = '';
+  int likes = 0;
 
   Recipe({
     required this.id,
@@ -276,6 +365,8 @@ class Recipe {
     this.type = 0,
     this.isAllowed = false,
     this.isPublic = false,
+    this.authorId = '',
+    required this.likes,
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
@@ -301,6 +392,8 @@ class Recipe {
           : (json['Type'] as double).toInt(),
       //isAllowed: json['isAllowed'],
       isPublic: json['isPublic'],
+      authorId: json['AuthorGUID'],
+      likes: json['NumLikes'],
     );
   }
 
@@ -317,6 +410,8 @@ class Recipe {
       'type': type,
       'isAllowed': isAllowed,
       'isPublic': isPublic,
+      'authorId': authorId,
+      'likes': likes,
     };
   }
 
@@ -461,6 +556,8 @@ class Recipe {
       servings: 0.0,
       type: 0,
       isPublic: false,
+      authorId: '',
+      likes: 0,
     );
   }
 }
@@ -603,6 +700,126 @@ Future<List<Recipe>> getMyRecipes() async {
   }
 }
 
+Future<List<Recipe>> getSearchRecipes(String search, int type) async {
+  // Get the user's recipes from the server
+  var request = http.Request('GET', Uri.parse('$url/Recipes/Search'));
+  request.headers.addAll({'cookie': User.getInstance().cookie});
+  request.bodyFields = {'search': search, 'type': type.toString()};
+
+  List<Recipe> recipeList = [];
+
+  try {
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      //print(" ---> ${await response.stream.bytesToString()}");
+
+      // if success field is true, save the user data
+      var responseBody = await response.stream.bytesToString();
+      if (responseBody.contains('"error":""')) {
+        print('Got recipes');
+
+        // Parse the JSON response and return the recipes
+        var json = jsonDecode(responseBody);
+        var recipeinfos = json['recipes'];
+
+        for (var recipe in recipeinfos) {
+          try {
+            // Creates a temporary recipe object
+            Recipe rcp = Recipe.fromJson(recipe);
+
+            print('Recipe: $rcp');
+
+            //! For now it won't save the ingredients, it will load them every time
+            //for (var ingredient in recipe['Ingredients']) {
+            //  var ing = Ingredient.fromJson(ingredient);
+            //  ing.save();
+            //}
+
+            // Adds the recipe object to the list
+            recipeList.add(rcp);
+          } catch (e) {
+            print('Error: $e');
+          }
+        }
+        // Prints the information about the recipes on the console for debugging
+        print(recipeinfos);
+
+        // Returns the list of recipes
+        return recipeList;
+      }
+    } else {
+      print(" ---> (0012) ${response.reasonPhrase}");
+      return List<Recipe>.empty();
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+  return List<Recipe>.empty();
+}
+
+// Gets the 10 most popular recipes
+//? [int page = 0] -> Is a optional parameter, if nothing is set, it will ask for the first page
+//? Every page has 10 recipes and starts at 10 * page
+//? In programming, 0 is generally the first page
+//? However, in terms of user interface, 1 is the first page and the page would start at 10 * page + 1
+Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
+  // Get the user's recipes from the server
+  var request = http.Request('GET', Uri.parse('$url/Recipes/GetPopular'));
+  request.headers.addAll({'cookie': User.getInstance().cookie});
+  request.bodyFields = {'page': page.toString()};
+
+  List<Recipe> recipeList = [];
+
+  try {
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      //print(" ---> ${await response.stream.bytesToString()}");
+
+      // if success field is true, save the user data
+      var responseBody = await response.stream.bytesToString();
+      if (responseBody.contains('"error":""')) {
+        print('Got recipes');
+
+        // Parse the JSON response and return the recipes
+        var json = jsonDecode(responseBody);
+        var recipeinfos = json['recipes'];
+
+        print(recipeinfos);
+        for (var recipe in recipeinfos) {
+          try {
+            // Creates a temporary recipe object
+            Recipe rcp = Recipe.fromJson(recipe);
+
+            print('Recipe: $rcp');
+
+            //! For now it won't save the ingredients, it will load them every time
+            //for (var ingredient in recipe['Ingredients']) {
+            //  var ing = Ingredient.fromJson(ingredient);
+            //  ing.save();
+            //}
+
+            // Adds the recipe object to the list
+            recipeList.add(rcp);
+          } catch (e) {
+            print('Error: $e');
+          }
+        }
+        // Prints the information about the recipes on the console for debugging
+        print(recipeinfos);
+
+        // Returns the list of recipes
+        return recipeList;
+      }
+    } else {
+      print(" ---> (0013) ${response.reasonPhrase}");
+      return List<Recipe>.empty();
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+  return List<Recipe>.empty();
+}
+
 class Ingredient {
   String id;
   String name;
@@ -731,15 +948,7 @@ Future<Recipe> fetchRecipe(String id) async {
       return recipe;
     } catch (e) {
       print('Error fetching the recipe $id: $e');
-      return Recipe(
-          id: id,
-          title: 'Recipe',
-          description: 'Description',
-          steps: 'Steps',
-          time: 0.0,
-          servings: 0.0,
-          type: 0,
-          isPublic: false);
+      return Recipe.defaultR();
     }
   } else {
     // Fetch the recipe from the server
