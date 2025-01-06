@@ -134,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           //* Recommended Recipes
           Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 10),
+              padding: const EdgeInsets.only(left: 40, right: 32, top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -191,33 +191,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                 : const Text(
                                     'Aqui estão as receitas recomendadas')
                             : const CircularProgressIndicator(),
-                        const Text(
-                          'Este processo tem problemas de execução',
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ),
                       ],
                     ),
                   ),
                 )
               : Expanded(
-                  child: ListView.builder(itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(recommended[index].title),
-                      subtitle: Text(recommended[index].description),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RecipeDetail(
-                              recipe: recommended[index],
+                  child: ListView.builder(
+                    itemCount: recommended.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(recommended[index].title),
+                        subtitle: Text(recommended[index].description),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RecipeDetail(
+                                recipe: recommended[index],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  }),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
         ],
       ),

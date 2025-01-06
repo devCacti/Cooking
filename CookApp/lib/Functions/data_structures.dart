@@ -392,7 +392,7 @@ class Recipe {
           : (json['Type'] as double).toInt(),
       //isAllowed: json['isAllowed'],
       isPublic: json['isPublic'],
-      authorId: json['AuthorGUID'],
+      authorId: json['AuthorGUID'], //! ??
       likes: json['NumLikes'],
     );
   }
@@ -790,8 +790,6 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
             // Creates a temporary recipe object
             Recipe rcp = Recipe.fromJson(recipe);
 
-            print('Recipe: $rcp');
-
             //! For now it won't save the ingredients, it will load them every time
             //for (var ingredient in recipe['Ingredients']) {
             //  var ing = Ingredient.fromJson(ingredient);
@@ -804,8 +802,6 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
             print('Error: $e');
           }
         }
-        // Prints the information about the recipes on the console for debugging
-        print(recipeinfos);
 
         // Returns the list of recipes
         return recipeList;
