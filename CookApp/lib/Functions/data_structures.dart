@@ -341,15 +341,15 @@ class Recipe {
   File? image;
   String title;
   String description;
-  List<IngBridge>? bridges;
-  //List<String> steps = [];
-  String steps;
+  List<IngBridge>? bridges = [];
+  List<Ingredient>? ingredients = [];
+  List<String>? steps = [];
   double time = 0.0;
   double servings = 0.0;
   int type = 0;
   bool isAllowed = false;
   bool isPublic = false;
-  String authorId = '';
+  String author = '';
   int likes = 0;
 
   Recipe({
@@ -358,14 +358,14 @@ class Recipe {
     required this.title,
     required this.description,
     this.bridges,
-    //this.steps = const [],
-    this.steps = '',
+    this.ingredients,
+    this.steps,
     this.time = 0.0,
     this.servings = 0.0,
     this.type = 0,
     this.isAllowed = false,
     this.isPublic = false,
-    this.authorId = '',
+    this.author = '',
     required this.likes,
   });
 
@@ -380,7 +380,12 @@ class Recipe {
               ?.map<IngBridge>((bridge) => IngBridge.fromJson(bridge))
               .toList()
           : [IngBridge.fromJson(json['Ingredients'])],
-      steps: json['Steps'].toString(),
+      steps: (json['Steps'] is List)
+          ? (json['Steps'] as List<dynamic>?)
+              ?.map<String>((step) =>
+                  (step as Map<String, dynamic>)['Details'].toString())
+              .toList()
+          : [json['Steps'].toString()],
       time: (json['Time'] is int)
           ? (json['Time'] as int).toDouble()
           : (json['Time'] ?? 0.0) as double,
@@ -392,7 +397,7 @@ class Recipe {
           : (json['Type'] as double).toInt(),
       //isAllowed: json['isAllowed'],
       isPublic: json['isPublic'],
-      authorId: json['AuthorGUID'], //! ??
+      author: json['Author'], //! ??
       likes: json['NumLikes'],
     );
   }
@@ -410,7 +415,7 @@ class Recipe {
       'type': type,
       'isAllowed': isAllowed,
       'isPublic': isPublic,
-      'authorId': authorId,
+      'author': author,
       'likes': likes,
     };
   }
@@ -551,12 +556,12 @@ class Recipe {
       id: '',
       title: 'Recipe',
       description: 'Description',
-      steps: 'Steps',
+      steps: [],
       time: 0.0,
       servings: 0.0,
       type: 0,
       isPublic: false,
-      authorId: '',
+      author: '',
       likes: 0,
     );
   }
@@ -607,11 +612,14 @@ Future<File> loadImage(String id) async {
   return file;
 }
 
-Future<Image> getRecipeImage(String id, Map<String, Image> imageCache) async {
+Future<Image> getRecipeImage(String id,
+    [Map<String, Image>? imageCache]) async {
   var request =
       http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
   request.headers.addAll({'Cookie': User.getInstance().cookie});
 
+  // Prevents "null check operator used on a null value" error
+  imageCache ??= {};
   if (imageCache.containsKey(id)) {
     return imageCache[id]!;
   }
@@ -626,7 +634,7 @@ Future<Image> getRecipeImage(String id, Map<String, Image> imageCache) async {
         // Save the image to the application files
         //! var file = File('images/$id.jpg');
         //! file.writeAsBytesSync(bytes);
-
+        //? Not done here because the function cannot change the state of the widget that calls it
         //?imageCache[id] = Image.memory(bytes);
 
         return Image.memory(bytes);
@@ -762,7 +770,7 @@ Future<List<Recipe>> getSearchRecipes(String search, int type) async {
 //? Every page has 10 recipes and starts at 10 * page
 //? In programming, 0 is generally the first page
 //? However, in terms of user interface, 1 is the first page and the page would start at 10 * page + 1
-Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
+Future<List<Recipe>> getPopularRecipes(int totalPages, [int page = 0]) async {
   // Get the user's recipes from the server
   var request = http.Request('GET', Uri.parse('$url/Recipes/GetPopular'));
   request.headers.addAll({'cookie': User.getInstance().cookie});
@@ -784,6 +792,8 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
         var json = jsonDecode(responseBody);
         var recipeinfos = json['recipes'];
 
+        totalPages = json['totalPages'];
+
         print(recipeinfos);
         for (var recipe in recipeinfos) {
           try {
@@ -791,6 +801,7 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
             Recipe rcp = Recipe.fromJson(recipe);
 
             //! For now it won't save the ingredients, it will load them every time
+            //! Not practical to save the ingredients of recipes from other people
             //for (var ingredient in recipe['Ingredients']) {
             //  var ing = Ingredient.fromJson(ingredient);
             //  ing.save();
@@ -799,6 +810,7 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
             // Adds the recipe object to the list
             recipeList.add(rcp);
           } catch (e) {
+            //? This try catch is indeed inside another try catch block but it's for better error handling
             print('Error: $e');
           }
         }
@@ -831,6 +843,7 @@ class Ingredient {
     this.tag,
   });
 
+  // TODO: This function does not work
   void save() {
     // Create directory
     var dir = Directory('recipes/ingredients');
@@ -1096,5 +1109,65 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
       print('Error: $e');
       return [Ingredient(id: id, name: 'Ingredient Fail 3', unit: 'Unit')];
     }
+  }
+}
+
+// Fetches the ingredients of a specific recipe with the id of the recipe
+Future<List<Ingredient>> RecipeIngredients(String Id) async {
+  // localhost:44322/Recipes/GetIngredientsByRecipe?Id=630fd198-beba-4f57-944d-8eb7907d8f65
+  // This one is only online, doesn't check the local files
+  var request = http.Request(
+      'GET', Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$Id'));
+  request.headers.addAll({'cookie': User.getInstance().cookie});
+
+  try {
+    // TODO: Doesn't return values
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      //print(" ---> ${await response.stream.bytesToString()}");
+
+      // if success field is true, save the user data
+      var responseBody = await response.stream.bytesToString();
+      if (responseBody.contains('"error":""')) {
+        print('Got ingredient');
+
+        // Parse the JSON response and return the recipe
+        var json = jsonDecode(responseBody);
+
+        // The ingredients returned by the server are in a list
+        // The list is then mapped to a list of Ingredient objects
+        var ingredients = json['Ingredients'];
+
+        if (ingredients == null) {
+          return [Ingredient(id: Id, name: 'Ingredient Fail 4', unit: 'Unit')];
+        }
+
+        List<Ingredient> ingredientList =
+            List<Ingredient>.empty(growable: true);
+
+        for (var ingredient in ingredients) {
+          try {
+            Ingredient ing = Ingredient.fromJson(ingredient);
+            //!ing.save();
+            ingredientList.add(ing);
+          } catch (e) {
+            print('Error: $e');
+          }
+        }
+
+        return ingredientList;
+      } else {
+        print('Failed to get ingredient');
+        print('Response: $responseBody');
+        return [Ingredient(id: Id, name: 'Ingredient Fail 1', unit: 'Unit')];
+      }
+    } else {
+      // If the status code is anything but 200, return a default recipe
+      print(" ---> (0018) ${response.reasonPhrase}");
+      return [Ingredient(id: Id, name: 'Ingredient Fail 2', unit: 'Unit')];
+    }
+  } catch (e) {
+    print('Error: $e');
+    return [Ingredient(id: Id, name: 'Ingredient Fail 3', unit: 'Unit')];
   }
 }

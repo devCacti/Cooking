@@ -42,15 +42,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Recipe> recommended = [];
   bool rLoaded = false;
+  int rIndex = 0;
+  int rMax = 1;
+  Map<String, Image> imageCache = {};
 
   //TODO: Load the recommended recipes
-  //? The recommended Recipes are the ones from the getPopularRecipes() Future<List<Recipes>> function
+  //? The recommended Recipes are the ones from the getPopularRecipes(rMax,) Future<List<Recipes>> function
 
   @override
   void initState() {
     super.initState();
 
-    getPopularRecipes().then((value) {
+    getPopularRecipes(rMax, rIndex).then((value) {
       setState(() {
         recommended = value;
         rLoaded = true;
@@ -134,50 +137,47 @@ class _MyHomePageState extends State<MyHomePage> {
 
           //* Recommended Recipes
           Padding(
-              padding: const EdgeInsets.only(left: 40, right: 32, top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    child: const Text(
-                      'Tendências',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w400,
-                      ),
+            padding: const EdgeInsets.only(left: 40, right: 32, top: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  child: const Text(
+                    'Tendências',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    height: 1,
-                    child: const Divider(
-                      color: Colors.black45,
-                    ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  height: 1,
+                  child: const Divider(
+                    color: Colors.black45,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.1,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        onPressed: () {
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      onPressed: () {
+                        getPopularRecipes(rMax, 0).then((value) {
                           setState(() {
-                            rLoaded = false;
+                            recommended = value;
+                            rLoaded = true;
                           });
-                          getPopularRecipes().then((value) {
-                            setState(() {
-                              recommended = value;
-                              rLoaded = true;
-                            });
-                          });
-                        },
-                        icon: const Icon(Icons.refresh),
-                      ),
+                        });
+                      },
+                      icon: const Icon(Icons.refresh),
                     ),
                   ),
-                ],
-              )),
-
+                ),
+              ],
+            ),
+          ),
           recommended.isEmpty
               ? Center(
                   child: Padding(
@@ -196,26 +196,105 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 )
               : Expanded(
-                  child: ListView.builder(
-                    itemCount: recommended.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(recommended[index].title),
-                        subtitle: Text(recommended[index].description),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RecipeDetail(
-                                recipe: recommended[index],
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 32.0, right: 32.0),
+                    child: ListView.builder(
+                      itemCount: recommended.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Material(
+                            elevation: 2,
+                            borderRadius: BorderRadius.circular(10),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
+                              leading: FutureBuilder<Image>(
+                                future: getRecipeImage(
+                                    recommended[index].id, imageCache),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    imageCache[recommended[index].id] =
+                                        snapshot.data!;
+                                    if (snapshot.hasError) {
+                                      return const Icon(Icons.error);
+                                    }
+                                    return SizedBox(
+                                      height: double.infinity,
+                                      child: snapshot.data,
+                                    );
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                },
+                              ),
+                              title: Text(recommended[index].title),
+                              subtitle: Text(recommended[index].description),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RecipeDetail(
+                                      recipe: recommended[index],
+                                      image: imageCache[recommended[index].id]!,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      );
-                    },
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
+          const Text("Página", style: TextStyle(fontSize: 18)),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.keyboard_arrow_left_rounded),
+                iconSize: 30,
+                onPressed: () {
+                  if (rIndex > 0) {
+                    int index = rIndex - 1;
+                    getPopularRecipes(rMax, index).then((value) {
+                      setState(() {
+                        recommended = value;
+                        rLoaded = true;
+                        rIndex = index;
+                      });
+                    });
+                  }
+                },
+              ),
+              Text(
+                '${rIndex + 1} / ${rMax + 1}',
+                style: const TextStyle(fontSize: 18),
+              ),
+              IconButton(
+                icon: const Icon(Icons.keyboard_arrow_right_rounded),
+                iconSize: 30,
+                onPressed: () {
+                  if (rIndex < rMax) {
+                    int index = rIndex + 1;
+                    getPopularRecipes(rMax, index).then((value) {
+                      setState(() {
+                        recommended = value;
+                        rLoaded = true;
+                        rIndex = index;
+                      });
+                    });
+                  }
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
         ],
       ),
       bottomNavigationBar: BottomAppBar(

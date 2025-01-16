@@ -5,36 +5,68 @@ import '../../Functions/data_structures.dart';
 
 class RecipeDetail extends StatefulWidget {
   final Recipe recipe;
+  final Image? image;
 
-  const RecipeDetail({Key? key, required this.recipe}) : super(key: key);
+  const RecipeDetail({Key? key, required this.recipe, this.image})
+      : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _RecipeDetailState createState() => _RecipeDetailState();
 }
 
 class _RecipeDetailState extends State<RecipeDetail> {
+  List<Ingredient> ingredients = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    RecipeIngredients(widget.recipe.id).then((value) => setState(() {
+          ingredients = value;
+          loading = false;
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.recipe.title),
+        centerTitle: true,
+        title: const Text(
+          "Detalhes de Receita",
+        ),
       ),
       body: ListView(
         children: [
           //* Recipe Image
-          Container(
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                //TODO: This method is a very interesting method of getting images;
-                image: NetworkImage(
-                  "https://cookclever.pt/Recipes/Image?id=${widget.recipe.id}",
-                ),
-                onError: (exception, stackTrace) => const AssetImage(
-                  "assets/images/placeholder.png",
-                ),
-                fit: BoxFit.cover,
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: SizedBox(
+              // Just use the height of the image if it doesn't exceed the width of the screen
+              height: widget.image != null ? widget.image!.height : 200,
+              width: MediaQuery.of(context).size.width,
+              child: widget.image != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image(
+                        image: widget.image!.image,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : const Icon(Icons.image, size: 200),
+            ),
+          ),
+          //* Recipe Title
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              widget.recipe.title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -43,48 +75,113 @@ class _RecipeDetailState extends State<RecipeDetail> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               widget.recipe.description,
+              textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 18),
             ),
+          ),
+          const Divider(
+            indent: 80,
+            endIndent: 80,
           ),
           //* Recipe Ingredients
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
               "Ingredientes",
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.recipe.bridges!.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(widget.recipe.bridges![index].ingredient),
-                subtitle: Text(
-                  "${widget.recipe.bridges![index].amount} ${widget.recipe.bridges![index].customUnit}",
+          loading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: ingredients.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        Text(
+                          // If the ingredients list is not empty
+                          ingredients.isNotEmpty
+                              // Use the name from the ingredient
+                              ? ingredients[index].name
+                              // Otherwise use the ingredient GUID
+                              : widget.recipe.bridges![index].ingredient,
+                          style: const TextStyle(
+                            fontSize: 22,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              widget.recipe.bridges![index].amount
+                                  .toString()
+                                  .replaceAll(r'.', ','),
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                            Text(
+                              // If the ingredients list is not empty
+                              widget.recipe.bridges![index].customUnit == null
+                                  // Use the amount and unit from the ingredient
+                                  ? " ${ingredients[index].unit}"
+                                  // Otherwise use the amount and custom unit from the recipe
+                                  : " ${widget.recipe.bridges![index].customUnit}",
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 32),
+                      ],
+                    );
+                  },
                 ),
-              );
-            },
+          const Divider(
+            indent: 80,
+            endIndent: 80,
           ),
           //* Recipe Procedure
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
               "Procedimento",
+              textAlign: TextAlign.center,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.recipe.steps.length,
+            itemCount: widget.recipe.steps!.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text("${index + 1}. ${widget.recipe.steps[index]}"),
+              return Column(
+                children: [
+                  Text(
+                    "Passo N.º ${index + 1}",
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.recipe.steps![index],
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
               );
             },
           ),

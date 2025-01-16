@@ -138,11 +138,14 @@ class _DetailsFormState extends State<DetailsForm> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text(
-                                              widget
-                                                  .detailRecipe.ingQuant![index]
-                                                  .toStringAsFixed(2)
-                                                  .replaceAll(
-                                                      RegExp(r'\.0+$'), ''),
+                                              widget.detailRecipe.ingQuant !=
+                                                      null
+                                                  ? widget.detailRecipe
+                                                      .ingQuant![index]
+                                                      .toStringAsFixed(2)
+                                                      .replaceAll(
+                                                          RegExp(r'\.0+$'), '')
+                                                  : '',
                                               style: const TextStyle(
                                                 fontSize: 20,
                                               ),
