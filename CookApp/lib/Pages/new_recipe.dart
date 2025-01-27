@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'dart:io';
-import '../Classes/receita.dart';
+import '../Functions/data_structures.dart';
+//import '../Classes/receita.dart';
 
 class NewRecipeForm extends StatefulWidget {
   const NewRecipeForm({Key? key}) : super(key: key);
@@ -19,29 +19,29 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   Recipe? novaReceita; //? Variável principal
 
   int id = 1;
-  XFile? _image;
-  String? nomeR; //* Nome da receita
-  String? descR; //* Decrição da receita
-  String? ingsR; //* Ingredientes da receita
-  String? procR; //* Procedimento da receita
-  double tempoCozi = 0;
-  double porcoes = 0;
+  XFile? _image; //* Recipe Image
+  String? nameR; //* Recipe Name
+  String? descR; //* Recipe Description
+  String? ingsR; //* Recipe Ingredients
+  String? procR; //* Recipe Procedure
+  double cookTime = 0;
+  double portions = 0;
   String _selectedValue = 'Geral';
-  bool? favorita = false;
+  bool? favorite = false;
 
-  //*Variável para validar (Não utilizada na gravação de dados)
+  //*Validation variable, only used to check if the recipe is valid
   bool? validate = false;
 
-  //*Nome
+  //*Name
   final _nameKey = GlobalKey<FormFieldState>();
 
-  //*Descrição
+  //*Description
   final _descKey = GlobalKey<FormFieldState>();
 
-  //*Ingredientes
+  //*Ingredients
   final _ingsKey = GlobalKey<FormFieldState>();
   final TextEditingController _ingsController = TextEditingController();
-  List<String> ingredientes = [];
+  List<String> ingredients = [];
   List<String> ingsOpts = [];
   List<double> ingsQaunt = [];
 
@@ -96,7 +96,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   }
 
   Future<void> _getImage() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final XFile? image =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
         _image = image;
@@ -112,12 +113,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   @override
   void initState() {
     super.initState();
-    initializeData();
+    //!initializeData();
   }
 
-  void initializeData() async {
-    id = await getNextId();
-  }
+  //!void initializeData() async {
+  //!  id = await getNextId();
+  //!}
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +190,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     ),
                     onChanged: (value) {
                       _nameKey.currentState!.validate();
-                      nomeR = value;
+                      nameR = value;
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -237,7 +238,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: ingredientes.isEmpty
+                    child: ingredients.isEmpty
                         ? const Center(
                             child: Text(
                               'Nenhum ingrediente',
@@ -249,7 +250,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         : ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: ingredientes.length,
+                            itemCount: ingredients.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Padding(
                                 padding: const EdgeInsets.only(
@@ -262,14 +263,13 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                   child: ListTile(
                                     onLongPress: () {
                                       setState(() {
-                                        ingredientes
-                                            .remove(ingredientes[index]);
+                                        ingredients.remove(ingredients[index]);
                                         ingsOpts.remove(ingsOpts[index]);
                                         ingsQaunt.remove(ingsQaunt[index]);
                                       });
                                     },
                                     title: Text(
-                                      ingredientes[index],
+                                      ingredients[index],
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                     trailing: Row(
@@ -361,7 +361,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           key: _ingsKey,
                           controller: _ingsController,
                           decoration: const InputDecoration(
-                            labelText: 'Ingredientes',
+                            labelText: 'Ingredients',
                             hintText: 'Insira um ingrediente',
                             border: OutlineInputBorder(
                               borderRadius:
@@ -390,7 +390,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               try {
                                 if (ingsR != '') {
                                   //* Parte principal
-                                  ingredientes.add(ingsR!);
+                                  ingredients.add(ingsR!);
                                   _ingsController.text = '';
                                   ingsR = '';
 
@@ -518,35 +518,45 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                                   ),
                                                 ),
                                               ),
-                                              child: CupertinoAlertDialog(
-                                                title: const Text('Eliminar?'),
+                                              child: AlertDialog(
+                                                title: const Text(
+                                                  'Eliminar',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
                                                 content: const Text(
-                                                    'Deseja eliminar este procedimento permanentemente?'),
-                                                actions: [
-                                                  CupertinoDialogAction(
-                                                    isDefaultAction: true,
+                                                  'Tem a certeza que deseja eliminar este passo?',
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  TextButton(
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
                                                     child:
                                                         const Text('Cancelar'),
                                                   ),
-                                                  CupertinoDialogAction(
-                                                    isDestructiveAction: true,
+                                                  TextButton(
                                                     onPressed: () {
                                                       setState(() {
-                                                        procedimentos.remove(
-                                                            procedimentos[
-                                                                index]);
-                                                        procsControllers.remove(
-                                                            procsControllers[
-                                                                index]);
+                                                        procedimentos
+                                                            .removeAt(index);
+                                                        procsControllers
+                                                            .removeAt(index);
                                                       });
                                                       Navigator.pop(context);
                                                     },
-                                                    child:
-                                                        const Text('Eliminar'),
-                                                  )
+                                                    style: ButtonStyle(
+                                                      foregroundColor:
+                                                          MaterialStateProperty
+                                                              .all<Color>(
+                                                                  Colors.red),
+                                                    ),
+                                                    child: const Text('Sim'),
+                                                  ),
                                                 ],
                                               ),
                                             );
@@ -749,12 +759,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                             final newValue =
                                                 double.tryParse(value);
                                             if (newValue != null &&
-                                                newValue != tempoCozi) {
+                                                newValue != cookTime) {
                                               setState(() {
-                                                tempoCozi = newValue;
+                                                cookTime = newValue;
                                               });
                                             } else {
-                                              tempoCozi = 0;
+                                              cookTime = 0;
                                             }
                                           },
                                           keyboardType: TextInputType.number,
@@ -828,12 +838,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                             final newValue =
                                                 double.tryParse(value);
                                             if (newValue != null &&
-                                                newValue != porcoes) {
+                                                newValue != portions) {
                                               setState(() {
-                                                porcoes = newValue;
+                                                portions = newValue;
                                               });
                                             } else {
-                                              porcoes = 0;
+                                              portions = 0;
                                             }
                                           },
                                           keyboardType: TextInputType.number,
@@ -963,10 +973,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.3,
                                 child: Checkbox(
-                                  value: favorita,
+                                  value: favorite,
                                   onChanged: (value) {
                                     setState(() {
-                                      favorita = value;
+                                      favorite = value;
                                     });
                                   },
                                 ),
@@ -984,80 +994,94 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     top: 32,
                     bottom: 64,
                   ),
-                  child: Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        width: 1,
-                        color: Colors.grey,
-                      ),
+                  child: IconButton(
+                    //! Save Button
+                    icon: const Icon(
+                      Icons.save,
+                      shadows: [Shadow(color: Colors.black)],
                     ),
-                    child: IconButton(
-                      //! Botão para guardar
-                      icon: const Icon(Icons.save),
-                      highlightColor: Colors.green[200],
-                      tooltip: 'Guardar',
-                      onPressed: () {
-                        //Processo para fazer com que apareça a mensagem em todos os campos
+                    iconSize: 50,
+                    tooltip: 'Guardar',
+                    onPressed: () {
+                      //Process of showing the warning on the fields
 
-                        try {
-                          _nameKey.currentState!.validate();
-                          _descKey.currentState!.validate();
+                      try {
+                        _nameKey.currentState!.validate();
+                        _descKey.currentState!.validate();
 
-                          //Certificação
-                          validate = _nameKey.currentState!.validate() &&
-                              _descKey.currentState!.validate();
-                          if (validate == true) {
-                            //! Processo que guarda a informação
-                            final novaReceita = Recipe(
-                              id: id,
-                              // ignore: prefer_null_aware_operators
-                              foto: _image == null ? null : _image!.path,
-                              nome: nomeR!,
-                              descricao: descR!,
-                              ingredientes: ingredientes,
-                              ingTipo: ingsOpts,
-                              ingQuant: ingsQaunt,
-                              procedimento: procedimentos,
-                              tempo: tempoCozi,
-                              porcoes: porcoes,
-                              categoria: _selectedValue,
-                              favorita: favorita!,
-                            );
-
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  'A receita foi guardada com sucesso.',
-                                ),
-                                action: SnackBarAction(
-                                    label: 'OK', onPressed: () {}),
-                              ),
-                            );
-                            saveRecipe(novaReceita);
-                            Navigator.pop(context);
-                          } else {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  'Por favor insira um nome e uma descrição.',
-                                ),
-                                action: SnackBarAction(
-                                    label: 'OK', onPressed: () {}),
+                        //Verification
+                        validate = _nameKey.currentState!.validate() &&
+                            _descKey.currentState!.validate();
+                        if (validate == true) {
+                          // TODO: Finish Changing the Recipe Creation Process
+                          //? Process of creating the Recipe
+                          final List<IngBridge> bridges = [];
+                          final List<Ingredient> ings = [];
+                          for (int i = 0; i < ingredients.length; i++) {
+                            ings.add(
+                              Ingredient(
+                                id: "",
+                                name: ingredients[i],
+                                unit: ingsOpts[i],
                               ),
                             );
                           }
-                        } catch (e) {
-                          throw Exception('Não deu: $e');
+                          for (int i = 0; i < ingredients.length; i++) {
+                            bridges.add(
+                              IngBridge(
+                                id: "",
+                                ingredient: ings[i].id,
+                                amount: ingsQaunt[i],
+                              ),
+                            );
+                          }
+
+                          Recipe novaReceita = Recipe(
+                            // ignore: prefer_null_aware_operators
+                            id: "",
+                            image: _image == null ? null : File(_image!.path),
+                            title: nameR!,
+                            description: descR!,
+                            ingredients: ings,
+                            //!ingTipo: ingsOpts,
+                            //!ingQuant: ingsQaunt,
+                            //!procedimento: procedimentos,
+                            time: cookTime,
+                            servings: portions,
+                            //!type: _selectedValue,
+                            likes: 0,
+                          );
+
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text(
+                                'A receita foi guardada com sucesso.',
+                              ),
+                              action:
+                                  SnackBarAction(label: 'OK', onPressed: () {}),
+                            ),
+                          );
+                          //!saveRecipe(novaReceita);
+                          Navigator.pop(context);
+                        } else {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text(
+                                'Por favor insira um nome e uma descrição.',
+                              ),
+                              action:
+                                  SnackBarAction(label: 'OK', onPressed: () {}),
+                            ),
+                          );
                         }
-                      },
-                    ),
+                      } catch (e) {
+                        throw Exception('Falha na criação da Receita: $e');
+                      }
+                    },
                   ),
-                )
+                ),
               ],
             ),
           ),

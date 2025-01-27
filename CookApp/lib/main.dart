@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Recipe> recommended = [];
   bool rLoaded = false;
   int rIndex = 0;
-  int rMax = 1;
+  int rMax = 0;
   Map<String, Image> imageCache = {};
 
   //TODO: Load the recommended recipes
@@ -53,10 +53,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    getPopularRecipes(rMax, rIndex).then((value) {
+    getPopularRecipes(rIndex).then((value) {
       setState(() {
         recommended = value;
         rLoaded = true;
+      });
+    });
+
+    fetchPopularPages().then((value) {
+      setState(() {
+        rMax = value;
       });
     });
   }
@@ -164,10 +170,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     alignment: Alignment.centerRight,
                     child: IconButton(
                       onPressed: () {
-                        getPopularRecipes(rMax, 0).then((value) {
+                        getPopularRecipes(0).then((value) {
                           setState(() {
+                            rIndex = 0;
                             recommended = value;
                             rLoaded = true;
+                          });
+                        });
+                        fetchPopularPages().then((value) {
+                          setState(() {
+                            rMax = value;
                           });
                         });
                       },
@@ -197,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               : Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 32.0, right: 32.0),
+                    padding: const EdgeInsets.only(left: 42.0, right: 42.0),
                     child: ListView.builder(
                       itemCount: recommended.length,
                       itemBuilder: (context, index) {
@@ -262,7 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   if (rIndex > 0) {
                     int index = rIndex - 1;
-                    getPopularRecipes(rMax, index).then((value) {
+                    getPopularRecipes(index).then((value) {
                       setState(() {
                         recommended = value;
                         rLoaded = true;
@@ -282,7 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   if (rIndex < rMax) {
                     int index = rIndex + 1;
-                    getPopularRecipes(rMax, index).then((value) {
+                    getPopularRecipes(index).then((value) {
                       setState(() {
                         recommended = value;
                         rLoaded = true;

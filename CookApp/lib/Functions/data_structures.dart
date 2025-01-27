@@ -640,6 +640,9 @@ Future<Image> getRecipeImage(String id,
         return Image.memory(bytes);
       } else {
         print('Failed to get image: Invalid content type');
+        //TODO: This should return a placeholder image but it's not working for some reason
+
+        //TODO: Make this work.
         return Image.asset('assets/images/placeholder.png');
       }
     } else {
@@ -770,7 +773,7 @@ Future<List<Recipe>> getSearchRecipes(String search, int type) async {
 //? Every page has 10 recipes and starts at 10 * page
 //? In programming, 0 is generally the first page
 //? However, in terms of user interface, 1 is the first page and the page would start at 10 * page + 1
-Future<List<Recipe>> getPopularRecipes(int totalPages, [int page = 0]) async {
+Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
   // Get the user's recipes from the server
   var request = http.Request('GET', Uri.parse('$url/Recipes/GetPopular'));
   request.headers.addAll({'cookie': User.getInstance().cookie});
@@ -791,8 +794,6 @@ Future<List<Recipe>> getPopularRecipes(int totalPages, [int page = 0]) async {
         // Parse the JSON response and return the recipes
         var json = jsonDecode(responseBody);
         var recipeinfos = json['recipes'];
-
-        totalPages = json['totalPages'];
 
         print(recipeinfos);
         for (var recipe in recipeinfos) {
@@ -1169,5 +1170,41 @@ Future<List<Ingredient>> RecipeIngredients(String Id) async {
   } catch (e) {
     print('Error: $e');
     return [Ingredient(id: Id, name: 'Ingredient Fail 3', unit: 'Unit')];
+  }
+}
+
+// Fetch number of pages of the popular recipes
+Future<int> fetchPopularPages() async {
+  // Get the user's recipes from the server
+  var request = http.Request('GET', Uri.parse('$url/Recipes/GetPopularPages'));
+  request.headers.addAll({'cookie': User.getInstance().cookie});
+
+  try {
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      //print(" ---> ${await response.stream.bytesToString()}");
+
+      // if success field is true, save the user data
+      var responseBody = await response.stream.bytesToString();
+      if (responseBody.contains('"error":""')) {
+        print('Got recipes');
+
+        // Parse the JSON response and return the recipes
+        var json = jsonDecode(responseBody);
+        var totalPages = json['totalPages'];
+
+        return totalPages;
+      } else {
+        print('Failed to get recipes');
+        print('Response: $responseBody');
+        return 0;
+      }
+    } else {
+      print(" ---> (0019) ${response.reasonPhrase}");
+      return 0;
+    }
+  } catch (e) {
+    print('Error: $e');
+    return 0;
   }
 }
