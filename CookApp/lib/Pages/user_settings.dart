@@ -15,7 +15,21 @@ class UserSettings extends StatefulWidget {
 }
 
 class _UserSettingsState extends State<UserSettings> {
-  User user = User.getInstance();
+  User? user = User(
+    cookie: "",
+    guid: "",
+    username: "",
+    email: "",
+    name: "",
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    user!.getInstance().then((value) => setState(() {
+          user = value;
+        }));
+  }
 
   String page = "details";
 
@@ -25,8 +39,8 @@ class _UserSettingsState extends State<UserSettings> {
   @override
   Widget build(BuildContext context) {
     final drawerHeader = UserAccountsDrawerHeader(
-      accountName: Text(user.username),
-      accountEmail: Text(user.email),
+      accountName: Text(user?.username ?? "Blank User"),
+      accountEmail: Text(user?.email ?? "Blank Email"),
       currentAccountPicture: const CircleAvatar(
         child: FlutterLogo(size: 42.0),
       ),
@@ -45,7 +59,7 @@ class _UserSettingsState extends State<UserSettings> {
     );
 
     setState(() {
-      isLogged = user.guid != "";
+      isLogged = user!.guid != "";
     });
 
     final drawerItems = isLogged
@@ -153,10 +167,14 @@ class _UserSettingsState extends State<UserSettings> {
                             isLogged = false;
 
                             // 'Deletes' the user, only in the files
-                            User.delete();
-
-                            // Updates the user variable
-                            user = User.getInstance();
+                            user!.delete().then((value) {
+                              //? This triggers the setState method so that the ui updates
+                              user!.getInstance().then((value) {
+                                setState(() {
+                                  user = value;
+                                });
+                              });
+                            });
                           }
                         });
                       }).then(
@@ -183,8 +201,8 @@ class _UserSettingsState extends State<UserSettings> {
                       builder: (context) => const LoginPage(),
                     ),
                   ).then((value) => setState(() {
-                        user = User.getInstance();
-                        isLogged = user.guid != "";
+                        user = user!;
+                        isLogged = user!.guid != "";
                       }));
                 },
               ),

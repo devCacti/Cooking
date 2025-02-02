@@ -1013,10 +1013,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         validate = _nameKey.currentState!.validate() &&
                             _descKey.currentState!.validate();
                         if (validate == true) {
-                          // TODO: Finish Changing the Recipe Creation Process
+                          //! TODO: Finish Changing the Recipe Creation Process
                           //? Process of creating the Recipe
                           final List<IngBridge> bridges = [];
                           final List<Ingredient> ings = [];
+
+                          // Insert into the ings list
                           for (int i = 0; i < ingredients.length; i++) {
                             ings.add(
                               Ingredient(
@@ -1026,6 +1028,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               ),
                             );
                           }
+
+                          // Sending ingredients to the server for creation
+                          final ingIds = newIngredients(ings);
+
+                          // Insert into the bridges list
                           for (int i = 0; i < ingredients.length; i++) {
                             bridges.add(
                               IngBridge(
@@ -1051,6 +1058,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             //!type: _selectedValue,
                             likes: 0,
                           );
+
+                          // Using a new type of class to send the data to the server
 
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(

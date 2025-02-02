@@ -23,7 +23,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
   void initState() {
     super.initState();
 
-    RecipeIngredients(widget.recipe.id).then((value) => setState(() {
+    recipeIngredients(widget.recipe.id).then((value) => setState(() {
           ingredients = value;
           loading = false;
         }));

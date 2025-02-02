@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           // Makes the login request
                           // And stores the token in a file
-                          final bool isLogged = await login.login();
+                          final bool isLogged = await login.send();
 
                           if (isLogged) {
                             // ignore: use_build_context_synchronously
