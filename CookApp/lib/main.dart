@@ -86,30 +86,30 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.only(left: 16, right: 16),
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(50),
                 color: Colors.grey[200],
               ),
               // Early Access Warning
               child: const ListTile(
                 title: Text(
                   'ACESSO ANTECIPADO',
-                  style: TextStyle(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
-                subtitle: Text(
-                  'Esta aplicação contém alguns problemas desconhecidos!',
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
+                subtitle: Text(
+                  'Pode perder tudo o que tiver durante esta fase!',
+                  style: TextStyle(fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
                 leading: Icon(
-                  Icons.info_outline,
+                  Icons.warning_amber_rounded,
                   color: Colors.red,
-                  size: 25,
+                  size: 30,
                 ),
                 trailing: Icon(
-                  Icons.info_outline,
+                  Icons.warning_amber_rounded,
                   color: Colors.red,
-                  size: 25,
+                  size: 30,
                 ),
               ),
             ),

@@ -464,6 +464,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                               Radius.circular(10)),
                                         ),
                                       ),
+                                      maxLines: null,
                                       textAlign: TextAlign.justify,
                                       onChanged: (value) {
                                         setState(
@@ -476,116 +477,135 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    IconButton(
-                                      onPressed: index < 1
-                                          ? null
-                                          : () {
-                                              String temp;
-                                              setState(() {
-                                                temp = procedimentos[index - 1];
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        //* Move up button
+                                        IconButton(
+                                          onPressed: index < 1
+                                              ? null
+                                              : () {
+                                                  String temp;
+                                                  setState(() {
+                                                    temp = procedimentos[
+                                                        index - 1];
 
-                                                procedimentos[index - 1] =
-                                                    procedimentos[index];
-                                                procedimentos[index] = temp;
+                                                    procedimentos[index - 1] =
+                                                        procedimentos[index];
+                                                    procedimentos[index] = temp;
 
-                                                procsControllers[index - 1]
-                                                        .text =
+                                                    procsControllers[index - 1]
+                                                            .text =
+                                                        procsControllers[index]
+                                                            .text;
                                                     procsControllers[index]
-                                                        .text;
-                                                procsControllers[index].text =
-                                                    temp;
-                                              });
-                                            },
-                                      icon: const Icon(Icons.arrow_upward),
-                                      tooltip: 'Mover para cima',
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Eliminar',
-                                      icon: const Icon(
-                                        Icons.delete_outlined,
-                                        color: Colors.red,
-                                      ),
-                                      iconSize: 40,
-                                      onPressed: () {
-                                        showDialog<bool>(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return Theme(
-                                              data: ThemeData(
-                                                brightness: Brightness.light,
-                                                textTheme: const TextTheme(
-                                                  titleMedium: TextStyle(
-                                                    color: Colors.blue,
-                                                  ),
-                                                ),
-                                              ),
-                                              child: AlertDialog(
-                                                title: const Text(
-                                                  'Eliminar',
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                                content: const Text(
-                                                  'Tem a certeza que deseja eliminar este passo?',
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child:
-                                                        const Text('Cancelar'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        procedimentos
-                                                            .removeAt(index);
-                                                        procsControllers
-                                                            .removeAt(index);
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                    style: ButtonStyle(
-                                                      foregroundColor:
-                                                          MaterialStateProperty
-                                                              .all<Color>(
-                                                                  Colors.red),
+                                                        .text = temp;
+                                                  });
+                                                },
+                                          icon: const Icon(Icons.arrow_upward),
+                                          tooltip: 'Mover para cima',
+                                        ),
+                                        //* Delete button
+                                        IconButton(
+                                          tooltip: 'Eliminar',
+                                          icon: const Icon(
+                                            Icons.delete_outlined,
+                                            color: Colors.red,
+                                          ),
+                                          iconSize: 40,
+                                          onPressed: () {
+                                            showDialog<bool>(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Theme(
+                                                  data: ThemeData(
+                                                    brightness:
+                                                        Brightness.light,
+                                                    textTheme: const TextTheme(
+                                                      titleMedium: TextStyle(
+                                                        color: Colors.blue,
+                                                      ),
                                                     ),
-                                                    child: const Text('Sim'),
                                                   ),
-                                                ],
-                                              ),
+                                                  child: AlertDialog(
+                                                    title: const Text(
+                                                      'Eliminar',
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                    content: const Text(
+                                                      'Tem a certeza que deseja eliminar este passo?',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Cancelar'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            procedimentos
+                                                                .removeAt(
+                                                                    index);
+                                                            procsControllers
+                                                                .removeAt(
+                                                                    index);
+                                                          });
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        style: ButtonStyle(
+                                                          foregroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                                      Colors
+                                                                          .red),
+                                                        ),
+                                                        child:
+                                                            const Text('Sim'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
                                             );
                                           },
-                                        );
-                                      },
-                                    ),
-                                    IconButton(
-                                      onPressed: index ==
-                                              procedimentos.length - 1
-                                          ? null
-                                          : () {
-                                              String temp;
-                                              setState(() {
-                                                temp = procedimentos[index + 1];
-                                                procedimentos[index + 1] =
-                                                    procedimentos[index];
-                                                procedimentos[index] = temp;
-                                                procsControllers[index + 1]
-                                                        .text =
+                                        ),
+                                        //* Move down button
+                                        IconButton(
+                                          onPressed: index ==
+                                                  procedimentos.length - 1
+                                              ? null
+                                              : () {
+                                                  String temp;
+                                                  setState(() {
+                                                    temp = procedimentos[
+                                                        index + 1];
+                                                    procedimentos[index + 1] =
+                                                        procedimentos[index];
+                                                    procedimentos[index] = temp;
+                                                    procsControllers[index + 1]
+                                                            .text =
+                                                        procsControllers[index]
+                                                            .text;
                                                     procsControllers[index]
-                                                        .text;
-                                                procsControllers[index].text =
-                                                    temp;
-                                              });
-                                            },
-                                      icon: const Icon(Icons.arrow_downward),
-                                      tooltip: 'Mover para cima',
+                                                        .text = temp;
+                                                  });
+                                                },
+                                          icon:
+                                              const Icon(Icons.arrow_downward),
+                                          tooltip: 'Mover para cima',
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(
                                       height: 10,
@@ -604,6 +624,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           ),
                   ),
                 ),
+                //* Procedure
                 Padding(
                   padding: const EdgeInsets.only(right: 32, left: 32, top: 16),
                   child: Row(
@@ -660,7 +681,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     ],
                   ),
                 ),
-                //!Acaba
                 const Padding(
                   padding: EdgeInsets.all(32),
                   child: Divider(
@@ -670,7 +690,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     color: Colors.grey,
                   ),
                 ),
-                //! OUTRAS OPÇÕES (COMEÇO)
+                //* Other options
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.only(

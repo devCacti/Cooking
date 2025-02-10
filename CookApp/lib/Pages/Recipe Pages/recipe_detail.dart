@@ -16,17 +16,27 @@ class RecipeDetail extends StatefulWidget {
 }
 
 class _RecipeDetailState extends State<RecipeDetail> {
+  Recipe recipe = Recipe.defaultR();
   List<Ingredient> ingredients = [];
   bool loading = true;
+  bool imageIsPlaceholder = false;
+  int imageHeight = 100;
 
   @override
   void initState() {
     super.initState();
 
-    recipeIngredients(widget.recipe.id).then((value) => setState(() {
+    recipe = widget.recipe;
+
+    recipeIngredients(recipe.id).then((value) => setState(() {
           ingredients = value;
           loading = false;
         }));
+
+    // Check if the image returned is the same as the placeholder image
+    if (widget.image!.image == const AssetImage("assets/placeholder.png")) {
+      imageIsPlaceholder = true;
+    }
   }
 
   @override
@@ -45,9 +55,8 @@ class _RecipeDetailState extends State<RecipeDetail> {
             padding: const EdgeInsets.all(12),
             child: SizedBox(
               // Just use the height of the image if it doesn't exceed the width of the screen
-              height: widget.image != null ? widget.image!.height : 200,
-              width: MediaQuery.of(context).size.width,
-              child: widget.image != null
+              width: MediaQuery.of(context).size.width / 2,
+              child: imageIsPlaceholder
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image(
@@ -55,14 +64,18 @@ class _RecipeDetailState extends State<RecipeDetail> {
                         fit: BoxFit.cover,
                       ),
                     )
-                  : const Icon(Icons.image, size: 200),
+                  : const Icon(
+                      Icons.image_not_supported,
+                      size: 100,
+                      color: Colors.grey,
+                    ),
             ),
           ),
           //* Recipe Title
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              widget.recipe.title,
+              recipe.title,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 24,
@@ -74,7 +87,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              widget.recipe.description,
+              recipe.description,
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 18),
             ),
@@ -112,7 +125,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                               // Use the name from the ingredient
                               ? ingredients[index].name
                               // Otherwise use the ingredient GUID
-                              : widget.recipe.bridges![index].ingredient,
+                              : recipe.bridges![index].ingredient,
                           style: const TextStyle(
                             fontSize: 22,
                           ),
@@ -122,7 +135,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              widget.recipe.bridges![index].amount
+                              recipe.bridges![index].amount
                                   .toString()
                                   .replaceAll(r'.', ','),
                               style: const TextStyle(
@@ -131,11 +144,11 @@ class _RecipeDetailState extends State<RecipeDetail> {
                             ),
                             Text(
                               // If the ingredients list is not empty
-                              widget.recipe.bridges![index].customUnit == null
+                              recipe.bridges![index].customUnit == null
                                   // Use the amount and unit from the ingredient
                                   ? " ${ingredients[index].unit}"
                                   // Otherwise use the amount and custom unit from the recipe
-                                  : " ${widget.recipe.bridges![index].customUnit}",
+                                  : " ${recipe.bridges![index].customUnit}",
                               style: const TextStyle(
                                 fontSize: 16,
                               ),
@@ -163,7 +176,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: widget.recipe.steps!.length,
+            itemCount: recipe.steps!.length,
             itemBuilder: (context, index) {
               return Column(
                 children: [
@@ -175,7 +188,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    widget.recipe.steps![index],
+                    recipe.steps![index],
                     style: const TextStyle(
                       fontSize: 18,
                     ),
@@ -184,6 +197,65 @@ class _RecipeDetailState extends State<RecipeDetail> {
                 ],
               );
             },
+          ),
+          //* Recipe Details (Preparation Time, Servings, etc.)
+          const Divider(
+            indent: 80,
+            endIndent: 80,
+          ),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              "Detalhes",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              const Text("Tempo de Preparação", style: TextStyle(fontSize: 16)),
+              Text(
+                "${recipe.time} minutos",
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text("Porções", style: TextStyle(fontSize: 16)),
+              Text(
+                // Remove the ".0" from the end of the number
+                recipe.servings
+                    .toString()
+                    .substring(0, recipe.servings.toString().length - 2),
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              ////const SizedBox(height: 8),
+              ////Text(
+              ////  "Dificuldade: ${recipe.difficulty}",
+              ////  style: const TextStyle(
+              ////    fontSize: 20,
+              ////  ),
+              ////),
+              const SizedBox(height: 8),
+              const Text(
+                "Categoria",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                recipe.getType(),
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
           ),
         ],
       ),

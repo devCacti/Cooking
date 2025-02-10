@@ -441,6 +441,23 @@ class Recipe {
     this.type = type;
   }
 
+  String getType() {
+    switch (type) {
+      case 0:
+        return 'Geral';
+      case 1:
+        return 'Bolo';
+      case 2:
+        return 'Tarte';
+      case 3:
+        return 'Sobremesa';
+      case 4:
+        return 'Prato Principal';
+      default:
+        return 'Outro';
+    }
+  }
+
   // void set public
   void setPublic(bool isPublic) {
     this.isPublic = isPublic;
