@@ -7,7 +7,8 @@ import '../Functions/data_structures.dart';
 //import '../Classes/receita.dart';
 
 class NewRecipeForm extends StatefulWidget {
-  const NewRecipeForm({Key? key}) : super(key: key);
+  final BuildContext context;
+  const NewRecipeForm({Key? key, required this.context}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -1030,49 +1031,58 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           }
 
                           // Sending ingredients to the server for creation
-                          final ingIds = newIngredients(ings);
-
-                          // Insert into the bridges list
-                          for (int i = 0; i < ingredients.length; i++) {
-                            bridges.add(
-                              IngBridge(
-                                id: "",
-                                ingredient: ings[i].id,
-                                amount: ingsQaunt[i],
-                              ),
+                          newIngredients(ings).then((ingIds) {
+                            // Insert into the bridges list
+                            for (int i = 0; i < ingredients.length; i++) {
+                              bridges.add(
+                                IngBridge(
+                                  id: ingIds[i],
+                                  ingredient: ings[i].id,
+                                  amount: ingsQaunt[i],
+                                ),
+                              );
+                            }
+                            // Using a new type of class to send the data to the server
+                            RecipeC novaReceita = RecipeC(
+                              // ignore: prefer_null_aware_operators
+                              image: _image == null ? null : File(_image!.path),
+                              title: nameR!,
+                              description: descR!,
+                              //!ingTipo: ingsOpts,
+                              //!ingQuant: ingsQaunt,
+                              //!procedimento: procedimentos,
+                              time: cookTime,
+                              portions: portions,
+                              //!type: _selectedValue,
+                              ingredientIds: ingIds,
                             );
-                          }
+                            novaReceita.send();
+                          });
 
-                          Recipe novaReceita = Recipe(
-                            // ignore: prefer_null_aware_operators
-                            id: "",
-                            image: _image == null ? null : File(_image!.path),
-                            title: nameR!,
-                            description: descR!,
-                            ingredients: ings,
-                            //!ingTipo: ingsOpts,
-                            //!ingQuant: ingsQaunt,
-                            //!procedimento: procedimentos,
-                            time: cookTime,
-                            servings: portions,
-                            //!type: _selectedValue,
-                            likes: 0,
-                          );
-
-                          // Using a new type of class to send the data to the server
-
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                'A receita foi guardada com sucesso.',
-                              ),
-                              action:
-                                  SnackBarAction(label: 'OK', onPressed: () {}),
-                            ),
-                          );
-                          //!saveRecipe(novaReceita);
+                          // Checking if the context is still mounted before doing anything to it (or with it)
+                          //!if (context.mounted) {
+                          //!  // Hiding any open snackbars just for good measure
+                          //!  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          //!  // The context of the main page is used to show the snackbar on the main page
+                          //!  ScaffoldMessenger.of(widget.context)
+                          //!      .hideCurrentSnackBar();
+                          //!  ScaffoldMessenger.of(widget.context).showSnackBar(
+                          //!    SnackBar(
+                          //!      content: const Text(
+                          //!        'A receita foi guardada com sucesso.',
+                          //!      ),
+                          //!      action: SnackBarAction(
+                          //!          label: 'OK',
+                          //!          onPressed: () {
+                          //!            ScaffoldMessenger.of(widget.context)
+                          //!                .hideCurrentSnackBar();
+                          //!          }),
+                          //!    ),
+                          //!  );
+                          //!  //!saveRecipe(novaReceita);
+                          //!}
                           Navigator.pop(context);
+                          // This is an else of a different if
                         } else {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -1080,8 +1090,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               content: const Text(
                                 'Por favor insira um nome e uma descrição.',
                               ),
-                              action:
-                                  SnackBarAction(label: 'OK', onPressed: () {}),
+                              action: SnackBarAction(
+                                  label: 'OK',
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                  }),
                             ),
                           );
                         }

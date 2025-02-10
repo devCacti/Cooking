@@ -200,10 +200,11 @@ class _UserSettingsState extends State<UserSettings> {
                     MaterialPageRoute(
                       builder: (context) => const LoginPage(),
                     ),
-                  ).then((value) => setState(() {
-                        user = user!;
-                        isLogged = user!.guid != "";
-                      }));
+                  ).then((value) {
+                    user!.getInstance().then((value) => setState(() {
+                          isLogged = user!.guid != "";
+                        }));
+                  });
                 },
               ),
               ListTile(

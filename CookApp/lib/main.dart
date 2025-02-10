@@ -68,6 +68,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void dispose() {
+    imageCache.forEach((key, value) {
+      value.image.evict();
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -190,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          recommended.isEmpty
+          recommended.isEmpty //? If there are no recipes, show a message
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -263,49 +271,59 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-          const Text("Página", style: TextStyle(fontSize: 18)),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.keyboard_arrow_left_rounded),
-                iconSize: 30,
-                onPressed: () {
-                  if (rIndex > 0) {
-                    int index = rIndex - 1;
-                    getPopularRecipes(index).then((value) {
-                      setState(() {
-                        recommended = value;
-                        rLoaded = true;
-                        rIndex = index;
-                      });
-                    });
-                  }
-                },
-              ),
-              Text(
-                '${rIndex + 1} / ${rMax + 1}',
-                style: const TextStyle(fontSize: 18),
-              ),
-              IconButton(
-                icon: const Icon(Icons.keyboard_arrow_right_rounded),
-                iconSize: 30,
-                onPressed: () {
-                  if (rIndex < rMax) {
-                    int index = rIndex + 1;
-                    getPopularRecipes(index).then((value) {
-                      setState(() {
-                        recommended = value;
-                        rLoaded = true;
-                        rIndex = index;
-                      });
-                    });
-                  }
-                },
-              ),
-            ],
-          ),
+          rMax == 0 //? If there are no pages, show a loading indicator
+              ? const Column(
+                  children: [
+                    Icon(Icons.sync_problem_rounded, size: 50),
+                    SizedBox(height: 10),
+                  ],
+                )
+              : Column(
+                  children: [
+                    const Text("Página", style: TextStyle(fontSize: 18)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.keyboard_arrow_left_rounded),
+                          iconSize: 30,
+                          onPressed: () {
+                            if (rIndex > 0) {
+                              int index = rIndex - 1;
+                              getPopularRecipes(index).then((value) {
+                                setState(() {
+                                  recommended = value;
+                                  rLoaded = true;
+                                  rIndex = index;
+                                });
+                              });
+                            }
+                          },
+                        ),
+                        Text(
+                          '${rIndex + 1} / $rMax',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.keyboard_arrow_right_rounded),
+                          iconSize: 30,
+                          onPressed: () {
+                            if (rIndex < rMax - 1) {
+                              int index = rIndex + 1;
+                              getPopularRecipes(index).then((value) {
+                                setState(() {
+                                  recommended = value;
+                                  rLoaded = true;
+                                  rIndex = index;
+                                });
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
           const SizedBox(height: 32),
         ],
       ),
@@ -378,7 +396,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const NewRecipeForm(),
+              builder: (context) => NewRecipeForm(context: context),
             ),
           );
         },
