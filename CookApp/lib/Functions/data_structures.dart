@@ -621,13 +621,14 @@ class RecipeC {
 
       //? ----------- Steps string ----------------------------
       String steps = '[';
-      for (var step in this.steps ?? []) {
-        steps += '{"details":"$step"},';
-      }
-      if (steps.isNotEmpty) {
-        // Remove the last comma
-        steps = steps.substring(0, steps.length - 1);
-        steps += ']';
+      if (this.steps == null || this.steps!.isEmpty) {
+        steps = '[]';
+      } else {
+        for (var step in this.steps ?? []) {
+          steps += '{"details":"$step"},';
+        }
+        // Remove the last comma and add the closing bracket
+        steps = '${steps.substring(0, steps.lastIndexOf(','))}]';
       }
 
       //? ----------- CustomIngM string -----------------------
@@ -649,6 +650,9 @@ class RecipeC {
         ));
       }
 
+      //? Debugging prints
+      print("Steps: $steps");
+
       // Add the fields to the request | All the names of the atributes of the class match the body field names
       request.fields.addAll({
         'title': title,
@@ -657,9 +661,12 @@ class RecipeC {
         'ingramounts': ingramounts,
         'time': time.toString().replaceAll('.', ','),
         'portions': portions.toString().replaceAll('.', ','),
+        'steps': steps,
         //!'type': type.toString(), //TODO: Make this ERROR PROOF
-        'isPublic': 'true' //?isPublic.toString(), // True for now
+        'isPublic': 'true', //?isPublic.toString(), // True for now
+        'ingredientIds': ingredientIds,
       });
+      print(request.fields);
     } catch (e) {
       print('Error: $e');
       return false;
@@ -999,13 +1006,13 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
       if (responseBody.contains('"error":""')) {
-        print('Got recipes');
+        print('Got popular recipes');
 
         // Parse the JSON response and return the recipes
         var json = jsonDecode(responseBody);
         var recipeinfos = json['recipes'];
 
-        print(recipeinfos);
+        ////print(recipeinfos);
         for (var recipe in recipeinfos) {
           try {
             // Creates a temporary recipe object

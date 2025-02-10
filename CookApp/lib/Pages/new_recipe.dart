@@ -708,7 +708,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.3,
                                 child: const Text(
-                                  'Tempo - Mins',
+                                  'Tempo [min]',
                                   style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.black54,
@@ -993,7 +993,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 32,
-                    bottom: 64,
+                    bottom: 48,
                   ),
                   child: IconButton(
                     //! Save Button
@@ -1043,20 +1043,18 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               );
                             }
                             // Using a new type of class to send the data to the server
-                            RecipeC novaReceita = RecipeC(
-                              // ignore: prefer_null_aware_operators
+                            RecipeC(
                               image: _image == null ? null : File(_image!.path),
                               title: nameR!,
                               description: descR!,
-                              //!ingTipo: ingsOpts,
-                              //!ingQuant: ingsQaunt,
-                              //!procedimento: procedimentos,
+                              ////ingTipo: ingsOpts,
+                              ingramounts: ingsQaunt,
+                              steps: procedimentos,
                               time: cookTime,
                               portions: portions,
-                              //!type: _selectedValue,
+                              ////type: _selectedValue,
                               ingredientIds: ingIds,
-                            );
-                            novaReceita.send();
+                            ).send();
                           });
 
                           // Checking if the context is still mounted before doing anything to it (or with it)
