@@ -1,8 +1,10 @@
-import 'dart:io';
+import 'package:cooking_app/Functions/server_requests.dart';
+import 'package:cooking_app/Pages/Recipe%20Pages/recipe_detail.dart';
 import 'package:flutter/material.dart';
-import '../Classes/receita.dart';
+import '../Classes/recipes.dart';
 import 'edit_recipe_page.dart';
-import 'details_recipes_page.dart';
+//? List of recipes page
+//* Only shows the recipes that are created by the user
 
 class ListRecipesForm extends StatefulWidget {
   const ListRecipesForm({Key? key}) : super(key: key);
@@ -19,9 +21,17 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
   @override
   void initState() {
     super.initState();
-    loadRecipes().then((recipes) {
+    ////loadRecipes().then((recipes) {
+    ////  setState(() {
+    ////    _recipes = recipes;
+    ////  });
+    ////});
+
+    // Gets a list of the user's recipes
+    // (2025-02-12) - This function returns all of the user's recipes
+    getMyRecipes().then((returnedValue) {
       setState(() {
-        _recipes = recipes;
+        _recipes = returnedValue;
       });
     });
   }
@@ -31,7 +41,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
 
   Future decisionDialog(
     BuildContext context,
-    int id,
+    String id,
     int index,
   ) async {
     return showDialog<bool>(
@@ -71,7 +81,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
     );
   }
 
-  Future<bool> showConfirmationDialog(BuildContext context, int id) async {
+  Future<bool> showConfirmationDialog(BuildContext context, String id) async {
     bool confirm = false;
     await showDialog<bool>(
       context: context,
@@ -91,13 +101,13 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
             TextButton(
               onPressed: () {
                 confirm = true;
-                deleteRecipeById(id).then((_) {
-                  loadRecipes().then((recipes) {
-                    setState(() {
-                      _recipes = recipes;
-                    });
-                  });
-                });
+                //!deleteRecipeById(id).then((_) {
+                //!  loadRecipes().then((recipes) {
+                //!    setState(() {
+                //!      _recipes = recipes;
+                //!    });
+                //!  });
+                //!});
                 Navigator.pop(context);
               },
               child: const Text('Sim'),
@@ -165,7 +175,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                   child: RefreshIndicator(
                     key: refreshIndicatorKey,
                     onRefresh: () async {
-                      loadRecipes().then((recipes) {
+                      getMyRecipes().then((recipes) {
                         setState(() {
                           _recipes = recipes;
                         });
@@ -176,7 +186,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                         : ListView.builder(
                             itemCount: _recipes.length,
                             itemBuilder: (BuildContext context, int index) {
-                              if (_recipes[index].categoria != categoria &&
+                              if (_recipes[index].getType() != categoria &&
                                   categoria != 'Geral') {
                                 return Container();
                               }
@@ -192,8 +202,8 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DetailsForm(
-                                            detailRecipe: _recipes[index],
+                                          builder: (context) => RecipeDetail(
+                                            recipe: _recipes[index],
                                           ),
                                         ),
                                       );
@@ -206,7 +216,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                       );
                                     },
                                     title: Text(
-                                      _recipes[index].nome,
+                                      _recipes[index].title,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: const TextStyle(
@@ -214,35 +224,28 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      _recipes[index].descricao,
+                                      _recipes[index].description,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
-                                    leading: _recipes[index].foto != null
+                                    leading: _recipes[index].image != null
                                         ? SizedBox(
                                             width: 50,
                                             height: 50,
                                             child: ClipRRect(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(4)),
-                                              child: Image.file(
-                                                File(_recipes[index].foto!),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(4)),
+                                                child: Image(
+                                                  image: _recipes[index].image!
+                                                      as ImageProvider,
+                                                  fit: BoxFit.cover,
+                                                )),
                                           )
                                         : const Icon(
                                             Icons.image_not_supported,
                                             size: 50,
                                           ),
-                                    trailing: _recipes[index].favorita
-                                        ? const Icon(
-                                            Icons.star,
-                                            color: Colors.yellow,
-                                            size: 30,
-                                          )
-                                        : null,
                                   ),
                                 ),
                               );

@@ -169,7 +169,19 @@ class Loja {
 
   Future<File> get _localFile async {
     final directory = await path_provider.getApplicationDocumentsDirectory();
-    return File('${directory.path}/testes_lojas0$nTry.json');
+
+    // Create if it doesn't exist already
+    if (!await directory.exists()) {
+      await directory.create();
+    }
+
+    File file = File('${directory.path}\\testes_lojas2$nTry.json');
+
+    if (!await file.exists()) {
+      await file.create();
+    }
+
+    return file;
   }
 
   //? Saves new stores to file
@@ -183,6 +195,12 @@ class Loja {
       } catch (e) {
         jsonList = [];
       }
+
+      // Check if there is already a store with the same name
+      if (jsonList.any((store) => store['nome'] == nome)) {
+        return;
+      }
+
       jsonList.add(toJson());
       file.writeAsStringSync(json.encode(jsonList));
     } catch (e) {
@@ -200,7 +218,13 @@ class Loja {
       }
 
       final contents = await file.readAsString();
+
+      if (contents.isEmpty) {
+        return [];
+      }
+
       final List<dynamic> jsonList = jsonDecode(contents);
+
       final List<Loja> stores =
           jsonList.map((json) => Loja.fromJson(json)).toList();
       return stores;
@@ -367,7 +391,7 @@ class PartialList {
 */
 
 // Final_AttemptNumber
-String nTry = "0_5";
+String nTry = "0_6";
 
 //Id file
 Future<File> get _localIdFile async {
@@ -405,6 +429,12 @@ Future<int> nextId() async {
   final file = await _localIdFile;
   try {
     final contents = await file.readAsString();
+
+    if (contents.isEmpty) {
+      await file.writeAsString('1');
+      return 1;
+    }
+
     final int lastId = int.parse(contents);
     final int nextId = lastId + 1;
     return nextId;
@@ -519,6 +549,11 @@ Future<List<PartialList>> loadListsSimple() async {
 
     final contents = await file.readAsString();
     developer.log('Contents: $contents');
+
+    if (contents.isEmpty) {
+      developer.log('File is empty - loadListsSimple()');
+      return [];
+    }
 
     final List<dynamic> jsonList = jsonDecode(contents);
     developer.log('Decoded file');

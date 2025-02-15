@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:cooking_app/Functions/server_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../Classes/receita.dart';
+import '../Classes/recipes.dart';
+import '../Classes/ingredients.dart';
 import '../Functions/show_conf_dialog.dart';
 
 class EditForm extends StatefulWidget {
@@ -19,41 +21,60 @@ class EditForm extends StatefulWidget {
 
 class _EditFormState extends State<EditForm> {
   Recipe? toEditR; //receita a editar substitui o toEditR que é inacessível
-  late String? foto;
-  late int id;
-  late String nome;
-  late String desc;
-  late List<String>? ings;
-  late List<String>? ingsT;
-  late List<double>? ingsQ;
-  late List<String>? procs;
-  late double? tempo;
-  late double? porcs;
-  late String? categ;
-  late bool fav;
+  Image? foto;
+  late String id = widget.toEditR.id;
+  late String nome = widget.toEditR.title;
+  late String desc = widget.toEditR.description;
 
-  late final TextEditingController _tempoController;
+  //* ings indicates the names od the ingredients
+  late List<String>? ings = [];
+  //* ingsT indicates the type of ingredient, more specifically, the unit of measurement
+  late List<String>? ingsT = [];
+  //* ingsQ indicates the quantity of the ingredient
+  late List<double>? ingsQ = [];
+  //* Convertion of the ingredients to all the seperate parts
+  List<Ingredient> ingredients = [];
+  List<IngBridge> bridges = [];
+
+  //* procs indicates the steps of the recipe (Procs = Procedures)
+  late List<String>? procs = [];
+  late double? time = 0;
+  late double? porcs = 0;
+  late String? categ = 'Geral';
+  ////late bool fav = false;
+
+  late final TextEditingController _timeController;
   late final TextEditingController _porcsController;
 
   @override
   void initState() {
     super.initState();
     toEditR = widget.toEditR;
-    foto = widget.toEditR.foto;
+    // Get the image
+    getRecipeImage(id).then((value) => setState(() {
+          foto = value;
+        }));
     id = widget.toEditR.id;
-    nome = widget.toEditR.nome;
-    desc = widget.toEditR.descricao;
-    ings = widget.toEditR.ingredientes;
-    ingsT = widget.toEditR.ingTipo;
-    ingsQ = widget.toEditR.ingQuant!;
-    procs = widget.toEditR.procedimento;
-    tempo = widget.toEditR.tempo;
-    porcs = widget.toEditR.porcoes;
-    categ = widget.toEditR.categoria;
-    fav = widget.toEditR.favorita;
+    nome = widget.toEditR.title;
+    desc = widget.toEditR.description;
+    ////ings = widget.toEditR.ingredients?.map((ing) => ing.name).toList() ?? [];
+    ////ingsT = widget.toEditR.ingredients?.map((ing) => ing.unit).toList() ?? [];
+    ingsQ = widget.toEditR.bridges?.map((ing) => ing.amount).toList() ?? [];
+    recipeIngredients(widget.toEditR.id).then((value) {
+      setState(() {
+        ingredients = value;
+        ings = ingredients.map((ing) => ing.name).toList();
+        ingsT = ingredients.map((ing) => ing.unit).toList();
+      });
+    });
+    procs = widget.toEditR.steps;
+    time = widget.toEditR.time;
+    porcs = widget.toEditR.servings;
+    categ = widget.toEditR.getType();
+    ////fav = false;
     //String? _selectedValue = categ;
 
-    _tempoController = TextEditingController(text: tempo!.toStringAsFixed(0));
+    _timeController = TextEditingController(text: time!.toStringAsFixed(0));
     _porcsController = TextEditingController(text: porcs!.toStringAsFixed(0));
   }
 
@@ -75,14 +96,14 @@ class _EditFormState extends State<EditForm> {
   Color saveColor = Colors.white;
 
   late List<TextEditingController> hintControllers = List.generate(
-    toEditR!.ingQuant!.length,
-    (_) =>
-        TextEditingController(text: toEditR!.ingQuant![_].toStringAsFixed(0)),
+    toEditR!.bridges!.length,
+    (_) => TextEditingController(
+        text: toEditR!.bridges![_].amount.toStringAsFixed(0)),
   );
 
   late List<TextEditingController> procsControllers = List.generate(
-    toEditR!.procedimento!.length,
-    (_) => TextEditingController(text: toEditR!.procedimento![_]),
+    toEditR!.steps!.length,
+    (_) => TextEditingController(text: toEditR!.steps![_]),
   );
 
   @override
@@ -117,7 +138,7 @@ class _EditFormState extends State<EditForm> {
               child: Column(
                 children: [
                   Text(
-                    toEditR!.nome,
+                    toEditR!.title,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -135,7 +156,9 @@ class _EditFormState extends State<EditForm> {
                           ),
                           child: Column(
                             children: [
-                              foto == null
+                              foto?.image ==
+                                      const AssetImage(
+                                          'assets/images/placeholder.png')
                                   ? IconButton(
                                       icon:
                                           const Icon(Icons.image_not_supported),
@@ -147,7 +170,9 @@ class _EditFormState extends State<EditForm> {
                                             .pickImage(
                                                 source: ImageSource.gallery);
                                         setState(() {
-                                          foto = image?.path;
+                                          foto = image == null
+                                              ? null
+                                              : Image.file(File(image.path));
                                         });
                                       },
                                     )
@@ -158,10 +183,12 @@ class _EditFormState extends State<EditForm> {
                                           ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(8),
-                                            child: Image.file(
-                                              File(foto!),
-                                              height: 200,
-                                            ),
+                                            child: foto ??
+                                                const Icon(
+                                                  Icons.image_not_supported,
+                                                  size: 100,
+                                                  color: Colors.grey,
+                                                ),
                                           ),
                                           Positioned(
                                             right: 10,
@@ -170,13 +197,7 @@ class _EditFormState extends State<EditForm> {
                                               icon: const Icon(
                                                   Icons.edit_outlined),
                                               onPressed: () async {
-                                                var image = await ImagePicker()
-                                                    .pickImage(
-                                                        source: ImageSource
-                                                            .gallery);
-                                                setState(() {
-                                                  foto = image?.path;
-                                                });
+                                                //! Foto is a "IMAGE" type
                                               },
                                               tooltip: 'Mudar Foto',
                                               iconSize: 40,
@@ -284,7 +305,7 @@ class _EditFormState extends State<EditForm> {
                                             onLongPress: () {
                                               setState(() {
                                                 ings!.remove(ings![index]);
-                                                ingsT!.remove(ingsT![index]);
+                                                ////ingsT!.remove(ingsT![index]);
                                                 ingsQ!.remove(ingsQ![index]);
                                                 hintControllers.removeAt(index);
                                               });
@@ -742,7 +763,7 @@ class _EditFormState extends State<EditForm> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Semantics(
-                                    label: 'tempo',
+                                    label: 'time',
                                     child: SizedBox(
                                       width: 48,
                                       height: 48,
@@ -755,16 +776,16 @@ class _EditFormState extends State<EditForm> {
                                           final newValue =
                                               double.tryParse(value);
                                           if (newValue != null &&
-                                              newValue != tempo) {
+                                              newValue != time) {
                                             setState(() {
-                                              tempo = newValue;
+                                              time = newValue;
                                             });
                                           } else {
-                                            tempo = 0;
+                                            time = 0;
                                           }
                                         },
                                         keyboardType: TextInputType.number,
-                                        controller: _tempoController,
+                                        controller: _timeController,
                                       ),
                                     ),
                                   ),
@@ -908,47 +929,47 @@ class _EditFormState extends State<EditForm> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              width: 125,
-                              child: const Text(
-                                'Favorita:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              width: 125,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(
-                                  width: 75,
-                                  height: 1,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              width: 125,
-                              child: Checkbox(
-                                value: fav,
-                                onChanged: (value) {
-                                  setState(() {
-                                    fav = value!;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
+                        ////Row(
+                        ////  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        ////  children: [
+                        ////    Container(
+                        ////      alignment: Alignment.center,
+                        ////      width: 125,
+                        ////      child: const Text(
+                        ////        'Favorita:',
+                        ////        style: TextStyle(
+                        ////          fontSize: 18,
+                        ////          color: Colors.black54,
+                        ////        ),
+                        ////      ),
+                        ////    ),
+                        ////    Container(
+                        ////      alignment: Alignment.center,
+                        ////      width: 125,
+                        ////      child: Container(
+                        ////        decoration: const BoxDecoration(
+                        ////          color: Colors.grey,
+                        ////        ),
+                        ////        child: const SizedBox(
+                        ////          width: 75,
+                        ////          height: 1,
+                        ////        ),
+                        ////      ),
+                        ////    ),
+                        ////    Container(
+                        ////      alignment: Alignment.center,
+                        ////      width: 125,
+                        ////      child: Checkbox(
+                        ////        value: fav,
+                        ////        onChanged: (value) {
+                        ////          setState(() {
+                        ////            fav = value!;
+                        ////          });
+                        ////        },
+                        ////      ),
+                        ////    ),
+                        ////  ],
+                        ////),
                       ],
                     ),
                   ),
@@ -970,29 +991,38 @@ class _EditFormState extends State<EditForm> {
                       IconButton(
                         onPressed: (() {
                           if (_nameKey.currentState != null) {
+                            // Verifies if there is a name
                             _nameKey.currentState!.validate();
                           }
                           if (_descKey.currentState != null) {
+                            // Verifies if there is a description
                             _descKey.currentState!.validate();
                           }
 
                           if (nome.isNotEmpty && desc.isNotEmpty) {
-                            editRecipeById(
-                              id,
-                              Recipe(
-                                id: id,
-                                foto: foto,
-                                nome: nome,
-                                descricao: desc,
-                                ingredientes: ings,
-                                ingTipo: ingsT,
-                                ingQuant: ingsQ,
-                                procedimento: procs,
-                                tempo: tempo!,
-                                porcoes: porcs!,
-                                categoria: categ!,
-                                favorita: fav,
-                              ),
+                            // TODO: Finish this
+                            //? Sending the update request to the server
+                            List<IngBridge> ingsQ = [];
+                            for (int i = 0; i < ings!.length; i++) {
+                              ingsQ.add(
+                                IngBridge(
+                                  id: bridges[i].id,
+                                  ingredient: ingredients[i].id,
+                                  amount: bridges[i].amount,
+                                ),
+                              );
+                            }
+
+                            RecipeC uRecipe = RecipeC(
+                              title: nome,
+                              description: desc,
+                              ////ingredients: ings!,
+                              ////bridges: ingsQ!,
+                              steps: procs!,
+                              time: time!,
+                              portions: porcs!,
+                              type: 0, //categ!,
+                              //isFavourite: fav,
                             );
                             Navigator.pop(context);
                           } else {

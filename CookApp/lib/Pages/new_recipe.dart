@@ -3,8 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../Functions/data_structures.dart';
-//import '../Classes/receita.dart';
+import '../Functions/server_requests.dart';
+import '../Classes/recipes.dart';
+import '../Classes/ingredients.dart';
 
 class NewRecipeForm extends StatefulWidget {
   final BuildContext context;
@@ -20,7 +21,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   Recipe? novaReceita; //? Variável principal
 
   int id = 1;
-  XFile? _image; //* Recipe Image
+  Image? _image; //* Recipe Image
   String? nameR; //* Recipe Name
   String? descR; //* Recipe Description
   String? ingsR; //* Recipe Ingredients
@@ -51,12 +52,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   final TextEditingController _procController = TextEditingController();
   List<String> procedimentos = [];
 
-  final TextEditingController _tempoController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController _porcoesController = TextEditingController(
-    text: '0',
-  );
+  final TextEditingController _tempoController =
+      TextEditingController(text: '0');
+  final TextEditingController _porcoesController =
+      TextEditingController(text: '0');
 
   List<TextEditingController> procsControllers = [];
 
@@ -67,7 +66,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text(
-            'Sair!',
+            'Sair?',
             style: TextStyle(color: Colors.red),
           ),
           content: const Text(
@@ -101,7 +100,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        _image = image;
+        _image = image as Image?;
       });
     }
   }
@@ -114,12 +113,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   @override
   void initState() {
     super.initState();
-    //!initializeData();
   }
-
-  //!void initializeData() async {
-  //!  id = await getNextId();
-  //!}
 
   @override
   Widget build(BuildContext context) {
@@ -147,21 +141,23 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     bottom: 32,
                   ),
                   child: _image == null
-                      ? IconButton(
-                          icon: const Icon(Icons.camera_alt_outlined),
-                          iconSize: 75,
-                          onPressed: _getImage,
-                          tooltip: 'Escolher Foto',
+                      ? Material(
+                          elevation: 10,
+                          shape: const CircleBorder(),
+                          child: IconButton(
+                            icon: const Icon(Icons.camera_alt_outlined),
+                            iconSize: 75,
+                            onPressed: _getImage,
+                            tooltip: 'Escolher Foto',
+                          ),
                         )
                       : Stack(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.file(
-                                File(_image!.path),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(10),
+                                child: _image ??
+                                    const Icon(
+                                        Icons.image_not_supported_rounded)),
                             Positioned(
                               top: 10,
                               right: 10,
@@ -170,13 +166,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 onPressed: _getImage,
                                 tooltip: 'Mudar Foto',
                                 iconSize: 40,
-                                color: Colors.green,
                               ),
                             ),
                           ],
                         ),
                 ),
-                //!Começo
                 Padding(
                   padding: const EdgeInsets.only(right: 32, left: 32),
                   child: TextFormField(
@@ -1009,118 +1003,121 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     ),
                   ),
                 ),
-                //! OUTRAS OPÇÕES (FIM)
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 32,
                     bottom: 48,
                   ),
-                  child: IconButton(
-                    //! Save Button
-                    icon: const Icon(
-                      Icons.save,
-                      shadows: [Shadow(color: Colors.black)],
-                    ),
-                    iconSize: 50,
-                    tooltip: 'Guardar',
-                    onPressed: () {
-                      //Process of showing the warning on the fields
+                  child: Material(
+                    elevation: 10,
+                    shape: const CircleBorder(),
+                    child: IconButton(
+                      //! Save Button
+                      icon: const Icon(
+                        Icons.save,
+                        shadows: [Shadow(color: Colors.black)],
+                      ),
+                      iconSize: 60,
+                      tooltip: 'Guardar',
+                      onPressed: () {
+                        //Process of showing the warning on the fields
 
-                      try {
-                        _nameKey.currentState!.validate();
-                        _descKey.currentState!.validate();
+                        try {
+                          _nameKey.currentState!.validate();
+                          _descKey.currentState!.validate();
 
-                        //Verification
-                        validate = _nameKey.currentState!.validate() &&
-                            _descKey.currentState!.validate();
-                        if (validate == true) {
-                          //! TODO: Finish Changing the Recipe Creation Process
-                          //? Process of creating the Recipe
-                          final List<IngBridge> bridges = [];
-                          final List<Ingredient> ings = [];
+                          //Verification
+                          validate = _nameKey.currentState!.validate() &&
+                              _descKey.currentState!.validate();
+                          if (validate == true) {
+                            //! TODO: Finish Changing the Recipe Creation Process
+                            //? Process of creating the Recipe
+                            final List<IngBridge> bridges = [];
+                            final List<Ingredient> ings = [];
 
-                          // Insert into the ings list
-                          for (int i = 0; i < ingredients.length; i++) {
-                            ings.add(
-                              Ingredient(
-                                id: "",
-                                name: ingredients[i],
-                                unit: ingsOpts[i],
-                              ),
-                            );
-                          }
-
-                          // Sending ingredients to the server for creation
-                          newIngredients(ings).then((ingIds) {
-                            // Insert into the bridges list
+                            // Insert into the ings list
                             for (int i = 0; i < ingredients.length; i++) {
-                              bridges.add(
-                                IngBridge(
-                                  id: ingIds[i],
-                                  ingredient: ings[i].id,
-                                  amount: ingsQaunt[i],
+                              ings.add(
+                                Ingredient(
+                                  id: "",
+                                  name: ingredients[i],
+                                  unit: ingsOpts[i],
                                 ),
                               );
                             }
-                            // Using a new type of class to send the data to the server
-                            RecipeC(
-                              image: _image == null ? null : File(_image!.path),
-                              title: nameR!,
-                              description: descR!,
-                              ////ingTipo: ingsOpts,
-                              ingramounts: ingsQaunt,
-                              steps: procedimentos,
-                              time: cookTime,
-                              portions: portions,
-                              ////type: _selectedValue,
-                              ingredientIds: ingIds,
-                            ).send();
-                          });
 
-                          // Checking if the context is still mounted before doing anything to it (or with it)
-                          //!if (context.mounted) {
-                          //!  // Hiding any open snackbars just for good measure
-                          //!  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          //!  // The context of the main page is used to show the snackbar on the main page
-                          //!  ScaffoldMessenger.of(widget.context)
-                          //!      .hideCurrentSnackBar();
-                          //!  ScaffoldMessenger.of(widget.context).showSnackBar(
-                          //!    SnackBar(
-                          //!      content: const Text(
-                          //!        'A receita foi guardada com sucesso.',
-                          //!      ),
-                          //!      action: SnackBarAction(
-                          //!          label: 'OK',
-                          //!          onPressed: () {
-                          //!            ScaffoldMessenger.of(widget.context)
-                          //!                .hideCurrentSnackBar();
-                          //!          }),
-                          //!    ),
-                          //!  );
-                          //!  //!saveRecipe(novaReceita);
-                          //!}
-                          Navigator.pop(context);
-                          // This is an else of a different if
-                        } else {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                'Por favor insira um nome e uma descrição.',
+                            // Sending ingredients to the server for creation
+                            newIngredients(ings).then((ingIds) {
+                              // Insert into the bridges list
+                              for (int i = 0; i < ingredients.length; i++) {
+                                bridges.add(
+                                  IngBridge(
+                                    id: ingIds[i],
+                                    ingredient: ings[i].id,
+                                    amount: ingsQaunt[i],
+                                  ),
+                                );
+                              }
+                              // Using a new type of class to send the data to the server
+                              RecipeC(
+                                image: _image != null ? _image as File : null,
+                                title: nameR!,
+                                description: descR!,
+                                ////ingTipo: ingsOpts,
+                                ingramounts: ingsQaunt,
+                                steps: procedimentos,
+                                time: cookTime,
+                                portions: portions,
+                                ////type: _selectedValue,
+                                ingredientIds: ingIds,
+                              ).send();
+                            });
+
+                            // Checking if the context is still mounted before doing anything to it (or with it)
+                            //!if (context.mounted) {
+                            //!  // Hiding any open snackbars just for good measure
+                            //!  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            //!  // The context of the main page is used to show the snackbar on the main page
+                            //!  ScaffoldMessenger.of(widget.context)
+                            //!      .hideCurrentSnackBar();
+                            //!  ScaffoldMessenger.of(widget.context).showSnackBar(
+                            //!    SnackBar(
+                            //!      content: const Text(
+                            //!        'A receita foi guardada com sucesso.',
+                            //!      ),
+                            //!      action: SnackBarAction(
+                            //!          label: 'OK',
+                            //!          onPressed: () {
+                            //!            ScaffoldMessenger.of(widget.context)
+                            //!                .hideCurrentSnackBar();
+                            //!          }),
+                            //!    ),
+                            //!  );
+                            //!  //!saveRecipe(novaReceita);
+                            //!}
+                            Navigator.pop(context);
+                            // This is an else of a different if
+                          } else {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  'Por favor insira um nome e uma descrição.',
+                                ),
+                                action: SnackBarAction(
+                                    label: 'OK',
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                    }),
                               ),
-                              action: SnackBarAction(
-                                  label: 'OK',
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
-                                  }),
-                            ),
-                          );
+                            );
+                          }
+                        } catch (e) {
+                          throw Exception('Falha na criação da Receita: $e');
                         }
-                      } catch (e) {
-                        throw Exception('Falha na criação da Receita: $e');
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ),
               ],

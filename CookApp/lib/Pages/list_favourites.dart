@@ -1,9 +1,9 @@
-import 'dart:io';
+import 'package:cooking_app/Functions/server_requests.dart';
+import 'package:cooking_app/Pages/Recipe%20Pages/recipe_detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'edit_recipe_page.dart';
-import '../Classes/receita.dart';
-import 'details_recipes_page.dart';
+import '../Classes/recipes.dart';
 
 class ListFavoutiresForm extends StatefulWidget {
   const ListFavoutiresForm({Key? key}) : super(key: key);
@@ -22,14 +22,20 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
   @override
   void initState() {
     super.initState();
-    loadRecipes().then((recipes) {
+    ////loadRecipes().then((recipes) {
+    ////  setState(() {
+    ////    _recipes = recipes;
+    ////  });
+    ////});
+
+    getMyRecipes().then((recipes) {
       setState(() {
         _recipes = recipes;
       });
     });
   }
 
-  Future decisionDialog(BuildContext context, int id, int index) async {
+  Future decisionDialog(BuildContext context, String id, int index) async {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -65,7 +71,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
     );
   }
 
-  Future<void> showConfirmationDialog(BuildContext context, int id) async {
+  Future<void> showConfirmationDialog(BuildContext context, String id) async {
     await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -98,13 +104,13 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
               CupertinoDialogAction(
                 isDestructiveAction: true,
                 onPressed: () {
-                  deleteRecipeById(id).then((_) {
-                    loadRecipes().then((recipes) {
-                      setState(() {
-                        _recipes = recipes;
-                      });
-                    });
-                  });
+                  //!deleteRecipeById(id).then((_) {
+                  //!  loadRecipes().then((recipes) {
+                  //!    setState(() {
+                  //!      _recipes = recipes;
+                  //!    });
+                  //!  });
+                  //!});
                   Navigator.pop(context);
                 },
                 child: const Text('Sim'),
@@ -168,7 +174,13 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                   child: RefreshIndicator(
                     key: refreshIndicatorKey,
                     onRefresh: () async {
-                      loadRecipes().then((recipes) {
+                      ////loadRecipes().then((recipes) {
+                      ////  setState(() {
+                      ////    _recipes = recipes;
+                      ////  });
+                      ////});
+
+                      getMyRecipes().then((recipes) {
                         setState(() {
                           _recipes = recipes;
                         });
@@ -179,9 +191,8 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                         : ListView.builder(
                             itemCount: _recipes.length,
                             itemBuilder: (BuildContext context, int index) {
-                              if (!_recipes[index].favorita ||
-                                  _recipes[index].categoria != categoria &&
-                                      categoria != 'Geral') {
+                              if (_recipes[index].getType() != categoria &&
+                                  categoria != 'Geral') {
                                 // Return an empty Container if the recipe is not a favorite
                                 return Container();
                               }
@@ -197,8 +208,8 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => DetailsForm(
-                                            detailRecipe: _recipes[index],
+                                          builder: (context) => RecipeDetail(
+                                            recipe: _recipes[index],
                                           ),
                                         ),
                                       );
@@ -211,7 +222,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                       );
                                     },
                                     title: Text(
-                                      _recipes[index].nome,
+                                      _recipes[index].title,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: const TextStyle(
@@ -219,11 +230,11 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      _recipes[index].descricao,
+                                      _recipes[index].description,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
-                                    leading: _recipes[index].foto != null
+                                    leading: _recipes[index].image != null
                                         ? SizedBox(
                                             width: 50,
                                             height: 50,
@@ -232,8 +243,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                                   const BorderRadius.all(
                                                       Radius.circular(4)),
                                               child: Image.file(
-                                                File(_recipes[index].foto!),
-                                                fit: BoxFit.cover,
+                                                _recipes[index].image!,
                                               ),
                                             ),
                                           )

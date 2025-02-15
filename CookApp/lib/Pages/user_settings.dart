@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_const
 
 import 'package:flutter/material.dart';
-import '../Functions/data_structures.dart';
+import '../Classes/user.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 import '../Functions/show_conf_dialog.dart';

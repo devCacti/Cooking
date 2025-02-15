@@ -1,11 +1,16 @@
+//? Imports
+import 'package:cooking_app/Pages/Elements/bottom_app_bar.dart';
 import 'package:flutter/material.dart';
-import '../../Pages/Shopping%20Lists/shopping_lists.dart';
-import 'Functions/data_structures.dart';
+import 'Functions/server_requests.dart';
+import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
-import 'Pages/user_settings.dart';
-import 'Pages/new_recipe.dart';
-import 'Pages/list_recipes.dart';
-import 'Pages/list_favoritas.dart';
+
+//? Unused Imports
+////import '../../Pages/Shopping%20Lists/shopping_lists.dart';
+////import 'Pages/user_settings.dart';
+////import 'Pages/new_recipe.dart';
+////import 'Pages/list_recipes.dart';
+////import 'Pages/list_favourites.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,13 +51,14 @@ class _MyHomePageState extends State<MyHomePage> {
   int rMax = 0;
   Map<String, Image> imageCache = {};
 
-  //TODO: Load the recommended recipes
+  //* Load the recommended recipes (TODO Done ✅)
   //? The recommended Recipes are the ones from the getPopularRecipes(rMax,) Future<List<Recipes>> function
 
   @override
   void initState() {
     super.initState();
 
+    // Gets the Popular Recipes from the server (Not the recommended ones)
     getPopularRecipes(rIndex).then((value) {
       setState(() {
         recommended = value;
@@ -60,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
 
+    // Gets the number of pages of the popular recipes
     fetchPopularPages().then((value) {
       setState(() {
         rMax = value;
@@ -178,6 +185,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     alignment: Alignment.centerRight,
                     child: IconButton(
                       onPressed: () {
+                        setState(() {
+                          rLoaded = false;
+                        });
                         getPopularRecipes(0).then((value) {
                           setState(() {
                             rIndex = 0;
@@ -327,86 +337,8 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(height: 32),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            //Shopping List Button
-            IconButton(
-              icon: const Icon(Icons.list),
-              tooltip: 'Lista de Compras',
-              iconSize: 35,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ShoppingLists(),
-                  ),
-                );
-              },
-            ),
-            //Recipes       Button
-            IconButton(
-              icon: const Icon(Icons.book_outlined),
-              tooltip: 'Receitas',
-              iconSize: 35,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ListRecipesForm(),
-                  ),
-                );
-              },
-            ),
-            //Favourites    Button
-            IconButton(
-              icon: const Icon(Icons.favorite_outline),
-              tooltip: 'Favoritas',
-              iconSize: 35,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ListFavoutiresForm(),
-                  ),
-                );
-              },
-            ),
-            //Profile       Button
-            IconButton(
-              icon: const Icon(Icons.account_circle_outlined),
-              tooltip: 'Perfil',
-              iconSize: 35,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const UserSettings(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NewRecipeForm(context: context),
-            ),
-          );
-        },
-        tooltip: 'Nova Receita',
-        shape: const CircleBorder(),
-        child: const Icon(
-          Icons.add,
-          size: 40,
-        ),
-      ),
+      bottomNavigationBar: bottomAppBar(context),
+      floatingActionButton: actionButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }

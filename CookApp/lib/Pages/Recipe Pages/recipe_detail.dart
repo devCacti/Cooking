@@ -1,7 +1,9 @@
 //? Recipe detail page
 
 import 'package:flutter/material.dart';
-import '../../Functions/data_structures.dart';
+import '../../Functions/server_requests.dart';
+import '../../Classes/recipes.dart';
+import '../../Classes/ingredients.dart';
 
 class RecipeDetail extends StatefulWidget {
   final Recipe recipe;
@@ -34,7 +36,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
         }));
 
     // Check if the image returned is the same as the placeholder image
-    if (widget.image!.image == const AssetImage("assets/placeholder.png")) {
+    if (widget.image?.image == const AssetImage("assets/placeholder.png")) {
       imageIsPlaceholder = true;
     }
   }

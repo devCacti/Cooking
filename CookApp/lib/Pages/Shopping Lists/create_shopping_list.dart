@@ -175,30 +175,47 @@ class _CreateListState extends State<CreateList> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Adicionar Loja'),
-                            content: TextField(
-                              onChanged: (value) {
-                                setState(() {
-                                  newStore = value;
-                                });
-                              },
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('Adicionar'),
-                                onPressed: () async {
-                                  Loja lojaInstance = Loja(nome: newStore);
-                                  await lojaInstance.save();
-                                  setState(() {
-                                    lojas.add(newStore);
-                                    loja = newStore;
-                                  });
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
+                          String newStore = '';
+                          void refresh() {
+                            setState(() {});
+                          }
+
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return AlertDialog(
+                                title: const Text('Adicionar Loja'),
+                                content: TextField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      newStore = value;
+                                    });
+                                  },
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: lojas.contains(newStore) ||
+                                            newStore.isEmpty
+                                        ? null
+                                        : () async {
+                                            if (lojas.contains(newStore)) {
+                                              return;
+                                            }
+                                            Loja lojaInstance =
+                                                Loja(nome: newStore);
+                                            await lojaInstance.save();
+                                            setState(() {
+                                              lojas.add(newStore);
+                                              loja = newStore;
+                                            });
+                                            // ignore: use_build_context_synchronously
+                                            refresh();
+                                            Navigator.of(context).pop();
+                                          },
+                                    child: const Text('Adicionar'),
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
                       );
