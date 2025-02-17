@@ -31,6 +31,8 @@ class _RecipeDetailState extends State<RecipeDetail> {
     recipe = widget.recipe;
 
     recipeIngredients(recipe.id).then((value) => setState(() {
+          print(value);
+          print(recipe.bridges.toString());
           ingredients = value;
           loading = false;
         }));
@@ -119,6 +121,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: ingredients.length,
                   itemBuilder: (context, index) {
+                    //print(recipe.bridges?[index].ingredient ?? "null");
                     return Column(
                       children: [
                         Text(
@@ -137,9 +140,10 @@ class _RecipeDetailState extends State<RecipeDetail> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              recipe.bridges![index].amount
-                                  .toString()
-                                  .replaceAll(r'.', ','),
+                              recipe.bridges?[index].amount
+                                      .toString()
+                                      .replaceAll(r'.', ',') ??
+                                  "",
                               style: const TextStyle(
                                 fontSize: 20,
                               ),
