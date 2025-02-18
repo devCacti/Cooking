@@ -36,6 +36,7 @@ class _UserSettingsState extends State<UserSettings> {
   bool isLogged = false;
 
   //TODO: Add user checking logic, if the user is logged in, show the user information, else, show like if isLogged is false
+  //* TLDR
   @override
   Widget build(BuildContext context) {
     final drawerHeader = UserAccountsDrawerHeader(

@@ -59,7 +59,6 @@ class _EditFormState extends State<EditForm> {
     desc = widget.toEditR.description;
     ////ings = widget.toEditR.ingredients?.map((ing) => ing.name).toList() ?? [];
     ////ingsT = widget.toEditR.ingredients?.map((ing) => ing.unit).toList() ?? [];
-    ingsQ = widget.toEditR.bridges?.map((ing) => ing.amount).toList() ?? [];
     recipeIngredients(widget.toEditR.id).then((value) {
       setState(() {
         ingredients = value;
@@ -67,6 +66,7 @@ class _EditFormState extends State<EditForm> {
         ingsT = ingredients.map((ing) => ing.unit).toList();
       });
     });
+    ingsQ = widget.toEditR.bridges?.map((ing) => ing.amount).toList() ?? [];
     procs = widget.toEditR.steps;
     time = widget.toEditR.time;
     porcs = widget.toEditR.servings;
@@ -1007,14 +1007,25 @@ class _EditFormState extends State<EditForm> {
                             List<double> ingramounts = [];
                             List<Map<String, String>> customM = [];
                             for (int i = 0; i < ings!.length; i++) {
-                              ingsQ.add(
-                                IngBridge(
-                                  id: bridges[i].id,
-                                  ingredient: ingredients[i].id,
-                                  amount: bridges[i].amount,
-                                  customUnit: ingsT?[i],
-                                ),
-                              );
+                              try {
+                                ingsQ.add(
+                                  IngBridge(
+                                    id: "",
+                                    ingredient: ingredients[i].id,
+                                    amount: toEditR!.bridges![i].amount,
+                                    customUnit: ingsT?[i],
+                                  ),
+                                );
+                              } catch (e) {
+                                ingsQ.add(
+                                  IngBridge(
+                                    id: "",
+                                    ingredient: ingredients[i].id,
+                                    amount: 0,
+                                    customUnit: ingsT?[i],
+                                  ),
+                                );
+                              }
                               ingIds.add(ingredients[i].id);
                               ingramounts.add(ingsQ[i].amount);
                               customM.add({
@@ -1059,7 +1070,7 @@ class _EditFormState extends State<EditForm> {
                               }
                             });
 
-                            Navigator.pop(context);
+                            //Navigator.pop(context);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(

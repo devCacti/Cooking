@@ -148,18 +148,16 @@ class Recipe {
 
   String getType() {
     switch (type) {
-      case 0:
-        return 'Geral';
       case 1:
-        return 'Bolo';
+        return 'Bolos';
       case 2:
-        return 'Tarte';
+        return 'Tartes';
       case 3:
-        return 'Sobremesa';
+        return 'Sobremesas';
       case 4:
-        return 'Prato Principal';
+        return 'Pratos';
       default:
-        return 'Outro';
+        return 'Geral';
     }
   }
 
