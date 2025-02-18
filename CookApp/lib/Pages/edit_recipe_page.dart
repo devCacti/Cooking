@@ -1003,27 +1003,62 @@ class _EditFormState extends State<EditForm> {
                             // TODO: Finish this
                             //? Sending the update request to the server
                             List<IngBridge> ingsQ = [];
+                            List<String> ingIds = [];
+                            List<double> ingramounts = [];
+                            List<Map<String, String>> customM = [];
                             for (int i = 0; i < ings!.length; i++) {
                               ingsQ.add(
                                 IngBridge(
                                   id: bridges[i].id,
                                   ingredient: ingredients[i].id,
                                   amount: bridges[i].amount,
+                                  customUnit: ingsT?[i],
                                 ),
                               );
+                              ingIds.add(ingredients[i].id);
+                              ingramounts.add(ingsQ[i].amount);
+                              customM.add({
+                                ingredients[i].id: ingsT![i],
+                              });
                             }
 
                             RecipeC uRecipe = RecipeC(
                               title: nome,
                               description: desc,
                               ////ingredients: ings!,
-                              ////bridges: ingsQ!,
+                              customIngM: customM,
+                              ingramounts: ingramounts,
                               steps: procs!,
                               time: time!,
                               portions: porcs!,
                               type: 0, //categ!,
+                              ingredientIds: ingIds,
                               //isFavourite: fav,
                             );
+
+                            uRecipe.update(id).then((value) {
+                              if (value) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Receita atualizada com sucesso!',
+                                    ),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Erro ao atualizar a receita.',
+                                    ),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            });
+
                             Navigator.pop(context);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

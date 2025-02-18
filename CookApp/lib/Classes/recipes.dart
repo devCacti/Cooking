@@ -440,7 +440,7 @@ class RecipeC {
     //difference is that this one includes a GUID to tell the server which recipe to update
 
     var request =
-        http.MultipartRequest('POST', Uri.parse('$url/Recipes/UpdateRecipe'));
+        http.MultipartRequest('PUT', Uri.parse('$url/Recipes/UpdateRecipe'));
 
     // Set the cookie, this lets the server know which user is making the request
     request.headers.addAll({'cookie': user.cookie});
