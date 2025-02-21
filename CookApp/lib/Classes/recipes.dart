@@ -355,6 +355,7 @@ class RecipeC {
       String customIngM = '';
       for (var ing in this.customIngM ?? []) {
         customIngM += '${ing[0]}:${ing[1]};';
+        print('Ing: ${ing[0]}:${ing[1]}');
       }
       if (customIngM.isNotEmpty) {
         // Remove the last semicolon
@@ -483,7 +484,8 @@ class RecipeC {
       //? ----------- CustomIngM string -----------------------
       String customIngM = '';
       for (var ing in this.customIngM ?? []) {
-        customIngM += '${ing[0]}:${ing[1]};';
+        customIngM += '${ing['IngGUID']}:${ing['CustomUnit']};';
+        print('Ing: ${ing['IngGUID']}:${ing['CustomUnit']}');
       }
       if (customIngM.isNotEmpty) {
         // Remove the last semicolon

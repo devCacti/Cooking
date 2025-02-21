@@ -712,23 +712,16 @@ class _EditFormState extends State<EditForm> {
                         ),
                         const SizedBox(height: 15),
                         const Divider(
-                          indent: 40,
-                          endIndent: 40,
-                          color: Colors.black,
-                        ),
+                            indent: 40, endIndent: 40, color: Colors.black),
                         const SizedBox(height: 10),
                         //* Outras edições
-                        const Text(
-                          'Outras Opções',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const Text('Outras Opções',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -870,9 +863,7 @@ class _EditFormState extends State<EditForm> {
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -926,9 +917,7 @@ class _EditFormState extends State<EditForm> {
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         ////Row(
                         ////  mainAxisAlignment: MainAxisAlignment.spaceAround,
                         ////  children: [
@@ -978,6 +967,7 @@ class _EditFormState extends State<EditForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       //! Close Button
+                      //TODO: Change the close and the save buttons to better icons and colors
                       IconButton(
                         onPressed: () => Navigator.maybePop(context),
                         icon: const Icon(
@@ -1002,22 +992,25 @@ class _EditFormState extends State<EditForm> {
                           if (nome.isNotEmpty && desc.isNotEmpty) {
                             // TODO: Finish this
                             //? Sending the update request to the server
-                            List<IngBridge> ingsQ = [];
+                            List<IngBridge> ingsB = [];
                             List<String> ingIds = [];
                             List<double> ingramounts = [];
                             List<Map<String, String>> customM = [];
                             for (int i = 0; i < ings!.length; i++) {
                               try {
-                                ingsQ.add(
+                                print("Ingredient : ${ingredients[i].id}");
+                                print("Amount     : ${ingsQ?[i]}");
+                                print("Custom Unit: ${ingsT?[i]}");
+                                ingsB.add(
                                   IngBridge(
                                     id: "",
                                     ingredient: ingredients[i].id,
-                                    amount: toEditR!.bridges![i].amount,
+                                    amount: ingsQ?[i] ?? 0,
                                     customUnit: ingsT?[i],
                                   ),
                                 );
                               } catch (e) {
-                                ingsQ.add(
+                                ingsB.add(
                                   IngBridge(
                                     id: "",
                                     ingredient: ingredients[i].id,
@@ -1027,9 +1020,11 @@ class _EditFormState extends State<EditForm> {
                                 );
                               }
                               ingIds.add(ingredients[i].id);
-                              ingramounts.add(ingsQ[i].amount);
+                              ingramounts.add(ingsB[i].amount);
                               customM.add({
-                                ingredients[i].id: ingsT![i],
+                                'IngGUID': ingredients[i].id,
+                                'Amount': ingsB[i].amount.toString(),
+                                'CustomUnit': ingsT![i],
                               });
                             }
 
