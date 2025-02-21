@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      debugShowCheckedModeBanner: false,
+      //debugShowCheckedModeBanner: false,
       home: const MyHomePage(
         title: 'Cooking',
       ),
@@ -252,10 +252,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                     if (snapshot.hasError) {
                                       return const Icon(Icons.error);
                                     }
-                                    return SizedBox(
-                                      height: double.infinity,
-                                      child: snapshot.data,
-                                    );
+                                    if (snapshot.data?.image ==
+                                        const AssetImage(
+                                            'assets/images/placeholder.png')) {
+                                      return const Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: Icon(
+                                          Icons.image_not_supported_rounded,
+                                          size: 50,
+                                          color: Colors.black38,
+                                        ),
+                                      );
+                                    } else {
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: snapshot.data!,
+                                      );
+                                    }
                                   } else {
                                     return const CircularProgressIndicator();
                                   }
