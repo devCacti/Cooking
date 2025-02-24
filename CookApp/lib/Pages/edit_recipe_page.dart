@@ -304,6 +304,7 @@ class _EditFormState extends State<EditForm> {
                                           child: ListTile(
                                             onLongPress: () {
                                               setState(() {
+                                                ingredients.removeAt(index);
                                                 ings!.remove(ings![index]);
                                                 ////ingsT!.remove(ingsT![index]);
                                                 ingsQ!.remove(ingsQ![index]);
@@ -998,6 +999,22 @@ class _EditFormState extends State<EditForm> {
                             List<Map<String, String>> customM = [];
                             for (int i = 0; i < ings!.length; i++) {
                               try {
+                                // Length -1 because i starts at 0 and the length starts at 1
+                                // When i is at 2 it's already asking for the 3rd element
+                                if (ingredients.length - 1 < i) {
+                                  // create a new ingredient if it doesn't exist
+                                  print("Creating new ingredient");
+                                  ingredients.add(
+                                    Ingredient(
+                                      id: "",
+                                      name: ings![i],
+                                      unit: ingsT![i],
+                                      isVerified: false,
+                                      tag: "",
+                                    ),
+                                  );
+                                }
+                                // TODO: PROBLEM (ISSUE: #24)
                                 print("Ingredient : ${ingredients[i].id}");
                                 print("Amount     : ${ingsQ?[i]}");
                                 print("Custom Unit: ${ingsT?[i]}");
@@ -1019,6 +1036,9 @@ class _EditFormState extends State<EditForm> {
                                   ),
                                 );
                               }
+                              if (ingredients[i].id == "") {
+                                continue;
+                              }
                               ingIds.add(ingredients[i].id);
                               ingramounts.add(ingsB[i].amount);
                               customM.add({
@@ -1028,41 +1048,70 @@ class _EditFormState extends State<EditForm> {
                               });
                             }
 
-                            RecipeC uRecipe = RecipeC(
-                              title: nome,
-                              description: desc,
-                              ////ingredients: ings!,
-                              customIngM: customM,
-                              ingramounts: ingramounts,
-                              steps: procs!,
-                              time: time!,
-                              portions: porcs!,
-                              type: 0, //categ!,
-                              ingredientIds: ingIds,
-                              //isFavourite: fav,
-                            );
+                            final List<Ingredient> noIdIngs = ingredients
+                                .where((element) =>
+                                    element.id.isEmpty || element.id == "")
+                                .toList();
 
-                            uRecipe.update(id).then((value) {
-                              if (value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Receita atualizada com sucesso!',
-                                    ),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
-                                Navigator.pop(context);
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Erro ao atualizar a receita.',
-                                    ),
-                                    duration: Duration(seconds: 2),
+                            // Send the ingredients to the server
+                            newIngredients(noIdIngs).then((value) {
+                              for (String id in value) {
+                                if (ingIds.contains(id)) {
+                                  // If it already has the id, skip it
+                                  continue;
+                                }
+                                ingIds.add(id);
+                                customM.add({
+                                  'IngGUID': id,
+                                  'Amount':
+                                      ingsQ![ingIds.indexOf(id)].toString(),
+                                  'CustomUnit': ingsT![ingIds.indexOf(id)],
+                                });
+                                ingramounts.add(ingsQ![ingIds.indexOf(id)]);
+                                ingsB.add(
+                                  IngBridge(
+                                    id: "",
+                                    ingredient: id,
+                                    amount: ingsQ![ingIds.indexOf(id)],
+                                    customUnit: ingsT![ingIds.indexOf(id)],
                                   ),
                                 );
                               }
+
+                              RecipeC(
+                                title: nome,
+                                description: desc,
+                                ////ingredients: ings!,
+                                customIngM: customM,
+                                ingramounts: ingramounts,
+                                steps: procs!,
+                                time: time!,
+                                portions: porcs!,
+                                type: 0, //categ!,
+                                ingredientIds: ingIds,
+                                //isFavourite: fav,
+                              ).update(id).then((value) {
+                                if (value) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Receita atualizada com sucesso!',
+                                      ),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Erro ao atualizar a receita.',
+                                      ),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              });
                             });
 
                             //Navigator.pop(context);

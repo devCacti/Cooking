@@ -498,6 +498,9 @@ Future<List<String>> newIngredients(List<Ingredient> ings) async {
   }
   // Upload the ingredients to the server: /Recipes/NewIngredients
   try {
+    if (ings.isEmpty) {
+      return List<String>.empty();
+    }
     var request =
         http.MultipartRequest('PUT', Uri.parse('$url/Recipes/NewIngredients'));
     request.headers.addAll({'cookie': user.cookie});
