@@ -380,8 +380,8 @@ class RecipeC {
         'description': description ?? '',
         'customIngM': customIngM,
         'ingramounts': ingramounts,
-        'time': time.toString().replaceAll('.', ','),
-        'portions': portions.toString().replaceAll('.', ','),
+        'time': time.toString().replaceAll(',', '.'),
+        'portions': portions.toString().replaceAll(',', '.'),
         'steps': steps,
         //!'type': type.toString(), //TODO: Make this ERROR PROOF
         'isPublic': 'true', //?isPublic.toString(), // True for now
@@ -511,8 +511,8 @@ class RecipeC {
         'description': description ?? '',
         'customIngM': customIngM,
         'ingramounts': ingramounts,
-        'time': time.toString().replaceAll('.', ','),
-        'portions': portions.toString().replaceAll('.', ','),
+        'time': time.toString().replaceAll(',', '.'),
+        'portions': portions.toString().replaceAll(',', '.'),
         'steps': steps,
         //!'type': type.toString(), //TODO: Make this ERROR PROOF
         'isPublic': 'true', //?isPublic.toString(), // True for now
