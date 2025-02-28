@@ -1,7 +1,7 @@
-import 'dart:io';
+//import 'dart:io';
 import 'package:cooking_app/Functions/server_requests.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+//import 'package:image_picker/image_picker.dart';
 import '../Classes/recipes.dart';
 import '../Classes/ingredients.dart';
 import '../Functions/show_conf_dialog.dart';
@@ -41,6 +41,7 @@ class _EditFormState extends State<EditForm> {
   late double? time = 0;
   late double? porcs = 0;
   late String? categ = 'Geral';
+  late bool isPublic = false;
   ////late bool fav = false;
 
   late final TextEditingController _timeController;
@@ -71,6 +72,7 @@ class _EditFormState extends State<EditForm> {
     time = widget.toEditR.time;
     porcs = widget.toEditR.servings;
     categ = widget.toEditR.getType();
+    isPublic = widget.toEditR.isPublic;
     ////fav = false;
     //String? _selectedValue = categ;
 
@@ -159,22 +161,22 @@ class _EditFormState extends State<EditForm> {
                               foto?.image ==
                                       const AssetImage(
                                           'assets/images/placeholder.png')
-                                  ? IconButton(
-                                      icon:
-                                          const Icon(Icons.image_not_supported),
+                                  ? const IconButton(
+                                      icon: Icon(Icons.image_not_supported),
                                       iconSize: 100,
                                       splashRadius: 65,
                                       color: Colors.grey,
-                                      onPressed: () async {
-                                        var image = await ImagePicker()
-                                            .pickImage(
-                                                source: ImageSource.gallery);
-                                        setState(() {
-                                          foto = image == null
-                                              ? null
-                                              : Image.file(File(image.path));
-                                        });
-                                      },
+                                      onPressed: null,
+                                      //?() async {
+                                      //?  var image = await ImagePicker()
+                                      //?      .pickImage(
+                                      //?          source: ImageSource.gallery);
+                                      //?  setState(() {
+                                      //?    foto = image == null
+                                      //?        ? null
+                                      //?        : Image.file(File(image.path));
+                                      //?  });
+                                      //?},
                                     )
                                   : Padding(
                                       padding: const EdgeInsets.all(30),
@@ -190,15 +192,15 @@ class _EditFormState extends State<EditForm> {
                                                   color: Colors.grey,
                                                 ),
                                           ),
-                                          Positioned(
+                                          const Positioned(
                                             right: 10,
                                             top: 10,
                                             child: IconButton(
-                                              icon: const Icon(
-                                                  Icons.edit_outlined),
-                                              onPressed: () async {
-                                                //! Foto is a "IMAGE" type
-                                              },
+                                              icon: Icon(Icons.edit_outlined),
+                                              onPressed: null,
+                                              //() async {
+                                              //! Foto is a "IMAGE" type
+                                              //},
                                               tooltip: 'Mudar Foto',
                                               iconSize: 40,
                                               color: Colors.green,
@@ -213,7 +215,10 @@ class _EditFormState extends State<EditForm> {
                                   key: _nameKey,
                                   maxLength: 75,
                                   decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(16)),
+                                    ),
                                     labelText: 'Nome',
                                   ),
                                   initialValue: nome,
@@ -241,7 +246,10 @@ class _EditFormState extends State<EditForm> {
                                   key: _descKey,
                                   maxLength: 500,
                                   decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(16)),
+                                    ),
                                     labelText: 'Descrição',
                                   ),
                                   initialValue: desc,
@@ -425,7 +433,10 @@ class _EditFormState extends State<EditForm> {
                                   decoration: const InputDecoration(
                                     labelText: 'Ingredientes',
                                     hintText: 'Insira um ingrediente',
-                                    border: OutlineInputBorder(),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(16)),
+                                    ),
                                   ),
                                   onChanged: (value) {
                                     ingsR = value;
@@ -437,30 +448,33 @@ class _EditFormState extends State<EditForm> {
                               ),
                               Expanded(
                                 flex: 0,
-                                child: IconButton(
-                                  tooltip: 'Adicionar',
-                                  splashRadius: 35,
-                                  iconSize: 50,
-                                  splashColor: Colors.black12,
-                                  color: Colors.green,
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      if (ingsR != null) {
-                                        hintControllers.add(
-                                          TextEditingController(text: '0'),
-                                        );
-                                        //* Parte principal
-                                        ings!.add(ingsR!);
-                                        _ingsController.text = '';
-                                        ingsR = '';
+                                child: Material(
+                                  elevation: 5,
+                                  shape: const CircleBorder(),
+                                  child: IconButton(
+                                    tooltip: 'Adicionar',
+                                    splashRadius: 35,
+                                    iconSize: 40,
+                                    splashColor: Colors.black12,
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (ingsR != null) {
+                                          hintControllers.add(
+                                            TextEditingController(text: '0'),
+                                          );
+                                          //* Parte principal
+                                          ings!.add(ingsR!);
+                                          _ingsController.text = '';
+                                          ingsR = '';
 
-                                        //* Parte das opções
-                                        ingsT!.add('g');
-                                        ingsQ!.add(0);
-                                      }
-                                    });
-                                  },
+                                          //* Parte das opções
+                                          ingsT!.add('g');
+                                          ingsQ!.add(0);
+                                        }
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
@@ -499,8 +513,8 @@ class _EditFormState extends State<EditForm> {
                                       return Padding(
                                         padding: const EdgeInsets.only(
                                           bottom: 16,
-                                          left: 16,
-                                          right: 16,
+                                          left: 8,
+                                          right: 8,
                                           top: 24,
                                         ),
                                         child: Column(
@@ -509,7 +523,7 @@ class _EditFormState extends State<EditForm> {
                                               'Passo N.º ${index + 1}',
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 24,
+                                                fontSize: 20,
                                               ),
                                             ),
                                             const SizedBox(
@@ -519,10 +533,15 @@ class _EditFormState extends State<EditForm> {
                                               controller:
                                                   procsControllers[index],
                                               style: const TextStyle(
-                                                fontSize: 20,
+                                                fontSize: 16,
                                               ),
                                               decoration: const InputDecoration(
                                                 label: Text('Procedimento'),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(16)),
+                                                ),
                                               ),
                                               textAlign: TextAlign.justify,
                                               onChanged: (value) {
@@ -679,7 +698,10 @@ class _EditFormState extends State<EditForm> {
                                   decoration: const InputDecoration(
                                     labelText: 'Preparação',
                                     hintText: 'Descreva o procedimento',
-                                    border: OutlineInputBorder(),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(16)),
+                                    ),
                                   ),
                                   onChanged: (value) {
                                     setState(() {
@@ -693,26 +715,29 @@ class _EditFormState extends State<EditForm> {
                               ),
                               Expanded(
                                 flex: 0,
-                                child: IconButton(
-                                  tooltip: 'Adicionar',
-                                  splashRadius: 35,
-                                  iconSize: 50,
-                                  color: Colors.green,
-                                  icon: const Icon(Icons.add),
-                                  onPressed: () {
-                                    setState(() {
-                                      if (procR.isNotEmpty) {
-                                        procsControllers.add(
-                                          TextEditingController(
-                                            text: procR,
-                                          ),
-                                        );
-                                        procs!.add(procR);
-                                        _procController.text = '';
-                                        procR = '';
-                                      }
-                                    });
-                                  },
+                                child: Material(
+                                  elevation: 5,
+                                  shape: const CircleBorder(),
+                                  child: IconButton(
+                                    tooltip: 'Adicionar',
+                                    splashRadius: 35,
+                                    iconSize: 40,
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (procR.isNotEmpty) {
+                                          procsControllers.add(
+                                            TextEditingController(
+                                              text: procR,
+                                            ),
+                                          );
+                                          procs!.add(procR);
+                                          _procController.text = '';
+                                          procR = '';
+                                        }
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                             ],
@@ -737,7 +762,7 @@ class _EditFormState extends State<EditForm> {
                               alignment: Alignment.center,
                               width: 125,
                               child: const Text(
-                                'Tempo:',
+                                'Tempo',
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.black54,
@@ -811,7 +836,7 @@ class _EditFormState extends State<EditForm> {
                               alignment: Alignment.center,
                               width: 125,
                               child: const Text(
-                                'Porções:',
+                                'Porções',
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.black54,
@@ -879,7 +904,7 @@ class _EditFormState extends State<EditForm> {
                               alignment: Alignment.center,
                               width: 125,
                               child: const Text(
-                                'Categoria:',
+                                'Categoria',
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.black54,
@@ -926,221 +951,209 @@ class _EditFormState extends State<EditForm> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        ////Row(
-                        ////  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        ////  children: [
-                        ////    Container(
-                        ////      alignment: Alignment.center,
-                        ////      width: 125,
-                        ////      child: const Text(
-                        ////        'Favorita:',
-                        ////        style: TextStyle(
-                        ////          fontSize: 18,
-                        ////          color: Colors.black54,
-                        ////        ),
-                        ////      ),
-                        ////    ),
-                        ////    Container(
-                        ////      alignment: Alignment.center,
-                        ////      width: 125,
-                        ////      child: Container(
-                        ////        decoration: const BoxDecoration(
-                        ////          color: Colors.grey,
-                        ////        ),
-                        ////        child: const SizedBox(
-                        ////          width: 75,
-                        ////          height: 1,
-                        ////        ),
-                        ////      ),
-                        ////    ),
-                        ////    Container(
-                        ////      alignment: Alignment.center,
-                        ////      width: 125,
-                        ////      child: Checkbox(
-                        ////        value: fav,
-                        ////        onChanged: (value) {
-                        ////          setState(() {
-                        ////            fav = value!;
-                        ////          });
-                        ////        },
-                        ////      ),
-                        ////    ),
-                        ////  ],
-                        ////),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              width: 125,
+                              child: const Text(
+                                'Pública',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              width: 125,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.grey,
+                                ),
+                                child: const SizedBox(
+                                  width: 75,
+                                  height: 1,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              width: 125,
+                              child: Switch(
+                                value: isPublic,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isPublic = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      //! Close Button
-                      //TODO: Change the close and the save buttons to better icons and colors
-                      IconButton(
-                        onPressed: () => Navigator.maybePop(context),
-                        icon: const Icon(
-                          Icons.close,
-                          color: Colors.red,
-                          size: 75,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      //! Save Button
-                      IconButton(
-                        onPressed: (() {
-                          if (_nameKey.currentState != null) {
-                            // Verifies if there is a name
-                            _nameKey.currentState!.validate();
-                          }
-                          if (_descKey.currentState != null) {
-                            // Verifies if there is a description
-                            _descKey.currentState!.validate();
-                          }
+                  //! Save Button
+                  Material(
+                    elevation: 10,
+                    shape: const CircleBorder(),
+                    child: IconButton(
+                      onPressed: (() {
+                        if (_nameKey.currentState != null) {
+                          // Verifies if there is a name
+                          _nameKey.currentState!.validate();
+                        }
+                        if (_descKey.currentState != null) {
+                          // Verifies if there is a description
+                          _descKey.currentState!.validate();
+                        }
 
-                          if (nome.isNotEmpty && desc.isNotEmpty) {
-                            // TODO: Finish this
-                            //? Sending the update request to the server
-                            List<IngBridge> ingsB = [];
-                            List<String> ingIds = [];
-                            List<double> ingramounts = [];
-                            List<Map<String, String>> customM = [];
-                            for (int i = 0; i < ings!.length; i++) {
-                              try {
-                                // Length -1 because i starts at 0 and the length starts at 1
-                                // When i is at 2 it's already asking for the 3rd element
-                                if (ingredients.length - 1 < i) {
-                                  // create a new ingredient if it doesn't exist
-                                  print("Creating new ingredient");
-                                  ingredients.add(
-                                    Ingredient(
-                                      id: "",
-                                      name: ings![i],
-                                      unit: ingsT![i],
-                                      isVerified: false,
-                                      tag: "",
-                                    ),
-                                  );
-                                }
-                                // TODO: PROBLEM (ISSUE: #24)
-                                print("Ingredient : ${ingredients[i].id}");
-                                print("Amount     : ${ingsQ?[i]}");
-                                print("Custom Unit: ${ingsT?[i]}");
-                                ingsB.add(
-                                  IngBridge(
+                        if (nome.isNotEmpty && desc.isNotEmpty) {
+                          // TODO: Finish this
+                          //? Sending the update request to the server
+                          List<IngBridge> ingsB = [];
+                          List<String> ingIds = [];
+                          List<double> ingramounts = [];
+                          List<Map<String, String>> customM = [];
+                          for (int i = 0; i < ings!.length; i++) {
+                            try {
+                              // Length -1 because i starts at 0 and the length starts at 1
+                              // When i is at 2 it's already asking for the 3rd element
+                              if (ingredients.length - 1 < i) {
+                                // create a new ingredient if it doesn't exist
+                                print("Creating new ingredient");
+                                ingredients.add(
+                                  Ingredient(
                                     id: "",
-                                    ingredient: ingredients[i].id,
-                                    amount: ingsQ?[i] ?? 0,
-                                    customUnit: ingsT?[i],
-                                  ),
-                                );
-                              } catch (e) {
-                                ingsB.add(
-                                  IngBridge(
-                                    id: "",
-                                    ingredient: ingredients[i].id,
-                                    amount: 0,
-                                    customUnit: ingsT?[i],
+                                    name: ings![i],
+                                    unit: ingsT![i],
+                                    isVerified: false,
+                                    tag: "",
                                   ),
                                 );
                               }
-                              if (ingredients[i].id == "") {
+                              // TODO: PROBLEM (ISSUE: #24)
+                              print("Ingredient : ${ingredients[i].id}");
+                              print("Amount     : ${ingsQ?[i]}");
+                              print("Custom Unit: ${ingsT?[i]}");
+                              ingsB.add(
+                                IngBridge(
+                                  id: "",
+                                  ingredient: ingredients[i].id,
+                                  amount: ingsQ?[i] ?? 0,
+                                  customUnit: ingsT?[i],
+                                ),
+                              );
+                            } catch (e) {
+                              ingsB.add(
+                                IngBridge(
+                                  id: "",
+                                  ingredient: ingredients[i].id,
+                                  amount: 0,
+                                  customUnit: ingsT?[i],
+                                ),
+                              );
+                            }
+                            if (ingredients[i].id == "") {
+                              continue;
+                            }
+                            ingIds.add(ingredients[i].id);
+                            ingramounts.add(ingsB[i].amount);
+                            customM.add({
+                              'IngGUID': ingredients[i].id,
+                              'Amount': ingsB[i].amount.toString(),
+                              'CustomUnit': ingsT![i],
+                            });
+                          }
+
+                          final List<Ingredient> noIdIngs = ingredients
+                              .where((element) =>
+                                  element.id.isEmpty || element.id == "")
+                              .toList();
+
+                          // Send the ingredients to the server
+                          newIngredients(noIdIngs).then((value) {
+                            for (String id in value) {
+                              if (ingIds.contains(id)) {
+                                // If it already has the id, skip it
                                 continue;
                               }
-                              ingIds.add(ingredients[i].id);
-                              ingramounts.add(ingsB[i].amount);
+                              ingIds.add(id);
                               customM.add({
-                                'IngGUID': ingredients[i].id,
-                                'Amount': ingsB[i].amount.toString(),
-                                'CustomUnit': ingsT![i],
+                                'IngGUID': id,
+                                'Amount': ingsQ![ingIds.indexOf(id)].toString(),
+                                'CustomUnit': ingsT![ingIds.indexOf(id)],
                               });
+                              ingramounts.add(ingsQ![ingIds.indexOf(id)]);
+                              ingsB.add(
+                                IngBridge(
+                                  id: "",
+                                  ingredient: id,
+                                  amount: ingsQ![ingIds.indexOf(id)],
+                                  customUnit: ingsT![ingIds.indexOf(id)],
+                                ),
+                              );
                             }
 
-                            final List<Ingredient> noIdIngs = ingredients
-                                .where((element) =>
-                                    element.id.isEmpty || element.id == "")
-                                .toList();
-
-                            // Send the ingredients to the server
-                            newIngredients(noIdIngs).then((value) {
-                              for (String id in value) {
-                                if (ingIds.contains(id)) {
-                                  // If it already has the id, skip it
-                                  continue;
-                                }
-                                ingIds.add(id);
-                                customM.add({
-                                  'IngGUID': id,
-                                  'Amount':
-                                      ingsQ![ingIds.indexOf(id)].toString(),
-                                  'CustomUnit': ingsT![ingIds.indexOf(id)],
-                                });
-                                ingramounts.add(ingsQ![ingIds.indexOf(id)]);
-                                ingsB.add(
-                                  IngBridge(
-                                    id: "",
-                                    ingredient: id,
-                                    amount: ingsQ![ingIds.indexOf(id)],
-                                    customUnit: ingsT![ingIds.indexOf(id)],
+                            RecipeC(
+                              title: nome,
+                              description: desc,
+                              ////ingredients: ings!,
+                              customIngM: customM,
+                              ingramounts: ingramounts,
+                              steps: procs!,
+                              time: time!,
+                              portions: porcs!,
+                              type: 0, //categ!,
+                              isPublic: isPublic,
+                              ingredientIds: ingIds,
+                              //isFavourite: fav,
+                            ).update(id).then((value) {
+                              if (value) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Receita atualizada com sucesso!',
+                                    ),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Erro ao atualizar a receita.',
+                                    ),
+                                    duration: Duration(seconds: 2),
                                   ),
                                 );
                               }
-
-                              RecipeC(
-                                title: nome,
-                                description: desc,
-                                ////ingredients: ings!,
-                                customIngM: customM,
-                                ingramounts: ingramounts,
-                                steps: procs!,
-                                time: time!,
-                                portions: porcs!,
-                                type: 0, //categ!,
-                                ingredientIds: ingIds,
-                                //isFavourite: fav,
-                              ).update(id).then((value) {
-                                if (value) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Receita atualizada com sucesso!',
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                  Navigator.pop(context);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Erro ao atualizar a receita.',
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
-                              });
                             });
+                          });
 
-                            //Navigator.pop(context);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Por favor preencha todos os campos obrigatórios.',
-                                ),
-                                duration: Duration(seconds: 2),
+                          //Navigator.pop(context);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Por favor preencha todos os campos obrigatórios.',
                               ),
-                            );
-                          }
-                        }),
-                        icon: const Icon(
-                          Icons.save,
-                          color: Colors.green,
-                          size: 75,
-                        ),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      }),
+                      icon: const Icon(
+                        Icons.cloud_upload_outlined,
                       ),
-                    ],
-                  )
+                      iconSize: 60,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),

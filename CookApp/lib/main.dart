@@ -1,4 +1,5 @@
 //? Imports
+//import 'package:cooking_app/Classes/server_info.dart';
 import 'package:cooking_app/Pages/Elements/bottom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'Functions/server_requests.dart';
@@ -90,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(height: 10),
           //*Early Access
           Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
+            padding: const EdgeInsets.only(left: 16, top: 20, right: 16),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
@@ -235,11 +236,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: const EdgeInsets.only(top: 8),
                           child: Material(
                             elevation: 5,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(16),
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(16),
                               ),
                               leading: FutureBuilder<Image>(
                                 future: getRecipeImage(

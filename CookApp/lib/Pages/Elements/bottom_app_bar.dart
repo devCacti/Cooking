@@ -15,7 +15,7 @@ Widget bottomAppBar(BuildContext context) => BottomAppBar(
           IconButton(
             icon: const Icon(Icons.list),
             tooltip: 'Lista de Compras',
-            iconSize: 35,
+            iconSize: 30,
             onPressed: () {
               Navigator.push(
                 context,
@@ -29,7 +29,7 @@ Widget bottomAppBar(BuildContext context) => BottomAppBar(
           IconButton(
             icon: const Icon(Icons.book_outlined),
             tooltip: 'Receitas',
-            iconSize: 35,
+            iconSize: 30,
             onPressed: () {
               Navigator.push(
                 context,
@@ -46,7 +46,7 @@ Widget bottomAppBar(BuildContext context) => BottomAppBar(
             icon: //const
                 Icon(Icons.favorite_outline),
             tooltip: 'Favoritas',
-            iconSize: 35,
+            iconSize: 30,
             onPressed: null,
             //*() {
             //* This code is going to be used but is commented out for now
@@ -62,7 +62,7 @@ Widget bottomAppBar(BuildContext context) => BottomAppBar(
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
             tooltip: 'Perfil',
-            iconSize: 35,
+            iconSize: 30,
             onPressed: () {
               Navigator.push(
                 context,

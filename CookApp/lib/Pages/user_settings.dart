@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_const
 
+import 'package:cooking_app/Classes/server_info.dart';
 import 'package:flutter/material.dart';
 import '../Classes/user.dart';
 import 'login_page.dart';
@@ -39,11 +40,14 @@ class _UserSettingsState extends State<UserSettings> {
   //* TLDR
   @override
   Widget build(BuildContext context) {
+    String Name = "${user?.name ?? ""} ${user?.surname ?? ""}";
+
     final drawerHeader = UserAccountsDrawerHeader(
-      accountName: Text(user?.username ?? "Blank User"),
-      accountEmail: Text(user?.email ?? "Blank Email"),
+      accountName: Text(Name == " " ? "Sem Nome" : Name),
+      accountEmail: Text(
+          "@${user?.username}" == "@" ? "Sem Username" : "@${user?.username}"),
       currentAccountPicture: const CircleAvatar(
-        child: FlutterLogo(size: 42.0),
+        child: Icon(Icons.person_rounded, size: 42.0),
       ),
     );
 
@@ -68,6 +72,14 @@ class _UserSettingsState extends State<UserSettings> {
             children: [
               drawerHeader,
               //* Privacy
+              const Text(
+                "Nenhuma definição disponível",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12.0,
+                ),
+              ),
+              const SizedBox(height: 10.0),
               ListTile(
                 title: const Text("Privacidade"),
                 leading: const Icon(Icons.remove_red_eye),
@@ -208,14 +220,31 @@ class _UserSettingsState extends State<UserSettings> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("A Minha Conta"),
+        // Button on the right side of the app bar to exit
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            iconSize: 30.0,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
       body: Semantics(
         container: true,
-        child: const Center(
+        child: Center(
           child: Padding(
-            padding: EdgeInsets.all(50.0),
+            padding: const EdgeInsets.all(50.0),
             //TODO: Add user settings widgets, dark mode, notifications, reminders, etc. (Only if the user is logged in)
-            child: const Text("Definições do Utilizador"),
+            child: Text(
+              version,
+              style: const TextStyle(
+                fontSize: 20.0,
+                color: Colors.grey,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),

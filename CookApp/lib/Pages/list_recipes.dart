@@ -199,11 +199,11 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                 ),
                                 child: Material(
                                   elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(16),
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
                                     onTap: () {
                                       Navigator.push(
@@ -251,6 +251,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                           )
                                         : const Icon(
                                             Icons.image_not_supported,
+                                            color: Colors.grey,
                                             size: 50,
                                           ),
                                   ),
