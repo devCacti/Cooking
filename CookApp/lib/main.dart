@@ -167,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Text(
                     'Tendências',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 18,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -234,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         return Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Material(
-                            elevation: 2,
+                            elevation: 5,
                             borderRadius: BorderRadius.circular(10),
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,

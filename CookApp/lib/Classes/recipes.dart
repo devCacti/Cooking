@@ -336,7 +336,7 @@ class RecipeC {
         // Remove the last semicolon
         ingramounts = ingramounts.substring(0, ingramounts.length - 1);
         // Replace any dots with commas -> Standardize the format | The server expects commas | 0.5 -> 0,5
-        ingramounts = ingramounts.replaceAll('.', ',');
+        ingramounts = ingramounts.replaceAll(',', '.');
       }
 
       //? ----------- Steps string ----------------------------
@@ -384,7 +384,8 @@ class RecipeC {
         'portions': portions.toString().replaceAll(',', '.'),
         'steps': steps,
         //!'type': type.toString(), //TODO: Make this ERROR PROOF
-        'isPublic': 'true', //?isPublic.toString(), // True for now
+        'isPublic': isPublic
+            .toString(), // If isPublic is true, it will send a value of 'true' telling the server that the recipe is public
         'ingredientIds': ingredientIds,
       });
       print(request.fields);
@@ -466,7 +467,7 @@ class RecipeC {
         // Remove the last semicolon
         ingramounts = ingramounts.substring(0, ingramounts.length - 1);
         // Replace any dots with commas -> Standardize the format | The server expects commas | 0.5 -> 0,5
-        ingramounts = ingramounts.replaceAll('.', ',');
+        ingramounts = ingramounts.replaceAll(',', '.');
       }
 
       //? ----------- Steps string ----------------------------

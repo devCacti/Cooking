@@ -191,13 +191,20 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                 return Container();
                               }
                               return Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.black12,
-                                  ),
+                                padding: const EdgeInsets.only(
+                                  left: 12,
+                                  right: 12,
+                                  top: 4,
+                                  bottom: 4,
+                                ),
+                                child: Material(
+                                  elevation: 5,
+                                  borderRadius: BorderRadius.circular(10),
                                   child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                     onTap: () {
                                       Navigator.push(
                                         context,

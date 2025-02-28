@@ -294,14 +294,17 @@ class _EditFormState extends State<EditForm> {
                                         (BuildContext context, int index) {
                                       return Padding(
                                         padding: const EdgeInsets.only(
-                                            bottom: 8, left: 16, right: 16),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: Colors.grey[200],
-                                          ),
+                                            bottom: 12, left: 10, right: 10),
+                                        child: Material(
+                                          elevation: 5,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                           child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
                                             onLongPress: () {
                                               setState(() {
                                                 ingredients.removeAt(index);
@@ -311,6 +314,7 @@ class _EditFormState extends State<EditForm> {
                                                 hintControllers.removeAt(index);
                                               });
                                             },
+                                            leading: const SizedBox(),
                                             title: Text(
                                               ings![index],
                                               style:
@@ -394,6 +398,9 @@ class _EditFormState extends State<EditForm> {
                                                       ingsT![index] = newValue!;
                                                     });
                                                   },
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
                                                 ),
                                               ],
                                             ),

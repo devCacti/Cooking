@@ -67,23 +67,9 @@ class _UserSettingsState extends State<UserSettings> {
         ? Column(
             children: [
               drawerHeader,
-              //* Likes, Comments and Visibility
+              //* Privacy
               ListTile(
-                title: const Text("Gostos"),
-                leading: const Icon(Icons.favorite),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text("Comentários"),
-                leading: const Icon(Icons.comment),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text("Visibilidade"),
+                title: const Text("Privacidade"),
                 leading: const Icon(Icons.remove_red_eye),
                 onTap: () {
                   Navigator.pop(context);
@@ -108,24 +94,8 @@ class _UserSettingsState extends State<UserSettings> {
                   Navigator.pop(context);
                 },
               ),
-              //* Notifications
-              ListTile(
-                title: const Text("Notificações"),
-                leading: const Icon(Icons.notifications),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
               //* Divider
               const Divider(),
-              //* Help
-              ListTile(
-                title: const Text("Ajuda"),
-                leading: const Icon(Icons.help),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
               //* About
               ListTile(
                 title: const Text("Sobre"),

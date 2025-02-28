@@ -29,7 +29,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   double cookTime = 0;
   double portions = 0;
   String _selectedValue = 'Geral';
-  bool? favorite = false;
+  bool? isPublic = false;
 
   //*Validation variable, only used to check if the recipe is valid
   bool? validate = false;
@@ -138,16 +138,18 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     left: 10.0,
                     right: 10.0,
                     top: 32,
-                    bottom: 32,
+                    bottom: 16,
+                    //bottom: 32,
                   ),
                   child: _image == null
-                      ? Material(
+                      ? const Material(
                           elevation: 10,
-                          shape: const CircleBorder(),
+                          shape: //const
+                              CircleBorder(),
                           child: IconButton(
-                            icon: const Icon(Icons.camera_alt_outlined),
+                            icon: Icon(Icons.camera_alt_outlined),
                             iconSize: 75,
-                            onPressed: _getImage,
+                            onPressed: null, // _getImage,
                             tooltip: 'Escolher Foto',
                           ),
                         )
@@ -171,6 +173,15 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           ],
                         ),
                 ),
+                const Text(
+                  'Funcionalidade ainda não disponível',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.black54,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.only(right: 32, left: 32),
                   child: TextFormField(
@@ -180,7 +191,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       labelText: 'Nome',
                       hintText: 'Escreva um nome',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
                     ),
                     onChanged: (value) {
@@ -206,7 +217,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       labelText: 'Descrição',
                       hintText: 'Escreva uma descrição',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
                     ),
                     onChanged: (value) {
@@ -227,6 +238,24 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   height: 1,
                   color: Colors.grey,
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                //* Ingredients
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 16,
+                    ),
+                    child: Text(
+                      'Ingredientes',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: Container(
@@ -238,7 +267,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             child: Text(
                               'Nenhum ingrediente',
                               style: TextStyle(
-                                fontSize: 22,
+                                fontSize: 16,
+                                color: Colors.black54,
                               ),
                             ),
                           )
@@ -249,19 +279,26 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             itemBuilder: (BuildContext context, int index) {
                               return Padding(
                                 padding: const EdgeInsets.only(
-                                    bottom: 8, left: 16, right: 16),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.grey[200],
-                                  ),
+                                    bottom: 8, left: 24, right: 24),
+                                child: Material(
+                                  elevation: 5,
+                                  borderRadius: BorderRadius.circular(10),
                                   child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
                                     onLongPress: () {
-                                      setState(() {
-                                        ingredients.remove(ingredients[index]);
-                                        ingsOpts.remove(ingsOpts[index]);
-                                        ingsQaunt.remove(ingsQaunt[index]);
-                                      });
+                                      showConfirmationDialog(context).then(
+                                        (value) {
+                                          if (value) {
+                                            setState(() {
+                                              ingredients.removeAt(index);
+                                              ingsOpts.removeAt(index);
+                                              ingsQaunt.removeAt(index);
+                                            });
+                                          }
+                                        },
+                                      );
                                     },
                                     title: Text(
                                       ingredients[index],
@@ -356,11 +393,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           key: _ingsKey,
                           controller: _ingsController,
                           decoration: const InputDecoration(
-                            labelText: 'Ingredients',
-                            hintText: 'Insira um ingrediente',
+                            labelText: 'Novo Ingrediente',
+                            hintText: 'Nome de um ingrediente',
                             border: OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(16)),
                             ),
                           ),
                           onChanged: (value) {
@@ -373,31 +410,34 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       ),
                       Expanded(
                         flex: 0,
-                        child: IconButton(
-                          tooltip: 'Adicionar',
-                          splashRadius: 35,
-                          iconSize: 50,
-                          splashColor: Colors.black12,
-                          color: Colors.green,
-                          icon: const Icon(Icons.add),
-                          onPressed: () {
-                            setState(() {
-                              try {
-                                if (ingsR != '') {
-                                  //* Parte principal
-                                  ingredients.add(ingsR!);
-                                  _ingsController.text = '';
-                                  ingsR = '';
+                        child: Material(
+                          elevation: 5,
+                          shape: const CircleBorder(),
+                          child: IconButton(
+                            tooltip: 'Adicionar',
+                            splashRadius: 25,
+                            iconSize: 40,
+                            splashColor: Colors.black12,
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              setState(() {
+                                try {
+                                  if (ingsR != '') {
+                                    //* Parte principal
+                                    ingredients.add(ingsR!);
+                                    _ingsController.text = '';
+                                    ingsR = '';
 
-                                  //* Parte das opções
-                                  ingsOpts.add('g');
-                                  ingsQaunt.add(0);
+                                    //* Parte das opções
+                                    ingsOpts.add('g');
+                                    ingsQaunt.add(0);
+                                  }
+                                } catch (e) {
+                                  print('Erro: $e');
                                 }
-                              } catch (e) {
-                                print('Erro: $e');
-                              }
-                            });
-                          },
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -407,6 +447,23 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   thickness: 1,
                   indent: 35,
                   endIndent: 35,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //* Procedure
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 16,
+                    ),
+                    child: Text(
+                      'Procedimento',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8),
@@ -419,7 +476,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             child: Text(
                               'Nenhum passo',
                               style: TextStyle(
-                                fontSize: 22,
+                                fontSize: 16,
+                                color: Colors.black54,
                               ),
                             ),
                           )
@@ -431,8 +489,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               return Padding(
                                 padding: const EdgeInsets.only(
                                   bottom: 8,
-                                  left: 16,
-                                  right: 16,
+                                  left: 24,
+                                  right: 24,
                                 ),
                                 child: Column(
                                   children: [
@@ -440,7 +498,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       'Passo N.º ${index + 1}',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 24,
+                                        fontSize: 20,
                                       ),
                                     ),
                                     const SizedBox(
@@ -449,13 +507,13 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     TextFormField(
                                       controller: procsControllers[index],
                                       style: const TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 16,
                                       ),
                                       decoration: const InputDecoration(
                                         label: Text('Procedimento'),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
+                                              Radius.circular(16)),
                                         ),
                                       ),
                                       maxLines: null,
@@ -634,7 +692,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             hintText: 'Descreva o procedimento',
                             border: OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
+                                  BorderRadius.all(Radius.circular(16)),
                             ),
                           ),
                           onChanged: (value) {
@@ -649,40 +707,46 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       ),
                       Expanded(
                         flex: 0,
-                        child: IconButton(
-                          tooltip: 'Adicionar',
-                          splashRadius: 35,
-                          iconSize: 50,
-                          color: Colors.green,
-                          icon: const Icon(Icons.add),
-                          onPressed: () {
-                            setState(() {
-                              try {
-                                if (procR != '') {
-                                  procedimentos.add(procR!);
-                                  _procController.text = '';
-                                  procsControllers
-                                      .add(TextEditingController(text: procR));
-                                  procR = '';
+                        child: Material(
+                          elevation: 5,
+                          shape: const CircleBorder(),
+                          child: IconButton(
+                            tooltip: 'Adicionar',
+                            splashRadius: 35,
+                            iconSize: 40,
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              setState(() {
+                                try {
+                                  if (procR != '') {
+                                    procedimentos.add(procR!);
+                                    _procController.text = '';
+                                    procsControllers.add(
+                                        TextEditingController(text: procR));
+                                    procR = '';
+                                  }
+                                } catch (e) {
+                                  print('Erro: $e');
                                 }
-                              } catch (e) {
-                                print('Erro: $e');
-                              }
-                            });
-                          },
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Divider(
-                    indent: 75,
-                    endIndent: 75,
-                    height: 2,
-                    color: Colors.grey,
-                  ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Divider(
+                  indent: 75,
+                  endIndent: 75,
+                  height: 2,
+                  color: Colors.grey,
+                ),
+                const SizedBox(
+                  height: 25,
                 ),
                 //* Other options
                 const Center(
@@ -705,302 +769,293 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     left: 12,
                     bottom: 12,
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16, bottom: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: const Text(
+                                'Tempo [min]',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.grey,
+                                    ),
+                                    child: const SizedBox(
+                                      width: 50,
+                                      height: 1,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              height: 48,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 48,
+                                    child: Semantics(
+                                      label: 'tempo',
+                                      child: TextField(
+                                        style: const TextStyle(
+                                          color: Colors.black54,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        onChanged: (value) {
+                                          final newValue =
+                                              double.tryParse(value);
+                                          if (newValue != null &&
+                                              newValue != cookTime) {
+                                            setState(() {
+                                              cookTime = newValue;
+                                            });
+                                          } else {
+                                            cookTime = 0;
+                                          }
+                                        },
+                                        keyboardType: TextInputType.number,
+                                        controller: _tempoController,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 32, bottom: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: const Text(
-                                  'Tempo [min]',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black54,
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: const Text(
+                                'Porções',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      width: 20,
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.grey,
+                                    ),
+                                    child: const SizedBox(
+                                      width: 50,
                                       height: 1,
                                     ),
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.grey,
-                                      ),
-                                      child: const SizedBox(
-                                        width: 50,
-                                        height: 1,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                      height: 1,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                height: 48,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 48,
-                                      child: Semantics(
-                                        label: 'tempo',
-                                        child: TextField(
-                                          style: const TextStyle(
-                                            color: Colors.black54,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          onChanged: (value) {
-                                            final newValue =
-                                                double.tryParse(value);
-                                            if (newValue != null &&
-                                                newValue != cookTime) {
-                                              setState(() {
-                                                cookTime = newValue;
-                                              });
-                                            } else {
-                                              cookTime = 0;
-                                            }
-                                          },
-                                          keyboardType: TextInputType.number,
-                                          controller: _tempoController,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              height: 48,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 48,
+                                    child: Semantics(
+                                      label: 'porcao',
+                                      child: TextField(
+                                        style: const TextStyle(
+                                          color: Colors.black54,
                                         ),
+                                        textAlign: TextAlign.center,
+                                        onChanged: (value) {
+                                          final newValue =
+                                              double.tryParse(value);
+                                          if (newValue != null &&
+                                              newValue != portions) {
+                                            setState(() {
+                                              portions = newValue;
+                                            });
+                                          } else {
+                                            portions = 0;
+                                          }
+                                        },
+                                        keyboardType: TextInputType.number,
+                                        controller: _porcoesController,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: const Text(
-                                  'Porções',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black54,
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
+                                ],
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      width: 20,
-                                      height: 1,
-                                    ),
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.grey,
-                                      ),
-                                      child: const SizedBox(
-                                        width: 50,
-                                        height: 1,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                      height: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                height: 48,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 48,
-                                      child: Semantics(
-                                        label: 'porcao',
-                                        child: TextField(
-                                          style: const TextStyle(
-                                            color: Colors.black54,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          onChanged: (value) {
-                                            final newValue =
-                                                double.tryParse(value);
-                                            if (newValue != null &&
-                                                newValue != portions) {
-                                              setState(() {
-                                                portions = newValue;
-                                              });
-                                            } else {
-                                              portions = 0;
-                                            }
-                                          },
-                                          keyboardType: TextInputType.number,
-                                          controller: _porcoesController,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: const Text(
-                                  'Categoria',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black54,
-                                  ),
-                                  textAlign: TextAlign.center,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: const Text(
+                                'Categoria',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      width: 20,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.grey,
+                                    ),
+                                    child: const SizedBox(
+                                      width: 50,
                                       height: 1,
                                     ),
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.grey,
-                                      ),
-                                      child: const SizedBox(
-                                        width: 50,
-                                        height: 1,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                      height: 1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: DropdownButton<String>(
-                                  value: _selectedValue,
-                                  style: const TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 16.8,
                                   ),
-                                  items: <String>[
-                                    'Geral',
-                                    'Bolos',
-                                    'Tartes',
-                                    'Sobremesas',
-                                    'Pratos'
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedValue = newValue!;
-                                    });
-                                  },
-                                ),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: DropdownButton<String>(
+                                value: _selectedValue,
+                                style: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 16.8,
+                                ),
+                                items: <String>[
+                                  'Geral',
+                                  'Bolos',
+                                  'Tartes',
+                                  'Sobremesas',
+                                  'Pratos'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selectedValue = newValue!;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: const Text(
-                                  'Favorita',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black54,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: const Text(
+                                'Pública',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black54,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      width: 20,
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.grey,
+                                    ),
+                                    child: const SizedBox(
+                                      width: 50,
                                       height: 1,
                                     ),
-                                    Container(
-                                      decoration: const BoxDecoration(
-                                        color: Colors.grey,
-                                      ),
-                                      child: const SizedBox(
-                                        width: 50,
-                                        height: 1,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                      height: 1,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: Checkbox(
-                                  value: favorite,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      favorite = value;
-                                    });
-                                  },
-                                ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: Switch(
+                                value: isPublic!,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isPublic = value;
+                                  });
+                                },
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
@@ -1070,6 +1125,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 time: cookTime,
                                 portions: portions,
                                 ////type: _selectedValue,
+                                isPublic: isPublic ?? false,
                                 ingredientIds: ingIds,
                               ).send();
                             });
