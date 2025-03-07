@@ -19,10 +19,15 @@ class _ShoppingListsState extends State<ShoppingLists> {
   @override
   void initState() {
     super.initState();
-    initializeDate();
+    initializeData();
   }
 
-  initializeDate() async {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  initializeData() async {
     await loadListsSimple().then(((value) {
       setState(() {
         lists = value;
@@ -37,177 +42,149 @@ class _ShoppingListsState extends State<ShoppingLists> {
         title: const Text('Listas de Compras'),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            IconButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CreateList(),
-                  ),
-                ).then((value) => initializeDate());
-              },
-              icon: const Icon(Icons.add_shopping_cart_rounded,
-                  color: Colors.greenAccent),
-              iconSize: 75,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 40),
-            lists.isEmpty
-                ? const Text(
-                    'Não tem listas de compras',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 20,
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      //phone height - appbar height - icon height - text height - button height
-                      height: MediaQuery.of(context).size.height / 1.5,
-                      child:
-                          NotificationListener<OverscrollIndicatorNotification>(
-                        onNotification:
-                            (OverscrollIndicatorNotification overscroll) {
-                          overscroll.disallowIndicator();
-                          return true;
-                        },
-                        child: ListView.builder(
-                          itemCount: lists.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () async {
-                                var listId = lists[index].id;
-                                print(
-                                    "Attempting to load list with id: $listId");
-                                await loadListById(listId).then((value) {
-                                  if (value == null) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: const Text(
-                                          // When there is an error with the database usually
-                                          //* when the id doesn't correspond to any list or the simple list is not empty but the main one is
-                                          'Não foi possivel carregar a lista (ERRO conhecido - Erro 1)'),
-                                      //dismiss button
-                                      action: SnackBarAction(
-                                        label: 'OK',
-                                        textColor: Colors.red,
-                                        onPressed: () {
-                                          ScaffoldMessenger.of(context)
-                                              .hideCurrentSnackBar();
-                                        },
-                                      ),
-                                    ));
-                                    return;
-                                  }
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ViewList(list: value),
-                                    ),
-                                  );
-                                });
-                              },
-                              child: Card(
-                                elevation: 1.5,
-                                child: ListTile(
-                                  title: Text(
-                                    lists[index].nome,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                  leading: lists[index].color == null
-                                      ? const Icon(
-                                          Icons.dangerous,
-                                          color: Colors.grey,
-                                          size: 50,
-                                        )
-                                      : Icon(
-                                          lists[index].detalhada! &&
-                                                  lists[index].detalhada != null
-                                              ? Icons.settings
-                                              : Icons.circle,
-                                          color: lists[index].color,
-                                          size: 50,
-                                        ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(height: 10),
-                                      lists[index].descricao == null
-                                          ? const SizedBox()
-                                          : Text(lists[index].descricao!,
-                                              style: const TextStyle(
-                                                  fontSize: 16)),
-                                      lists[index].descricao == null
-                                          ? const SizedBox()
-                                          : const SizedBox(height: 10),
-                                      Text(lists[index].data!),
-                                    ],
-                                  ),
-                                  trailing: IconButton(
-                                    iconSize: 35,
-                                    icon: const Icon(
-                                      Icons.delete_forever_outlined,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () async {
-                                      try {
-                                        var confirmationResult =
-                                            await deleteConfirmationDialog(
-                                                context, 'lista de compras');
-                                        if (confirmationResult != null &&
-                                            confirmationResult) {
-                                          await deleteListById(lists[index].id);
-                                          setState(() {
-                                            lists.removeAt(index);
-                                          });
-                                        }
-                                      } catch (e) {
-                                        // ignore: use_build_context_synchronously
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: const Text(
-                                              'Não foi possivel apagar a lista (ERRO conhecido - Erro 1)'),
-                                          //dismiss button
-                                          action: SnackBarAction(
-                                            label: 'OK',
-                                            textColor: Colors.red,
-                                            onPressed: () {
-                                              ScaffoldMessenger.of(context)
-                                                  .hideCurrentSnackBar();
-                                            },
-                                          ),
-                                        ));
-                                      }
-                                    },
-                                  ),
-                                ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: lists.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      Material(
+                        elevation: 2,
+                        borderRadius: BorderRadius.circular(50),
+                        color: lists[index].color,
+                        child: const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Icon(
+                            Icons.shopping_cart_outlined,
+                            size: 50,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 5,
+                                color: Colors.black45,
+                                offset: Offset(2, 2),
                               ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(16),
+                          child: ListTile(
+                            title: Text(lists[index].nome),
+                            subtitle: Text(
+                              lists[index].data?.toString() ?? 'Erro na Data!',
+                              style: TextStyle(
+                                color: lists[index].data == null
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            onTap: () async {
+                              var listId = lists[index].id;
+                              //print("Attempting to load list with id: $listId");
+                              await loadListById(listId).then((value) {
+                                if (value == null) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: const Text(
+                                        // When there is an error with the database usually
+                                        //* when the id doesn't correspond to any list or the simple list is not empty but the main one is
+                                        'Não foi possivel carregar a lista (ERRO conhecido - Erro 1)'),
+                                    //dismiss button
+                                    action: SnackBarAction(
+                                      label: 'OK',
+                                      textColor: Colors.red,
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
+                                      },
+                                    ),
+                                  ));
+                                  return;
+                                }
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ViewList(list: value),
+                                  ),
+                                );
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Material(
+                        elevation: 4,
+                        borderRadius: BorderRadius.circular(50),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.delete_outlined,
+                            size: 50,
+                            color: Colors.red,
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Apagar Lista'),
+                                  content: const Text(
+                                      'Tem a certeza que deseja apagar esta lista?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        await deleteListById(lists[index].id)
+                                            .then((value) {
+                                          initializeData();
+                                        });
+                                      },
+                                      child: const Text('Apagar'),
+                                    ),
+                                  ],
+                                );
+                              },
                             );
                           },
                         ),
                       ),
-                    ),
-                  )
-            //?const SizedBox(height: 20),
-            //?ElevatedButton(
-            //?  onPressed: () => Navigator.push(
-            //?    context,
-            //?    MaterialPageRoute(
-            //?      builder: (context) => const CreateList(),
-            //?    ),
-            //?  ),
-            //?  child: const Text('Criar Lista'),
-            //?),
-          ],
-        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'Nova Lista',
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CreateList(),
+            ),
+          );
+        },
+        tooltip: 'Nova Lista',
+        child: const Icon(Icons.add),
       ),
     );
   }

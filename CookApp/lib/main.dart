@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
+import 'Pages/new_recipe.dart';
 
 //? Unused Imports
 ////import '../../Pages/Shopping%20Lists/shopping_lists.dart';
@@ -352,7 +353,24 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       bottomNavigationBar: bottomAppBar(context),
-      floatingActionButton: actionButton(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewRecipeForm(context: context),
+            ),
+          );
+        },
+        tooltip: 'Nova Receita',
+        shape: const CircleBorder(),
+        //backgroundColor: Colors.lime[200],
+        child: const Icon(
+          Icons.add,
+          size: 40,
+          color: Colors.black,
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }

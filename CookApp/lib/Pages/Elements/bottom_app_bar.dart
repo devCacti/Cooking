@@ -13,7 +13,7 @@ Widget bottomAppBar(BuildContext context) => BottomAppBar(
         children: [
           //Shopping List Button
           IconButton(
-            icon: const Icon(Icons.list),
+            icon: const Icon(Icons.shopping_cart_outlined),
             tooltip: 'Lista de Compras',
             iconSize: 30,
             onPressed: () {
@@ -87,8 +87,10 @@ Widget actionButton(BuildContext context) => FloatingActionButton(
       },
       tooltip: 'Nova Receita',
       shape: const CircleBorder(),
+      //backgroundColor: Colors.lime[200],
       child: const Icon(
         Icons.add,
         size: 40,
+        color: Colors.black,
       ),
     );

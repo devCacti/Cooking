@@ -5,4 +5,4 @@
 String url = 'http://172.211.108.134';
 
 //* Pre-Release
-String version = 'v0.5.0.3';
+String version = 'v0.5.0.4';

@@ -19,6 +19,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _isRegistering = false;
+  bool _isObscure = true;
+  bool _isObscureConf = true;
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
             //* Password
             TextFormField(
-              obscureText: true,
+              obscureText: _isObscure,
               autocorrect: false,
               keyboardType: TextInputType.visiblePassword,
               controller: _passwordController,
@@ -189,10 +191,25 @@ class _RegisterPageState extends State<RegisterPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.remove_red_eye),
+                  onPressed: () {
+                    setState(() {
+                      _isObscure = !_isObscure;
+                    });
+                  },
+                ),
               ),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return "Por favor insira a sua password";
+                }
+                // At least 6 chars, 1 Capital letter, 1 Number and 1 Special character
+                String pattern =
+                    r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~.])[A-Za-z\d!@#\$&*~.]{6,}$';
+                RegExp regex = RegExp(pattern);
+                if (!regex.hasMatch(value)) {
+                  return '6 caracteres, 1 letra maiús., 1 num. e 1 car. especial';
                 }
                 return null;
               },
@@ -202,7 +219,7 @@ class _RegisterPageState extends State<RegisterPage> {
             TextFormField(
               controller: _confPasswordController,
               keyboardType: TextInputType.visiblePassword,
-              obscureText: true,
+              obscureText: _isObscureConf,
               autocorrect: false,
               decoration: InputDecoration(
                 hintText: "@Password123",
@@ -213,6 +230,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
+                ),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.remove_red_eye),
+                  onPressed: () {
+                    setState(() {
+                      _isObscureConf = !_isObscureConf;
+                    });
+                  },
                 ),
               ),
               validator: (String? value) {
