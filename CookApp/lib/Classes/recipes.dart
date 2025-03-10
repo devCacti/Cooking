@@ -107,14 +107,6 @@ class Recipe {
     saveImage();
   }
 
-  void setTitle(String title) {
-    this.title = title;
-  }
-
-  void setDescription(String description) {
-    this.description = description;
-  }
-
   void addBridge(IngBridge bridge) {
     bridges?.add(bridge);
   }
@@ -134,18 +126,6 @@ class Recipe {
   //  steps.remove(step);
   //}
 
-  void setTime(double time) {
-    this.time = time;
-  }
-
-  void setServings(double servings) {
-    this.servings = servings;
-  }
-
-  void setType(int type) {
-    this.type = type;
-  }
-
   String getType() {
     switch (type) {
       case 1:
@@ -159,22 +139,6 @@ class Recipe {
       default:
         return 'Geral';
     }
-  }
-
-  // void set public
-  void setPublic(bool isPublic) {
-    this.isPublic = isPublic;
-  }
-
-  void saveRecipe() {
-    // Save the recipe to the application files
-    String name = '$id.json';
-
-    var file = File(name);
-    // The encoded image is saved as a string so it's not a problem
-    file.writeAsStringSync(jsonEncode(this));
-
-    saveImage();
   }
 
   void saveImage() {
@@ -336,7 +300,7 @@ class RecipeC {
         // Remove the last semicolon
         ingramounts = ingramounts.substring(0, ingramounts.length - 1);
         // Replace any dots with commas -> Standardize the format | The server expects commas | 0.5 -> 0,5
-        ingramounts = ingramounts.replaceAll(',', '.');
+        ingramounts = ingramounts.replaceAll('.', ',');
       }
 
       //? ----------- Steps string ----------------------------
@@ -467,7 +431,7 @@ class RecipeC {
         // Remove the last semicolon
         ingramounts = ingramounts.substring(0, ingramounts.length - 1);
         // Replace any dots with commas -> Standardize the format | The server expects commas | 0.5 -> 0,5
-        ingramounts = ingramounts.replaceAll(',', '.');
+        ingramounts = ingramounts.replaceAll('.', ',');
       }
 
       //? ----------- Steps string ----------------------------
@@ -512,11 +476,11 @@ class RecipeC {
         'description': description ?? '',
         'customIngM': customIngM,
         'ingramounts': ingramounts,
-        'time': time.toString().replaceAll(',', '.'),
-        'portions': portions.toString().replaceAll(',', '.'),
+        'time': time.toString().replaceAll('.', ','),
+        'portions': portions.toString().replaceAll('.', ','),
         'steps': steps,
-        //!'type': type.toString(), //TODO: Make this ERROR PROOF
-        'isPublic': 'true', //?isPublic.toString(), // True for now
+        //!'type': type.toString(), //TODO: Make this not give an error
+        'isPublic': isPublic.toString(), // True for now
         'ingredientIds': ingredientIds,
       });
 

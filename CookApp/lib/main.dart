@@ -244,12 +244,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               : Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 42.0, right: 42.0),
+                    padding: const EdgeInsets.only(left: 32, right: 32),
                     child: ListView.builder(
                       itemCount: recommended.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(top: 8),
+                          padding: const EdgeInsets.only(
+                              top: 2, bottom: 10, left: 10, right: 10),
                           child: Material(
                             elevation: 5,
                             borderRadius: BorderRadius.circular(16),
