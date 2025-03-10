@@ -56,13 +56,15 @@ class _ShoppingListsState extends State<ShoppingLists> {
                         elevation: 2,
                         borderRadius: BorderRadius.circular(50),
                         color: lists[index].color,
-                        child: const Padding(
-                          padding: EdgeInsets.all(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
                           child: Icon(
-                            Icons.shopping_cart_outlined,
+                            lists[index].detalhada ?? false
+                                ? Icons.add_shopping_cart_rounded // Detailed
+                                : Icons.shopping_cart_outlined, // Simple
                             size: 50,
                             color: Colors.white,
-                            shadows: [
+                            shadows: const [
                               Shadow(
                                 blurRadius: 5,
                                 color: Colors.black45,
@@ -150,11 +152,13 @@ class _ShoppingListsState extends State<ShoppingLists> {
                                       child: const Text('Cancelar'),
                                     ),
                                     TextButton(
-                                      onPressed: () async {
-                                        await deleteListById(lists[index].id)
+                                      onPressed: () {
+                                        deleteListById(lists[index].id)
                                             .then((value) {
+                                          if (!context.mounted) return;
                                           initializeData();
                                         });
+                                        Navigator.pop(context);
                                       },
                                       child: const Text('Apagar'),
                                     ),
@@ -181,7 +185,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
             MaterialPageRoute(
               builder: (context) => const CreateList(),
             ),
-          );
+          ).then((value) => initializeData());
         },
         tooltip: 'Nova Lista',
         child: const Icon(Icons.add),

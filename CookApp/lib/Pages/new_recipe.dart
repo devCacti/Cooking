@@ -256,6 +256,16 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     ),
                   ),
                 ),
+                ingredients.isEmpty
+                    ? Container()
+                    : const Text(
+                        'Toque e segure para eliminar um ingrediente',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: Container(
@@ -282,10 +292,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     bottom: 8, left: 24, right: 24),
                                 child: Material(
                                   elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(25),
                                   child: ListTile(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(25),
                                     ),
                                     onLongPress: () {
                                       showConfirmationDialog(context).then(
@@ -1003,7 +1013,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.3,
@@ -1064,12 +1074,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     bottom: 48,
                   ),
                   child: Material(
-                    elevation: 10,
+                    elevation: 5,
                     shape: const CircleBorder(),
                     child: IconButton(
                       //! Save Button
                       icon: const Icon(
-                        Icons.save,
+                        Icons.cloud_upload_outlined,
                         shadows: [Shadow(color: Colors.black)],
                       ),
                       iconSize: 60,
@@ -1127,37 +1137,62 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 ////type: _selectedValue,
                                 isPublic: isPublic ?? false,
                                 ingredientIds: ingIds,
-                              ).send();
-                            });
+                              ).send().then((value) {
+                                if (value) {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                        'A receita foi guardada com sucesso.',
+                                      ),
+                                      action: SnackBarAction(
+                                          label: 'OK',
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
+                                          }),
+                                    ),
+                                  );
 
-                            // Checking if the context is still mounted before doing anything to it (or with it)
-                            //!if (context.mounted) {
-                            //!  // Hiding any open snackbars just for good measure
-                            //!  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            //!  // The context of the main page is used to show the snackbar on the main page
-                            //!  ScaffoldMessenger.of(widget.context)
-                            //!      .hideCurrentSnackBar();
-                            //!  ScaffoldMessenger.of(widget.context).showSnackBar(
-                            //!    SnackBar(
-                            //!      content: const Text(
-                            //!        'A receita foi guardada com sucesso.',
-                            //!      ),
-                            //!      action: SnackBarAction(
-                            //!          label: 'OK',
-                            //!          onPressed: () {
-                            //!            ScaffoldMessenger.of(widget.context)
-                            //!                .hideCurrentSnackBar();
-                            //!          }),
-                            //!    ),
-                            //!  );
-                            //!  //!saveRecipe(novaReceita);
-                            //!}
-                            Navigator.pop(context);
+                                  Navigator.pop(context);
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      behavior: SnackBarBehavior.floating,
+                                      content: const Text(
+                                        'Não foi possível guardar a receita!',
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      action: SnackBarAction(
+                                          label: 'OK',
+                                          textColor: Colors.white,
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
+                                          }),
+                                    ),
+                                  );
+                                }
+                              });
+                            });
                             // This is an else of a different if
                           } else {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                behavior: SnackBarBehavior.floating,
                                 content: const Text(
                                   'Por favor insira um nome e uma descrição.',
                                 ),

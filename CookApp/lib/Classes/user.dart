@@ -192,6 +192,10 @@ class User {
     }
   }
 
+  factory User.defaultU() {
+    return User(cookie: '', guid: '', email: '', username: '', name: '');
+  }
+
   Future<User> getInstance() async {
     // Returns the information about the user that is saved in the user.json file
     cookie = await storage.read(key: 'cookie') ?? '';
@@ -200,6 +204,12 @@ class User {
     username = await storage.read(key: 'username') ?? '';
     name = await storage.read(key: 'name') ?? '';
     surname = await storage.read(key: 'surname') ?? '';
+
+    //! It's triggering a terrible error that doesn't allow app manipulation
+    //! [ERROR:flutter/shell/platform/windows/task_runner_window.cc(56)] Failed to post message to main thread.
+    //!if (guid != '') {
+    //!  return User.defaultU();
+    //!}
 
     return this;
   }

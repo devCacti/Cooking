@@ -159,11 +159,11 @@ class _CreateListState extends State<CreateList> {
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                        borderRadius: BorderRadius.all(Radius.circular(16))),
                     labelText: 'Loja',
                   ),
                   items: lojas.map((String value) {
-                    print("Stores: $value");
+                    //print("Stores: $value");
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -237,7 +237,7 @@ class _CreateListState extends State<CreateList> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
+                                  BorderRadius.all(Radius.circular(16))),
                           labelText: 'Nome da Lista',
                         ),
                         onChanged: (value) {
@@ -262,7 +262,7 @@ class _CreateListState extends State<CreateList> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
+                                  BorderRadius.all(Radius.circular(16))),
                           labelText: 'Descrição da Lista',
                         ),
                         onChanged: (value) {
@@ -306,21 +306,25 @@ class _CreateListState extends State<CreateList> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                IconButton(
-                  iconSize: 60,
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      list.color = pickerColor;
-                      await saveList(list).then((value) {
-                        Navigator.pop(context);
-                      });
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.add,
-                    color: Colors.greenAccent,
+                Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(50),
+                  child: IconButton(
+                    iconSize: 60,
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        list.color = pickerColor;
+                        await saveList(list).then((value) {
+                          Navigator.pop(context);
+                        });
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.greenAccent,
+                    ),
                   ),
-                )
+                ),
               ],
             ),
           ),

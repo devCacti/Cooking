@@ -16,14 +16,7 @@ class UserSettings extends StatefulWidget {
 }
 
 class _UserSettingsState extends State<UserSettings> {
-  User? user = User(
-    cookie: "",
-    guid: "",
-    username: "",
-    email: "",
-    name: "",
-  );
-
+  User? user = User.defaultU();
   @override
   void initState() {
     super.initState();
@@ -40,10 +33,10 @@ class _UserSettingsState extends State<UserSettings> {
   //* TLDR
   @override
   Widget build(BuildContext context) {
-    String Name = "${user?.name ?? ""} ${user?.surname ?? ""}";
+    String name = "${user?.name ?? ""} ${user?.surname ?? ""}";
 
     final drawerHeader = UserAccountsDrawerHeader(
-      accountName: Text(Name == " " ? "Sem Nome" : Name),
+      accountName: Text(name == " " ? "Sem Nome" : name),
       accountEmail: Text(
           "@${user?.username}" == "@" ? "Sem Username" : "@${user?.username}"),
       currentAccountPicture: const CircleAvatar(

@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
-import 'Pages/new_recipe.dart';
+import 'Classes/user.dart';
+//import 'Pages/new_recipe.dart';
 
 //? Unused Imports
 ////import '../../Pages/Shopping%20Lists/shopping_lists.dart';
@@ -47,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //User user = User.defaultU();
   List<Recipe> recommended = [];
   bool rLoaded = false;
   int rIndex = 0;
@@ -58,6 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    User user = User.defaultU();
+    user.getInstance().then((value) {
+      setState(() {
+        user = value;
+      });
+    });
     super.initState();
 
     // Gets the Popular Recipes from the server (Not the recommended ones)
@@ -74,6 +82,13 @@ class _MyHomePageState extends State<MyHomePage> {
         rMax = value;
       });
     });
+
+    // // Get the user instance
+    // user.getInstance().then((value) {
+    //   setState(() {
+    //     user = value;
+    //   });
+    // });
   }
 
   @override
@@ -92,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(height: 10),
           //*Early Access
           Padding(
-            padding: const EdgeInsets.only(left: 16, top: 20, right: 16),
+            padding: const EdgeInsets.only(left: 16, top: 30, right: 16),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
@@ -353,24 +368,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       bottomNavigationBar: bottomAppBar(context),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NewRecipeForm(context: context),
-            ),
-          );
-        },
-        tooltip: 'Nova Receita',
-        shape: const CircleBorder(),
-        //backgroundColor: Colors.lime[200],
-        child: const Icon(
-          Icons.add,
-          size: 40,
-          color: Colors.black,
-        ),
-      ),
+      floatingActionButton: actionButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }

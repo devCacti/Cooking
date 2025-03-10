@@ -77,6 +77,7 @@ Widget bottomAppBar(BuildContext context) => BottomAppBar(
     );
 
 Widget actionButton(BuildContext context) => FloatingActionButton(
+      heroTag: 'newRecipe',
       onPressed: () {
         Navigator.push(
           context,
