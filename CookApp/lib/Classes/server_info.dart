@@ -1,8 +1,8 @@
 //* Localhost
-const String url = 'https://localhost:44322';
+//const String url = 'https://localhost:44322';
 
 //* Release BETA
-//const String url = 'http://172.211.108.134';
+const String url = 'http://172.211.108.134';
 
 //* Android Version
 const String version = 'v1.5.1.1';
