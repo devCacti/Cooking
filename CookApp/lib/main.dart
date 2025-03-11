@@ -54,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int rIndex = 0;
   int rMax = 0;
   Map<String, Image> imageCache = {};
+  final CarouselController controller = CarouselController(initialItem: 1);
 
   //* Load the recommended recipes (TODO Done ✅)
   //? The recommended Recipes are the ones from the getPopularRecipes(rMax,) Future<List<Recipes>> function
@@ -82,13 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
         rMax = value;
       });
     });
-
-    // // Get the user instance
-    // user.getInstance().then((value) {
-    //   setState(() {
-    //     user = value;
-    //   });
-    // });
   }
 
   @override
@@ -167,10 +161,36 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          const Divider(
-            indent: 50,
-            endIndent: 50,
-            color: Colors.black,
+          const Divider(indent: 50, endIndent: 50, color: Colors.black),
+
+          ConstrainedBox(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height / 2),
+            child: CarouselView.weighted(
+              itemSnapping: true,
+              controller: controller,
+              flexWeights: const <int>[1, 7, 1],
+              children: [
+                Container(
+                  color: Colors.blue,
+                  child: Center(
+                    child: Text('Page 1'),
+                  ),
+                ),
+                Container(
+                  color: Colors.red,
+                  child: Center(
+                    child: Text('Page 2'),
+                  ),
+                ),
+                Container(
+                  color: Colors.green,
+                  child: Center(
+                    child: Text('Page 3'),
+                  ),
+                ),
+              ],
+            ),
           ),
 
           //* Recommended Recipes

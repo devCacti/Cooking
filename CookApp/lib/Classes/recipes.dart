@@ -300,7 +300,7 @@ class RecipeC {
         // Remove the last semicolon
         ingramounts = ingramounts.substring(0, ingramounts.length - 1);
         // Replace any dots with commas -> Standardize the format | The server expects commas | 0.5 -> 0,5
-        ingramounts = ingramounts.replaceAll('.', ',');
+        ingramounts = ingramounts.replaceAll(',', '.');
       }
 
       //? ----------- Steps string ----------------------------
@@ -431,7 +431,7 @@ class RecipeC {
         // Remove the last semicolon
         ingramounts = ingramounts.substring(0, ingramounts.length - 1);
         // Replace any dots with commas -> Standardize the format | The server expects commas | 0.5 -> 0,5
-        ingramounts = ingramounts.replaceAll('.', ',');
+        ingramounts = ingramounts.replaceAll(',', '.');
       }
 
       //? ----------- Steps string ----------------------------
@@ -476,8 +476,8 @@ class RecipeC {
         'description': description ?? '',
         'customIngM': customIngM,
         'ingramounts': ingramounts,
-        'time': time.toString().replaceAll('.', ','),
-        'portions': portions.toString().replaceAll('.', ','),
+        'time': time.toString().replaceAll(',', '.'),
+        'portions': portions.toString().replaceAll(',', '.'),
         'steps': steps,
         //!'type': type.toString(), //TODO: Make this not give an error
         'isPublic': isPublic.toString(), // True for now
