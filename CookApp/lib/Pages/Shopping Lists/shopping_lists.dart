@@ -1,5 +1,5 @@
-import 'package:cooking_app/Classes/lista_compra.dart';
-import 'package:cooking_app/Pages/Shopping%20Lists/create_shopping_list.dart';
+import 'package:cookapp/Classes/lista_compra.dart';
+import 'package:cookapp/Pages/Shopping%20Lists/create_shopping_list.dart';
 import 'package:flutter/material.dart';
 
 import 'view_shopping_list.dart';
@@ -8,7 +8,6 @@ class ShoppingLists extends StatefulWidget {
   const ShoppingLists({Key? key}) : super(key: key);
 
   @override
-
   // ignore: library_private_types_in_public_api
   _ShoppingListsState createState() => _ShoppingListsState();
 }
@@ -38,10 +37,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Listas de Compras'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Listas de Compras'), centerTitle: true),
       body: Column(
         children: [
           Expanded(
@@ -60,7 +56,8 @@ class _ShoppingListsState extends State<ShoppingLists> {
                           padding: const EdgeInsets.all(8),
                           child: Icon(
                             lists[index].detalhada ?? false
-                                ? Icons.add_shopping_cart_rounded // Detailed
+                                ? Icons
+                                    .add_shopping_cart_rounded // Detailed
                                 : Icons.shopping_cart_outlined, // Simple
                             size: 50,
                             color: Colors.white,
@@ -84,9 +81,10 @@ class _ShoppingListsState extends State<ShoppingLists> {
                             subtitle: Text(
                               lists[index].data?.toString() ?? 'Erro na Data!',
                               style: TextStyle(
-                                color: lists[index].data == null
-                                    ? Colors.red
-                                    : Colors.black,
+                                color:
+                                    lists[index].data == null
+                                        ? Colors.red
+                                        : Colors.black,
                               ),
                             ),
                             shape: RoundedRectangleBorder(
@@ -97,22 +95,25 @@ class _ShoppingListsState extends State<ShoppingLists> {
                               //print("Attempting to load list with id: $listId");
                               await loadListById(listId).then((value) {
                                 if (value == null) {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: const Text(
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
                                         // When there is an error with the database usually
                                         //* when the id doesn't correspond to any list or the simple list is not empty but the main one is
-                                        'Não foi possivel carregar a lista (ERRO conhecido - Erro 1)'),
-                                    //dismiss button
-                                    action: SnackBarAction(
-                                      label: 'OK',
-                                      textColor: Colors.red,
-                                      onPressed: () {
-                                        ScaffoldMessenger.of(context)
-                                            .hideCurrentSnackBar();
-                                      },
+                                        'Não foi possivel carregar a lista (ERRO conhecido - Erro 1)',
+                                      ),
+                                      //dismiss button
+                                      action: SnackBarAction(
+                                        label: 'OK',
+                                        textColor: Colors.red,
+                                        onPressed: () {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).hideCurrentSnackBar();
+                                        },
+                                      ),
                                     ),
-                                  ));
+                                  );
                                   return;
                                 }
                                 Navigator.push(
@@ -143,7 +144,8 @@ class _ShoppingListsState extends State<ShoppingLists> {
                                 return AlertDialog(
                                   title: const Text('Apagar Lista'),
                                   content: const Text(
-                                      'Tem a certeza que deseja apagar esta lista?'),
+                                    'Tem a certeza que deseja apagar esta lista?',
+                                  ),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -153,8 +155,9 @@ class _ShoppingListsState extends State<ShoppingLists> {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        deleteListById(lists[index].id)
-                                            .then((value) {
+                                        deleteListById(lists[index].id).then((
+                                          value,
+                                        ) {
                                           if (!context.mounted) return;
                                           initializeData();
                                         });
@@ -182,9 +185,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const CreateList(),
-            ),
+            MaterialPageRoute(builder: (context) => const CreateList()),
           ).then((value) => initializeData());
         },
         tooltip: 'Nova Lista',

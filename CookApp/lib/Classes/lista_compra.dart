@@ -134,12 +134,12 @@ class ListItem {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'nome': nome,
-        'preco': preco,
-        'quantidade': quantidade,
-        'checked': checked,
-      };
+    'id': id,
+    'nome': nome,
+    'preco': preco,
+    'quantidade': quantidade,
+    'checked': checked,
+  };
 }
 
 class Loja {
@@ -147,11 +147,7 @@ class Loja {
   String nome;
   String? localizacao;
 
-  Loja({
-    this.id = 0,
-    required this.nome,
-    this.localizacao,
-  });
+  Loja({this.id = 0, required this.nome, this.localizacao});
 
   factory Loja.fromJson(Map<String, dynamic> json) {
     return Loja(
@@ -162,10 +158,10 @@ class Loja {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'nome': nome,
-        'localizacao': localizacao,
-      };
+    'id': id,
+    'nome': nome,
+    'localizacao': localizacao,
+  };
 
   Future<File> get _localFile async {
     final directory = await path_provider.getApplicationDocumentsDirectory();
@@ -313,26 +309,28 @@ class ListClass {
       descricao: json['descricao'],
       data: json['data'],
       loja: json['loja'],
-      color: json['color'] != null
-          ? Color(int.parse(json['color'], radix: 16))
-          : const Color.fromARGB(255, 53, 140, 255),
+      color:
+          json['color'] != null
+              ? Color(int.parse(json['color'], radix: 16))
+              : const Color.fromARGB(255, 53, 140, 255),
       detalhada: json['detalhada'],
-      items: (json['items'] as List<dynamic>)
-          .map((item) => ListItem.fromJson(item))
-          .toList(),
+      items:
+          (json['items'] as List<dynamic>)
+              .map((item) => ListItem.fromJson(item))
+              .toList(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'nome': nome,
-        'descricao': descricao,
-        'data': data,
-        'loja': loja,
-        'color': color!.value.toRadixString(16),
-        'detalhada': detalhada,
-        'items': items!.map((item) => item.toJson()).toList(),
-      };
+    'id': id,
+    'nome': nome,
+    'descricao': descricao,
+    'data': data,
+    'loja': loja,
+    'color': color!.value.toRadixString(16),
+    'detalhada': detalhada,
+    'items': items!.map((item) => item.toJson()).toList(),
+  };
 }
 
 class PartialList {
@@ -358,28 +356,29 @@ class PartialList {
       nome: json['nome'],
       descricao: json['descricao'],
       data: json['data'],
-      color: json['color'] != null
-          ? Color(int.parse(json['color'], radix: 16))
-          : const Color.fromARGB(255, 53, 140, 255),
+      color:
+          json['color'] != null
+              ? Color(int.parse(json['color'], radix: 16))
+              : const Color.fromARGB(255, 53, 140, 255),
       detalhada: json['detalhada'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'nome': nome,
-        'descricao': descricao,
-        'data': data,
-        'color': color!.value.toRadixString(16),
-        'detalhada': detalhada,
-      };
+    'id': id,
+    'nome': nome,
+    'descricao': descricao,
+    'data': data,
+    'color': color!.value.toRadixString(16),
+    'detalhada': detalhada,
+  };
 }
 
 //? >TODO: Arranjar o problema de não dar para abrir receitas.
 //* DONE
 /*
-!I/flutter (16831): /data/user/0/com.example.cooking_app/app_flutter/testes_list_compras0_2.json
-![log] Error loading lists: PathNotFoundException: Cannot open file, path = '/data/user/0/com.example.cooking_app/app_flutter/testes_list_compras0_2.json' (OS Error: No such file or directory, errno = 2)
+!I/flutter (16831): /data/user/0/com.example.cookapp/app_flutter/testes_list_compras0_2.json
+![log] Error loading lists: PathNotFoundException: Cannot open file, path = '/data/user/0/com.example.cookapp/app_flutter/testes_list_compras0_2.json' (OS Error: No such file or directory, errno = 2)
 */
 
 //List file
@@ -406,8 +405,9 @@ Future<File> get _localIdFile async {
 //List file
 Future<File> get _localFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
-  final file =
-      File('${directory.path}/testes_list_compras${nTry.toString()}.json');
+  final file = File(
+    '${directory.path}/testes_list_compras${nTry.toString()}.json',
+  );
   if (!await file.exists()) {
     await file.create();
   }
@@ -418,7 +418,8 @@ Future<File> get _localFile async {
 Future<File> get _localSimpleFile async {
   final directory = await path_provider.getApplicationDocumentsDirectory();
   final file = File(
-      '${directory.path}/testes_list_compras${nTry.toString()}_simple.json');
+    '${directory.path}/testes_list_compras${nTry.toString()}_simple.json',
+  );
   if (!await file.exists()) {
     await file.create();
   }
@@ -486,14 +487,16 @@ Future<void> saveList(ListClass list) async {
     } catch (e) {
       jsonList = [];
     }
-    jsonList.add(PartialList(
-      id: list.id,
-      nome: list.nome,
-      descricao: list.descricao,
-      data: list.data,
-      color: list.color,
-      detalhada: list.detalhada,
-    ).toJson());
+    jsonList.add(
+      PartialList(
+        id: list.id,
+        nome: list.nome,
+        descricao: list.descricao,
+        data: list.data,
+        color: list.color,
+        detalhada: list.detalhada,
+      ).toJson(),
+    );
     developer.log(jsonList.toString());
     await file.writeAsString(json.encode(jsonList));
   } catch (e) {
@@ -562,16 +565,19 @@ Future<List<PartialList>> loadListsSimple() async {
         jsonList.map((json) => PartialList.fromJson(json)).toList();
     developer.log('Mapped file');
 
-    final List<PartialList> filteredList = lists
-        .map((list) => PartialList(
-              id: list.id,
-              nome: list.nome,
-              descricao: list.descricao,
-              data: list.data,
-              color: list.color,
-              detalhada: list.detalhada,
-            ))
-        .toList();
+    final List<PartialList> filteredList =
+        lists
+            .map(
+              (list) => PartialList(
+                id: list.id,
+                nome: list.nome,
+                descricao: list.descricao,
+                data: list.data,
+                color: list.color,
+                detalhada: list.detalhada,
+              ),
+            )
+            .toList();
     //developer.log('Filtered lists: ${filteredList.toList()}'); //! Useless
     return filteredList;
   } catch (e) {
@@ -601,9 +607,7 @@ Future<ListClass?> loadListById(int id) async {
         jsonList.map((json) => ListClass.fromJson(json)).toList();
     developer.log('Mapped file');
 
-    final filteredList = lists.firstWhere(
-      (list) => list.id == id,
-    );
+    final filteredList = lists.firstWhere((list) => list.id == id);
     developer.log('Filtered list: $filteredList');
 
     return filteredList;
@@ -657,27 +661,31 @@ Future<void> updateListById(ListClass list) async {
 
 // Delete confirmation dialog
 Future<bool?> deleteConfirmationDialog(
-    BuildContext context, String keyWord) async {
+  BuildContext context,
+  String keyWord,
+) async {
   return await showDialog<bool?>(
     context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Apagar $keyWord'),
-      content: Text('Tem a certeza que quer apagar: $keyWord?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: const Text(
-            'Cancelar',
-          ),
+    builder:
+        (context) => AlertDialog(
+          title: Text('Apagar $keyWord'),
+          content: Text('Tem a certeza que quer apagar: $keyWord?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text(
+                'Apagar',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: const Text(
-            'Apagar',
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
-    ),
   );
 }
