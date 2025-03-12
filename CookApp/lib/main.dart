@@ -1,5 +1,7 @@
 //? Imports
 //import 'package:cookapp/Classes/server_info.dart';
+import 'dart:ui';
+
 import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'Classes/server_info.dart';
@@ -48,7 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
   //User user = User.defaultU();
   List<Recipe> recommended = [];
   bool rLoaded = false;
-  int rIndex = 0;
   int rMax = 0;
   Map<String, Image> imageCache = {};
   final CarouselController controller = CarouselController(initialItem: 1);
@@ -67,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     // Gets the Popular Recipes from the server (Not the recommended ones)
-    getPopularRecipes(rIndex).then((value) {
+    getPopularRecipes().then((value) {
       setState(() {
         recommended = value;
         rLoaded = true;
@@ -170,23 +171,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          rLoaded = false;
-                        });
-                        getPopularRecipes(0).then((value) {
-                          setState(() {
-                            rIndex = 0;
-                            recommended = value;
-                            rLoaded = true;
-                          });
-                        });
-                        fetchPopularPages().then((value) {
-                          setState(() {
-                            rMax = value;
-                          });
-                        });
-                      },
+                      onPressed:
+                          !rLoaded
+                              ? null
+                              : () {
+                                setState(() {
+                                  rLoaded = false;
+                                });
+                                getPopularRecipes(0).then((value) {
+                                  setState(() {
+                                    recommended = value;
+                                    rLoaded = true;
+                                  });
+                                });
+                                fetchPopularPages().then((value) {
+                                  setState(() {
+                                    rMax = value;
+                                  });
+                                });
+                              },
                       icon: const Icon(Icons.refresh),
                     ),
                   ),
@@ -194,8 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          const Divider(indent: 50, endIndent: 50, color: Colors.black38),
-          const SizedBox(height: 10),
+          //* Recommended Recipes Carousel
           recommended.isEmpty
               ? rLoaded
                   ? const SizedBox()
@@ -214,7 +216,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder:
                             (context) => RecipeDetail(
                               recipe: recipe,
-                              image: imageCache[recipe.id]!,
+                              image:
+                                  imageCache[recipe.id] ??
+                                  const Image(
+                                    image: AssetImage(
+                                      'Assets/Images/LittleMan.png',
+                                    ),
+                                  ),
                             ),
                       ),
                     );
@@ -222,10 +230,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(10),
                   itemSnapping: true,
                   controller: controller,
-                  elevation: 5,
+                  elevation: 4,
                   flexWeights: const <int>[1, 7, 1],
                   children:
                       recommended.map((recipe) {
+                        if (!imageCache.containsKey(recipe.id)) {
+                          getRecipeImage(recipe.id).then((value) {
+                            setState(() {
+                              imageCache[recipe.id] = value;
+                            });
+                          });
+                        }
                         return Stack(
                           children: [
                             ClipRect(
@@ -283,166 +298,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       }).toList(),
                 ),
               ),
-          const SizedBox(height: 10),
-
-          //* Recommended Recipes
-          recommended
-                  .isEmpty //? If there are no recipes, show a message
-              ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      rLoaded
-                          ? const Text(
-                            'Não existem receitas recomendadas',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black38,
-                            ),
-                          )
-                          : const CircularProgressIndicator(),
-                    ],
-                  ),
-                ),
-              )
-              : Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 32, right: 32),
-                  child: ListView.builder(
-                    itemCount: recommended.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          top: 2,
-                          bottom: 10,
-                          left: 10,
-                          right: 10,
-                        ),
-                        child: Material(
-                          elevation: 5,
-                          borderRadius: BorderRadius.circular(16),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            leading: FutureBuilder<Image>(
-                              future: getRecipeImage(
-                                recommended[index].id,
-                                imageCache,
-                              ),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  imageCache[recommended[index].id] =
-                                      snapshot.data!;
-                                  if (snapshot.hasError) {
-                                    return const Icon(Icons.error);
-                                  }
-                                  if (snapshot.data?.image ==
-                                      const AssetImage(
-                                        'Assets/Images/LittleMan.png',
-                                      )) {
-                                    return const Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                      child: Icon(
-                                        Icons.image_not_supported_rounded,
-                                        size: 50,
-                                        color: Colors.black38,
-                                      ),
-                                    );
-                                  } else {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: snapshot.data!,
-                                    );
-                                  }
-                                } else {
-                                  return const CircularProgressIndicator();
-                                }
-                              },
-                            ),
-                            title: Text(recommended[index].title),
-                            subtitle: Text(recommended[index].description),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => RecipeDetail(
-                                        recipe: recommended[index],
-                                        image:
-                                            imageCache[recommended[index].id]!,
-                                      ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-          //? If there are no pages and it already loaded, show an icon
-          rMax == 0 && rLoaded
-              ? const Column(
-                children: [
-                  Icon(
-                    Icons.sync_problem_rounded,
-                    size: 40,
-                    color: Colors.black38,
-                  ),
-                ],
-              )
-              : Column(
-                children: [
-                  const Text("Página", style: TextStyle(fontSize: 18)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.keyboard_arrow_left_rounded),
-                        iconSize: 30,
-                        onPressed: () {
-                          if (rIndex > 0) {
-                            int index = rIndex - 1;
-                            getPopularRecipes(index).then((value) {
-                              setState(() {
-                                recommended = value;
-                                rLoaded = true;
-                                rIndex = index;
-                              });
-                            });
-                          }
-                        },
-                      ),
-                      Text(
-                        '${rIndex + 1} / $rMax',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.keyboard_arrow_right_rounded),
-                        iconSize: 30,
-                        onPressed: () {
-                          if (rIndex < rMax - 1) {
-                            int index = rIndex + 1;
-                            getPopularRecipes(index).then((value) {
-                              setState(() {
-                                recommended = value;
-                                rLoaded = true;
-                                rIndex = index;
-                              });
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-          const SizedBox(height: 32),
         ],
       ),
       bottomNavigationBar: bottomAppBar(context),
