@@ -155,7 +155,7 @@ class _EditFormState extends State<EditForm> {
                             children: [
                               foto?.image ==
                                       const AssetImage(
-                                        'assets/images/placeholder.png',
+                                        'Assets/Images/LittleMan.png',
                                       )
                                   ? const IconButton(
                                     icon: Icon(Icons.image_not_supported),

@@ -24,8 +24,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 const storage = FlutterSecureStorage();
 
 // Request the image of a recipe
-Future<Image> getRecipeImage(String id,
-    [Map<String, Image>? imageCache]) async {
+Future<Image> getRecipeImage(
+  String id, [
+  Map<String, Image>? imageCache,
+]) async {
   // Declaring the User object
   User user = User();
   try {
@@ -33,10 +35,12 @@ Future<Image> getRecipeImage(String id,
     await user.getInstance();
   } catch (e) {
     print('Error: $e');
-    return Image.asset('assets/images/placeholder.png');
+    return Image.asset('Assets/Images/LittleMan.png');
   }
-  var request =
-      http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
+  var request = http.Request(
+    'GET',
+    Uri.parse('$url/Recipes/RecipeImage?id=$id'),
+  );
   request.headers.addAll({'Cookie': user.cookie});
 
   // Prevents "null check operator used on a null value" error
@@ -58,15 +62,15 @@ Future<Image> getRecipeImage(String id,
         return Image.memory(bytes);
       } else {
         print('Failed to get image: Invalid content type');
-        return Image.asset('assets/images/placeholder.png');
+        return Image.asset('Assets/Images/LittleMan.png');
       }
     } else {
       print(" ---> (0009) ${response.reasonPhrase}");
-      return Image.asset('assets/images/placeholder.png');
+      return Image.asset('Assets/Images/LittleMan.png');
     }
   } catch (e) {
     print('Error: $e');
-    return Image.asset('assets/images/placeholder.png');
+    return Image.asset('Assets/Images/LittleMan.png');
   }
 }
 
@@ -323,7 +327,9 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
     // Fetch the recipe from the server
     ////~TODO: Server is refusing to allow the request, always returning 404 (Not Found)
     var request = http.Request(
-        'GET', Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$id'));
+      'GET',
+      Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$id'),
+    );
     request.headers.addAll({'cookie': user.cookie});
 
     print("Cookie: ${user.cookie}");
@@ -345,8 +351,9 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
           // The list is then mapped to a list of Ingredient objects
           var ingredients = json['ingredients'];
 
-          List<Ingredient> ingredientList =
-              List<Ingredient>.empty(growable: true);
+          List<Ingredient> ingredientList = List<Ingredient>.empty(
+            growable: true,
+          );
 
           for (var ingredient in ingredients) {
             try {
@@ -392,7 +399,9 @@ Future<List<Ingredient>> recipeIngredients(String id) async {
   // localhost:44322/Recipes/GetIngredientsByRecipe?Id=630fd198-beba-4f57-944d-8eb7907d8f65
   // This one is only online, doesn't check the local files
   var request = http.Request(
-      'GET', Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$id'));
+    'GET',
+    Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$id'),
+  );
   request.headers.addAll({'cookie': user.cookie});
 
   try {
@@ -416,8 +425,9 @@ Future<List<Ingredient>> recipeIngredients(String id) async {
           return [Ingredient(id: id, name: 'Ingredient Fail 4', unit: 'Unit')];
         }
 
-        List<Ingredient> ingredientList =
-            List<Ingredient>.empty(growable: true);
+        List<Ingredient> ingredientList = List<Ingredient>.empty(
+          growable: true,
+        );
 
         for (var ingredient in ingredients) {
           try {
@@ -501,8 +511,10 @@ Future<List<String>> newIngredients(List<Ingredient> ings) async {
     if (ings.isEmpty) {
       return List<String>.empty();
     }
-    var request =
-        http.MultipartRequest('PUT', Uri.parse('$url/Recipes/NewIngredients'));
+    var request = http.MultipartRequest(
+      'PUT',
+      Uri.parse('$url/Recipes/NewIngredients'),
+    );
     request.headers.addAll({'cookie': user.cookie});
     // We need to put the ingredients in the body, each name is in the the form of "name": "value1;value2;value3"
     // The values are separated by a semicolon in the same field, meaning that if the user puts semicolons, the program deletes them
@@ -514,11 +526,15 @@ Future<List<String>> newIngredients(List<Ingredient> ings) async {
       Ingredient cing = ing; // Current ingredient
       // Curating the inputs
       // Replacing semicolons with commas
-      cing.name =
-          cing.name.replaceAll(';', ','); // In case the user puts a semicolon
+      cing.name = cing.name.replaceAll(
+        ';',
+        ',',
+      ); // In case the user puts a semicolon
       // Replacing semicolons with commas
-      cing.unit =
-          cing.unit.replaceAll(';', ','); // In case the user puts a semicolon
+      cing.unit = cing.unit.replaceAll(
+        ';',
+        ',',
+      ); // In case the user puts a semicolon
 
       // Inserting the values into the lists
       names.add(cing.name);
