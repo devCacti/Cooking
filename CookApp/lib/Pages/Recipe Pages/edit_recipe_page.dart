@@ -2,9 +2,9 @@
 import 'package:cookapp/Functions/server_requests.dart';
 import 'package:flutter/material.dart';
 //import 'package:image_picker/image_picker.dart';
-import '../Classes/recipes.dart';
-import '../Classes/ingredients.dart';
-import '../Functions/show_conf_dialog.dart';
+import '../../Classes/recipes.dart';
+import '../../Classes/ingredients.dart';
+import '../../Functions/show_conf_dialog.dart';
 
 class EditForm extends StatefulWidget {
   final Recipe toEditR;

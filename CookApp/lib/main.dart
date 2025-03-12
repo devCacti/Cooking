@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
+import 'package:cookapp/Pages/Elements/early_access.dart';
 import 'package:flutter/material.dart';
 import 'Classes/server_info.dart';
 import 'Functions/server_requests.dart';
@@ -98,40 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           const SizedBox(height: 10),
           //*Early Access
-          version.startsWith('v3')
-              ? const SizedBox()
-              : Padding(
-                padding: const EdgeInsets.only(left: 16, top: 30, right: 16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.grey[200],
-                  ),
-                  // Early Access Warning
-                  child: const ListTile(
-                    title: Text(
-                      'ACESSO ANTECIPADO',
-                      style: TextStyle(fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                    subtitle: Text(
-                      'Pode perder tudo o que tiver durante esta fase!',
-                      style: TextStyle(fontSize: 12),
-                      textAlign: TextAlign.center,
-                    ),
-                    leading: Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.red,
-                      size: 30,
-                    ),
-                    trailing: Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.red,
-                      size: 30,
-                    ),
-                  ),
-                ),
-              ),
+          version.startsWith('v3') ? const SizedBox() : earlyAccess,
           const Padding(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             child: Row(

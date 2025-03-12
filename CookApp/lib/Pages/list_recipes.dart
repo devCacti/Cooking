@@ -2,7 +2,7 @@ import 'package:cookapp/Functions/server_requests.dart';
 import 'package:cookapp/Pages/Recipe%20Pages/recipe_detail.dart';
 import 'package:flutter/material.dart';
 import '../Classes/recipes.dart';
-import 'edit_recipe_page.dart';
+import 'Recipe Pages/edit_recipe_page.dart';
 //? List of recipes page
 //* Only shows the recipes that are created by the user
 
