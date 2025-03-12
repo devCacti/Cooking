@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     User user = User.defaultU();
-    user.getInstance().then((value) {
+    user.getInstance("Main").then((value) {
       setState(() {
         user = value;
       });
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 40, right: 32, top: 10),
+            padding: const EdgeInsets.only(left: 12, right: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -130,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.225,
+                  width: MediaQuery.of(context).size.width * 0.15,
                   height: 1,
                   child: const Divider(color: Colors.black45),
                 ),
@@ -172,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   : const CircularProgressIndicator()
               : ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery.sizeOf(context).height / 3,
+                  maxHeight: MediaQuery.sizeOf(context).height / 2.5,
                 ),
                 child: CarouselView.weighted(
                   onTap: (index) {
@@ -184,13 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder:
                             (context) => RecipeDetail(
                               recipe: recipe,
-                              image:
-                                  imageCache[recipe.id] ??
-                                  const Image(
-                                    image: AssetImage(
-                                      'Assets/Images/LittleMan.png',
-                                    ),
-                                  ),
+                              image: imageCache[recipe.id],
                             ),
                       ),
                     );
@@ -199,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemSnapping: true,
                   controller: controller,
                   elevation: 4,
-                  flexWeights: const <int>[1, 7, 1],
+                  flexWeights: const <int>[1, 10, 1],
                   children:
                       recommended.map((recipe) {
                         if (!imageCache.containsKey(recipe.id)) {
@@ -211,16 +205,19 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                         return Stack(
                           children: [
-                            ClipRect(
-                              child: Center(
-                                child: Image(
-                                  height: double.infinity,
-                                  image:
-                                      imageCache[recipe.id]?.image ??
-                                      const AssetImage(
-                                        'Assets/Images/LittleMan.png',
-                                      ),
-                                  fit: BoxFit.cover,
+                            Center(
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: double.infinity,
+                                child: ClipRect(
+                                  child: Image(
+                                    image:
+                                        imageCache[recipe.id]?.image ??
+                                        const AssetImage(
+                                          'Assets/Images/LittleMan.png',
+                                        ),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),

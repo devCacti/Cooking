@@ -22,6 +22,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
 
   int id = 1;
   Image? _image; //* Recipe Image
+  File? imageFile; //* Recipe Image File
   String? nameR; //* Recipe Name
   String? descR; //* Recipe Description
   String? ingsR; //* Recipe Ingredients
@@ -100,7 +101,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     );
     if (image != null) {
       setState(() {
-        _image = image as Image?;
+        _image = Image.file(File(image.path));
+        imageFile = File(image.path);
       });
     }
   }
@@ -151,14 +153,14 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   ),
                   child:
                       _image == null
-                          ? const Material(
+                          ? Material(
                             elevation: 10,
                             shape: //const
                                 CircleBorder(),
                             child: IconButton(
                               icon: Icon(Icons.camera_alt_outlined),
                               iconSize: 75,
-                              onPressed: null, // _getImage,
+                              onPressed: _getImage,
                               tooltip: 'Escolher Foto',
                             ),
                           )
@@ -1112,7 +1114,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               }
                               // Using a new type of class to send the data to the server
                               RecipeC(
-                                image: _image != null ? _image as File : null,
+                                image: imageFile,
                                 title: nameR!,
                                 description: descR!,
                                 ////ingTipo: ingsOpts,
@@ -1137,7 +1139,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                         label: 'OK',
                                         onPressed: () {
                                           ScaffoldMessenger.of(
-                                            context,
+                                            widget.context,
                                           ).hideCurrentSnackBar();
                                         },
                                       ),

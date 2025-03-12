@@ -59,16 +59,24 @@ class _RecipeDetailState extends State<RecipeDetail> {
           Padding(
             padding: const EdgeInsets.all(12),
             child: SizedBox(
-              // Just use the height of the image if it doesn't exceed the width of the screen
-              width: MediaQuery.of(context).size.width / 2,
               child: Material(
-                elevation: 5,
+                elevation:
+                    widget.image?.image == null ||
+                            widget.image?.image ==
+                                Image.asset("Assets/Images/LittleMan.png").image
+                        ? 0
+                        : 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image(image: widget.image!.image, fit: BoxFit.cover),
+                  child: Image(
+                    fit: BoxFit.cover,
+                    image:
+                        widget.image?.image ??
+                        Image.asset('Assets/Images/LittleMan.png').image,
+                  ),
                 ),
               ),
             ),

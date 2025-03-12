@@ -20,11 +20,13 @@ class _UserSettingsState extends State<UserSettings> {
   @override
   void initState() {
     super.initState();
-    user!.getInstance().then(
-      (value) => setState(() {
-        user = value;
-      }),
-    );
+    user!
+        .getInstance("initState User Settings")
+        .then(
+          (value) => setState(() {
+            user = value;
+          }),
+        );
   }
 
   String page = "details";
@@ -144,7 +146,9 @@ class _UserSettingsState extends State<UserSettings> {
                                   // 'Deletes' the user, only in the files
                                   user!.delete().then((value) {
                                     //? This triggers the setState method so that the ui updates
-                                    user!.getInstance().then((value) {
+                                    user!.getInstance("End Session").then((
+                                      value,
+                                    ) {
                                       setState(() {
                                         user = value;
                                       });
@@ -177,11 +181,11 @@ class _UserSettingsState extends State<UserSettings> {
                         builder: (context) => const LoginPage(),
                       ),
                     ).then((value) {
-                      user!.getInstance().then(
-                        (value) => setState(() {
-                          isLogged = user!.guid != "";
-                        }),
-                      );
+                      //?user!.getInstance().then(
+                      //?  (value) => setState(() {
+                      //?    isLogged = user!.guid != "";
+                      //?  }),
+                      //?);
                     });
                   },
                 ),

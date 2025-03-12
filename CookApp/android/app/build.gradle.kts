@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.cookapp"
+    namespace = "com.cooking.cookapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
