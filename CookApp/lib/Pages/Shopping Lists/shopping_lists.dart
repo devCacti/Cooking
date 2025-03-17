@@ -45,7 +45,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
               itemCount: lists.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 6),
                   child: Row(
                     children: [
                       Material(

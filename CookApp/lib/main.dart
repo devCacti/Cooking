@@ -189,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     );
                   },
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(4),
                   itemSnapping: true,
                   controller: controller,
                   elevation: 4,
