@@ -3,7 +3,7 @@ import '../Classes/user.dart';
 import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -15,13 +15,42 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  bool isLogged = false;
+  bool attemptingLogin = false;
+
+  bool hidePassword = true;
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    if (isLogged) {
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> login() async {
+    if (_formKey.currentState!.validate()) {
+      final String email = _emailController.text;
+      final String password = _passwordController.text;
+      final Login login = Login(email: email, password: password);
+
+      // Makes the login request
+      // And stores the token in a file
+      login.send().then((value) {
+        if (value) {
+          setState(() {
+            isLogged = true;
+            attemptingLogin = false;
+          });
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Iniciar Sessão"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Iniciar Sessão"), centerTitle: true),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -29,8 +58,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Icon(
               Icons.login_rounded,
-              size: 100.0,
-              color: Theme.of(context).primaryColor,
+              size: 75,
               shadows: const [
                 BoxShadow(
                   color: Colors.grey,
@@ -39,17 +67,21 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 32.0), // Add space between the fields
+            const SizedBox(height: 16.0), // Add space between the fields
+            const Text(
+              "Log In",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16.0), // Add space between the fields
             //* Email field
             TextFormField(
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: "Email",
                 hintText: "exemplo@email.com",
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 16.0), // Adjust padding
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0), // Rounded borders
+                  borderRadius: BorderRadius.circular(16), // Rounded borders
                 ),
               ),
               validator: (String? value) {
@@ -67,18 +99,31 @@ class _LoginPageState extends State<LoginPage> {
             ),
 
             const SizedBox(height: 16.0), // Add space between the fields
-
             //* Password field
             TextFormField(
               controller: _passwordController,
-              obscureText: true, // Hide the password
+              obscureText: hidePassword,
+
               decoration: InputDecoration(
                 labelText: "Password",
                 hintText: "@Password123",
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 16.0), // Adjust padding
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0), // Rounded borders
+                  borderRadius: BorderRadius.circular(16), // Rounded borders
+                ),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.only(right: 8, top: 1),
+                  child: IconButton(
+                    icon: Icon(
+                      hidePassword
+                          ? Icons.visibility_rounded
+                          : Icons.visibility_off_rounded,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        hidePassword = !hidePassword;
+                      });
+                    },
+                  ),
                 ),
               ),
               validator: (String? value) {
@@ -87,12 +132,15 @@ class _LoginPageState extends State<LoginPage> {
                 }
                 return null;
               },
+              onFieldSubmitted: (String value) {
+                login();
+              },
             ),
-            const SizedBox(height: 32.0),
+            const SizedBox(height: 16.0),
             const Row(
               children: [
                 Icon(
-                  Icons.perm_device_information_outlined,
+                  Icons.info_outline_rounded,
                   size: 28.0,
                   color: Colors.grey,
                 ),
@@ -100,33 +148,33 @@ class _LoginPageState extends State<LoginPage> {
                 Expanded(
                   child: Text(
                     softWrap: true,
-                    style: TextStyle(
-                      fontSize: 13.0,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 12.0, color: Colors.grey),
                     "A sua conta permanecerá ativa até sair, ou se mudar a palavra-passe.",
                   ),
                 ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 64.0),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
                     child: TextButton(
-                      child: const Text("Não tenho conta."),
+                      child: const Text("Registar"),
                       onPressed: () {
                         Navigator.replace(
                           context,
                           oldRoute: ModalRoute.of(context)!,
-                          newRoute: PageRouteBuilder(pageBuilder:
-                              (BuildContext context,
-                                  Animation<double> animation,
-                                  Animation<double> secondaryAnimation) {
-                            return const RegisterPage();
-                          }),
+                          newRoute: PageRouteBuilder(
+                            pageBuilder: (
+                              BuildContext context,
+                              Animation<double> animation,
+                              Animation<double> secondaryAnimation,
+                            ) {
+                              return const RegisterPage();
+                            },
+                          ),
                         );
                       },
                     ),
@@ -134,26 +182,10 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(width: 32.0),
                   Expanded(
                     child: ElevatedButton(
+                      onPressed: login,
                       child: const Text("Log In"),
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          final String email = _emailController.text;
-                          final String password = _passwordController.text;
-                          final Login login =
-                              Login(email: email, password: password);
-
-                          // Makes the login request
-                          // And stores the token in a file
-                          final bool isLogged = await login.send();
-
-                          if (isLogged) {
-                            // ignore: use_build_context_synchronously
-                            Navigator.pop(context);
-                          }
-                        }
-                      },
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

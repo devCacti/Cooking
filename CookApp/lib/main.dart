@@ -1,7 +1,11 @@
 //? Imports
-//import 'package:cooking_app/Classes/server_info.dart';
-import 'package:cooking_app/Pages/Elements/bottom_app_bar.dart';
+//import 'package:cookapp/Classes/server_info.dart';
+import 'dart:ui';
+
+import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
+import 'package:cookapp/Pages/Elements/early_access.dart';
 import 'package:flutter/material.dart';
+import 'Classes/server_info.dart';
 import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
@@ -27,19 +31,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Cooking',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
+      theme: ThemeData(primarySwatch: Colors.green),
       //debugShowCheckedModeBanner: false,
-      home: const MyHomePage(
-        title: 'Cooking',
-      ),
+      home: const MyHomePage(title: 'Cooking'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -51,9 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
   //User user = User.defaultU();
   List<Recipe> recommended = [];
   bool rLoaded = false;
-  int rIndex = 0;
   int rMax = 0;
   Map<String, Image> imageCache = {};
+  final CarouselController controller = CarouselController(initialItem: 1);
 
   //* Load the recommended recipes (TODO Done ✅)
   //? The recommended Recipes are the ones from the getPopularRecipes(rMax,) Future<List<Recipes>> function
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     User user = User.defaultU();
-    user.getInstance().then((value) {
+    user.getInstance("Main").then((value) {
       setState(() {
         user = value;
       });
@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     // Gets the Popular Recipes from the server (Not the recommended ones)
-    getPopularRecipes(rIndex).then((value) {
+    getPopularRecipes().then((value) {
       setState(() {
         recommended = value;
         rLoaded = true;
@@ -82,13 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
         rMax = value;
       });
     });
-
-    // // Get the user instance
-    // user.getInstance().then((value) {
-    //   setState(() {
-    //     user = value;
-    //   });
-    // });
   }
 
   @override
@@ -106,76 +99,26 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           const SizedBox(height: 10),
           //*Early Access
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 30, right: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.grey[200],
-              ),
-              // Early Access Warning
-              child: const ListTile(
-                title: Text(
-                  'ACESSO ANTECIPADO',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                ),
-                subtitle: Text(
-                  'Pode perder tudo o que tiver durante esta fase!',
-                  style: TextStyle(fontSize: 12),
-                  textAlign: TextAlign.center,
-                ),
-                leading: Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.red,
-                  size: 30,
-                ),
-                trailing: Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.red,
-                  size: 30,
-                ),
-              ),
-            ),
-          ),
+          version.startsWith('v3') ? const SizedBox() : earlyAccess,
           const Padding(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.fastfood_rounded,
-                  size: 40,
-                ),
-                SizedBox(
-                  width: 20,
-                ),
+                Icon(Icons.fastfood_rounded, size: 40),
+                SizedBox(width: 20),
                 Text(
                   'Cooking',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 40,
-                  ),
+                  style: TextStyle(fontSize: 40),
                 ),
-                SizedBox(
-                  width: 20,
-                ),
-                Icon(
-                  Icons.local_dining_sharp,
-                  size: 40,
-                ),
+                SizedBox(width: 20),
+                Icon(Icons.local_dining_sharp, size: 40),
               ],
             ),
           ),
-          const Divider(
-            indent: 50,
-            endIndent: 50,
-            color: Colors.black,
-          ),
-
-          //* Recommended Recipes
           Padding(
-            padding: const EdgeInsets.only(left: 40, right: 32, top: 10),
+            padding: const EdgeInsets.only(left: 12, right: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -183,41 +126,38 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: MediaQuery.of(context).size.width * 0.3,
                   child: const Text(
                     'Tendências',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
                   ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.15,
                   height: 1,
-                  child: const Divider(
-                    color: Colors.black45,
-                  ),
+                  child: const Divider(color: Colors.black45),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.3,
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          rLoaded = false;
-                        });
-                        getPopularRecipes(0).then((value) {
-                          setState(() {
-                            rIndex = 0;
-                            recommended = value;
-                            rLoaded = true;
-                          });
-                        });
-                        fetchPopularPages().then((value) {
-                          setState(() {
-                            rMax = value;
-                          });
-                        });
-                      },
+                      onPressed:
+                          !rLoaded
+                              ? null
+                              : () {
+                                setState(() {
+                                  rLoaded = false;
+                                });
+                                getPopularRecipes(0).then((value) {
+                                  setState(() {
+                                    recommended = value;
+                                    rLoaded = true;
+                                  });
+                                });
+                                fetchPopularPages().then((value) {
+                                  setState(() {
+                                    rMax = value;
+                                  });
+                                });
+                              },
                       icon: const Icon(Icons.refresh),
                     ),
                   ),
@@ -225,147 +165,104 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          recommended.isEmpty //? If there are no recipes, show a message
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        rLoaded
-                            ? recommended.isEmpty
-                                ? const Text(
-                                    'Não existem receitas recomendadas')
-                                : const Text(
-                                    'Aqui estão as receitas recomendadas')
-                            : const CircularProgressIndicator(),
-                      ],
-                    ),
-                  ),
-                )
-              : Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 32, right: 32),
-                    child: ListView.builder(
-                      itemCount: recommended.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              top: 2, bottom: 10, left: 10, right: 10),
-                          child: Material(
-                            elevation: 5,
-                            borderRadius: BorderRadius.circular(16),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              leading: FutureBuilder<Image>(
-                                future: getRecipeImage(
-                                    recommended[index].id, imageCache),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    imageCache[recommended[index].id] =
-                                        snapshot.data!;
-                                    if (snapshot.hasError) {
-                                      return const Icon(Icons.error);
-                                    }
-                                    if (snapshot.data?.image ==
+          //* Recommended Recipes Carousel
+          recommended.isEmpty
+              ? rLoaded
+                  ? const SizedBox()
+                  : const CircularProgressIndicator()
+              : ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(context).height / 2.5,
+                ),
+                child: CarouselView.weighted(
+                  onTap: (index) {
+                    Recipe recipe = recommended[index];
+                    print("Recipe: ${recipe.title}");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => RecipeDetail(
+                              recipe: recipe,
+                              image: imageCache[recipe.id],
+                            ),
+                      ),
+                    );
+                  },
+                  padding: EdgeInsets.all(4),
+                  itemSnapping: true,
+                  controller: controller,
+                  elevation: 4,
+                  flexWeights: const <int>[1, 10, 1],
+                  children:
+                      recommended.map((recipe) {
+                        if (!imageCache.containsKey(recipe.id)) {
+                          getRecipeImage(recipe.id).then((value) {
+                            setState(() {
+                              imageCache[recipe.id] = value;
+                            });
+                          });
+                        }
+                        return Stack(
+                          children: [
+                            Center(
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: double.infinity,
+                                child: ClipRect(
+                                  child: Image(
+                                    image:
+                                        imageCache[recipe.id]?.image ??
                                         const AssetImage(
-                                            'assets/images/placeholder.png')) {
-                                      return const Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child: Icon(
-                                          Icons.image_not_supported_rounded,
-                                          size: 50,
-                                          color: Colors.black38,
+                                          'Assets/Images/LittleMan.png',
                                         ),
-                                      );
-                                    } else {
-                                      return ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: snapshot.data!,
-                                      );
-                                    }
-                                  } else {
-                                    return const CircularProgressIndicator();
-                                  }
-                                },
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
-                              title: Text(recommended[index].title),
-                              subtitle: Text(recommended[index].description),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RecipeDetail(
-                                      recipe: recommended[index],
-                                      image: imageCache[recommended[index].id]!,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      const Color.fromARGB(127, 0, 0, 0),
+                                    ],
+                                  ),
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    recipe.title,
+                                    overflow: TextOverflow.fade,
+                                    softWrap: false,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
                                     ),
                                   ),
-                                );
-                              },
+                                  subtitle: Text(
+                                    recipe.description,
+                                    overflow: TextOverflow.fade,
+                                    softWrap: false,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         );
-                      },
-                    ),
-                  ),
+                      }).toList(),
                 ),
-          rMax == 0 //? If there are no pages, show a loading indicator
-              ? const Column(
-                  children: [
-                    Icon(Icons.sync_problem_rounded, size: 50),
-                    SizedBox(height: 10),
-                  ],
-                )
-              : Column(
-                  children: [
-                    const Text("Página", style: TextStyle(fontSize: 18)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.keyboard_arrow_left_rounded),
-                          iconSize: 30,
-                          onPressed: () {
-                            if (rIndex > 0) {
-                              int index = rIndex - 1;
-                              getPopularRecipes(index).then((value) {
-                                setState(() {
-                                  recommended = value;
-                                  rLoaded = true;
-                                  rIndex = index;
-                                });
-                              });
-                            }
-                          },
-                        ),
-                        Text(
-                          '${rIndex + 1} / $rMax',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.keyboard_arrow_right_rounded),
-                          iconSize: 30,
-                          onPressed: () {
-                            if (rIndex < rMax - 1) {
-                              int index = rIndex + 1;
-                              getPopularRecipes(index).then((value) {
-                                setState(() {
-                                  recommended = value;
-                                  rLoaded = true;
-                                  rIndex = index;
-                                });
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-          const SizedBox(height: 32),
+              ),
         ],
       ),
       bottomNavigationBar: bottomAppBar(context),

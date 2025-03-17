@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_const
 
-import 'package:cooking_app/Classes/server_info.dart';
+import 'package:cookapp/Classes/server_info.dart';
 import 'package:flutter/material.dart';
 import '../Classes/user.dart';
 import 'login_page.dart';
@@ -20,9 +20,13 @@ class _UserSettingsState extends State<UserSettings> {
   @override
   void initState() {
     super.initState();
-    user!.getInstance().then((value) => setState(() {
-          user = value;
-        }));
+    user!
+        .getInstance("initState User Settings")
+        .then(
+          (value) => setState(() {
+            user = value;
+          }),
+        );
   }
 
   String page = "details";
@@ -38,19 +42,20 @@ class _UserSettingsState extends State<UserSettings> {
     final drawerHeader = UserAccountsDrawerHeader(
       accountName: Text(name == " " ? "Sem Nome" : name),
       accountEmail: Text(
-          "@${user?.username}" == "@" ? "Sem Username" : "@${user?.username}"),
+        "@${user?.username}" == "@" ? "Sem Username" : "@${user?.username}",
+      ),
       currentAccountPicture: const CircleAvatar(
         child: Icon(Icons.person_rounded, size: 42.0),
       ),
     );
 
     const anonymousDrawerHeader = UserAccountsDrawerHeader(
-      decoration: BoxDecoration(
-        color: Colors.blueGrey,
-      ),
+      decoration: BoxDecoration(color: Colors.blueGrey),
       accountName: Text("Utilizador Anónimo"),
-      accountEmail: Text("Faça logon para aceder aos serviços",
-          style: TextStyle(color: Colors.orange)),
+      accountEmail: Text(
+        "Faça logon para aceder aos serviços",
+        style: TextStyle(color: Colors.orange),
+      ),
       currentAccountPicture: CircleAvatar(
         child: Icon(Icons.person, size: 42.0),
       ),
@@ -60,156 +65,157 @@ class _UserSettingsState extends State<UserSettings> {
       isLogged = user!.guid != "";
     });
 
-    final drawerItems = isLogged
-        ? Column(
-            children: [
-              drawerHeader,
-              //* Privacy
-              const Text(
-                "Nenhuma definição disponível",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12.0,
+    final drawerItems =
+        isLogged
+            ? Column(
+              children: [
+                drawerHeader,
+                //* Privacy
+                const Text(
+                  "Nenhuma definição disponível",
+                  style: TextStyle(color: Colors.grey, fontSize: 12.0),
                 ),
-              ),
-              const SizedBox(height: 10.0),
-              ListTile(
-                title: const Text("Privacidade"),
-                leading: const Icon(Icons.remove_red_eye),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
+                const SizedBox(height: 10.0),
+                ListTile(
+                  title: const Text("Privacidade"),
+                  leading: const Icon(Icons.remove_red_eye),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
 
-              //* Divider
-              const Divider(),
-              //* Account Details
-              ListTile(
-                title: const Text("Detalhes da Conta"),
-                leading: const Icon(Icons.account_circle),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              //* Settings
-              ListTile(
-                title: const Text("Definições"),
-                leading: const Icon(Icons.settings),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              //* Divider
-              const Divider(),
-              //* About
-              ListTile(
-                title: const Text("Sobre"),
-                leading: const Icon(Icons.info),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              //* Divider
-              const Divider(),
-              //* Go back button
-              ListTile(
-                title: const Text("Voltar"),
-                leading: const Icon(Icons.arrow_back),
-                onTap: () {
-                  //? Twice so that it closes the drawer and then the page
-                  Navigator.pop(context); // Close the drawer
-                  Navigator.pop(context); // Close the page
-                },
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ListTile(
-                    title: const Text("Terminar sessão"),
-                    leading: const Icon(
-                      Icons.logout,
-                      color: Colors.red,
-                    ),
-                    onTap: () async {
-                      await showConfDialog(
-                        context,
-                        "Tem a certeza que quer terminar sessão?",
-                      ).then((value) {
-                        setState(() {
-                          //? This "Sets the state" although it doesn't update anything
-                          //* If the user confirms to log out
-                          if (value) {
-                            // Sets the user as not logged in
-                            isLogged = false;
+                //* Divider
+                const Divider(),
+                //* Account Details
+                ListTile(
+                  title: const Text("Detalhes da Conta"),
+                  leading: const Icon(Icons.account_circle),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                //* Settings
+                ListTile(
+                  title: const Text("Definições"),
+                  leading: const Icon(Icons.settings),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                //* Divider
+                const Divider(),
+                //* About
+                ListTile(
+                  title: const Text("Sobre"),
+                  leading: const Icon(Icons.info),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                //* Divider
+                const Divider(),
+                //* Go back button
+                ListTile(
+                  title: const Text("Voltar"),
+                  leading: const Icon(Icons.arrow_back),
+                  onTap: () {
+                    //? Twice so that it closes the drawer and then the page
+                    Navigator.pop(context); // Close the drawer
+                    Navigator.pop(context); // Close the page
+                  },
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ListTile(
+                      title: const Text("Terminar sessão"),
+                      leading: const Icon(Icons.logout, color: Colors.red),
+                      onTap: () async {
+                        await showConfDialog(
+                              context,
+                              "Tem a certeza que quer terminar sessão?",
+                            )
+                            .then((value) {
+                              setState(() {
+                                //? This "Sets the state" although it doesn't update anything
+                                //* If the user confirms to log out
+                                if (value) {
+                                  // Sets the user as not logged in
+                                  isLogged = false;
 
-                            // 'Deletes' the user, only in the files
-                            user!.delete().then((value) {
-                              //? This triggers the setState method so that the ui updates
-                              user!.getInstance().then((value) {
-                                setState(() {
-                                  user = value;
-                                });
+                                  // 'Deletes' the user, only in the files
+                                  user!.delete().then((value) {
+                                    //? This triggers the setState method so that the ui updates
+                                    user!.getInstance("End Session").then((
+                                      value,
+                                    ) {
+                                      setState(() {
+                                        user = value;
+                                      });
+                                    });
+                                  });
+                                }
                               });
-                            });
-                          }
-                        });
-                      }).then(
-                        (value) => setState,
-                      ); //? This triggers the setState method so that the ui updates
-                    },
+                            })
+                            .then(
+                              (value) => setState,
+                            ); //? This triggers the setState method so that the ui updates
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
-          )
-        : ListView(
-            children: [
-              anonymousDrawerHeader,
-              //* Login and Register buttons
-              ListTile(
-                title: const Text("Entrar"),
-                leading: const Icon(Icons.login),
-                onTap: () {
-                  //LoginPage is the page that we want to open on click.
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                  ).then((value) {
-                    user!.getInstance().then((value) => setState(() {
-                          isLogged = user!.guid != "";
-                        }));
-                  });
-                },
-              ),
-              ListTile(
-                title: const Text("Registar"),
-                leading: const Icon(Icons.app_registration),
-                onTap: () {
-                  //RegisterPage is the page that we want to open on click.
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
-                    ),
-                  );
-                },
-              ),
-              //* Divider
-              const Divider(),
-              //* Go back button
-              ListTile(
-                title: const Text("Voltar"),
-                leading: const Icon(Icons.arrow_back),
-                onTap: () {
-                  //? Twice so that it closes the drawer and then the page
-                  Navigator.pop(context); // Close the drawer
-                  Navigator.pop(context); // Close the page
-                },
-              ),
-            ],
-          );
+              ],
+            )
+            : ListView(
+              children: [
+                anonymousDrawerHeader,
+                //* Login and Register buttons
+                ListTile(
+                  title: const Text("Entrar"),
+                  leading: const Icon(Icons.login),
+                  onTap: () {
+                    //LoginPage is the page that we want to open on click.
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    ).then((value) {
+                      //?user!.getInstance().then(
+                      //?  (value) => setState(() {
+                      //?    isLogged = user!.guid != "";
+                      //?  }),
+                      //?);
+                    });
+                  },
+                ),
+                ListTile(
+                  title: const Text("Registar"),
+                  leading: const Icon(Icons.app_registration),
+                  onTap: () {
+                    //RegisterPage is the page that we want to open on click.
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterPage(),
+                      ),
+                    );
+                  },
+                ),
+                //* Divider
+                const Divider(),
+                //* Go back button
+                ListTile(
+                  title: const Text("Voltar"),
+                  leading: const Icon(Icons.arrow_back),
+                  onTap: () {
+                    //? Twice so that it closes the drawer and then the page
+                    Navigator.pop(context); // Close the drawer
+                    Navigator.pop(context); // Close the page
+                  },
+                ),
+              ],
+            );
     return Scaffold(
       appBar: AppBar(
         title: const Text("A Minha Conta"),
@@ -232,18 +238,13 @@ class _UserSettingsState extends State<UserSettings> {
             //TODO: Add user settings widgets, dark mode, notifications, reminders, etc. (Only if the user is logged in)
             child: Text(
               version,
-              style: const TextStyle(
-                fontSize: 20.0,
-                color: Colors.grey,
-              ),
+              style: const TextStyle(fontSize: 20.0, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
           ),
         ),
       ),
-      drawer: Drawer(
-        child: drawerItems,
-      ),
+      drawer: Drawer(child: drawerItems),
     );
   }
 }

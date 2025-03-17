@@ -1,4 +1,4 @@
-import 'package:cooking_app/Classes/lista_compra.dart';
+import 'package:cookapp/Classes/lista_compra.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
@@ -6,7 +6,6 @@ class CreateList extends StatefulWidget {
   const CreateList({Key? key}) : super(key: key);
 
   @override
-
   // ignore: library_private_types_in_public_api
   _CreateListState createState() => _CreateListState();
 }
@@ -64,10 +63,7 @@ class _CreateListState extends State<CreateList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Criar Lista'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Criar Lista'), centerTitle: true),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -75,57 +71,53 @@ class _CreateListState extends State<CreateList> {
             child: Column(
               //Body of the creating of a new shopping list
               mainAxisAlignment: MainAxisAlignment.center,
+
               //Nome da lista
               //Descrição da lista
               //Botão de criar lista
               //Data de criação da lista (Não editavel pelo utilizador mas sim automatico correspondente ao dia que a pessoa está a criar a lista)
-
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 40),
-                  child: list.id != 0
-                      ? Column(
-                          children: [
-                            Text(
-                              'ID: ${list.id}',
-                              style: const TextStyle(
-                                fontSize: 20,
+                  child:
+                      list.id != 0
+                          ? Column(
+                            children: [
+                              Text(
+                                'ID: ${list.id}',
+                                style: const TextStyle(fontSize: 20),
                               ),
-                            ),
-                            Text(
-                              'Data: ${list.data}',
-                              style: const TextStyle(
-                                fontSize: 20,
+                              Text(
+                                'Data: ${list.data}',
+                                style: const TextStyle(fontSize: 20),
                               ),
-                            ),
-                          ],
-                        )
-                      :
-                      //Loading ICon
-                      const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(),
-                        ),
+                            ],
+                          )
+                          :
+                          //Loading ICon
+                          const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(),
+                          ),
                 ),
-                //Color picker
 
+                //Color picker
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        Colors.white.withOpacity(0.9)),
+                      Colors.white.withOpacity(0.9),
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.circle,
-                        size: 45,
-                        color: pickerColor,
-                      ),
+                      Icon(Icons.circle, size: 45, color: pickerColor),
                       const SizedBox(width: 20),
-                      const Text('Escolher Cor',
-                          style: TextStyle(fontSize: 20, color: Colors.black)),
+                      const Text(
+                        'Escolher Cor',
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
                     ],
                   ),
                   onPressed: () {
@@ -159,16 +151,18 @@ class _CreateListState extends State<CreateList> {
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16))),
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
                     labelText: 'Loja',
                   ),
-                  items: lojas.map((String value) {
-                    //print("Stores: $value");
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  items:
+                      lojas.map((String value) {
+                        //print("Stores: $value");
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                   value: loja == 'Escolher Loja' ? null : loja,
                   onChanged: (value) {
                     if (value == 'Nova Loja') {
@@ -193,24 +187,26 @@ class _CreateListState extends State<CreateList> {
                                 ),
                                 actions: <Widget>[
                                   TextButton(
-                                    onPressed: lojas.contains(newStore) ||
-                                            newStore.isEmpty
-                                        ? null
-                                        : () async {
-                                            if (lojas.contains(newStore)) {
-                                              return;
-                                            }
-                                            Loja lojaInstance =
-                                                Loja(nome: newStore);
-                                            await lojaInstance.save();
-                                            setState(() {
-                                              lojas.add(newStore);
-                                              loja = newStore;
-                                            });
-                                            // ignore: use_build_context_synchronously
-                                            refresh();
-                                            Navigator.of(context).pop();
-                                          },
+                                    onPressed:
+                                        lojas.contains(newStore) ||
+                                                newStore.isEmpty
+                                            ? null
+                                            : () async {
+                                              if (lojas.contains(newStore)) {
+                                                return;
+                                              }
+                                              Loja lojaInstance = Loja(
+                                                nome: newStore,
+                                              );
+                                              await lojaInstance.save();
+                                              setState(() {
+                                                lojas.add(newStore);
+                                                loja = newStore;
+                                              });
+                                              // ignore: use_build_context_synchronously
+                                              refresh();
+                                              Navigator.of(context).pop();
+                                            },
                                     child: const Text('Adicionar'),
                                   ),
                                 ],
@@ -236,8 +232,8 @@ class _CreateListState extends State<CreateList> {
                         controller: _nameController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16))),
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                          ),
                           labelText: 'Nome da Lista',
                         ),
                         onChanged: (value) {
@@ -261,8 +257,8 @@ class _CreateListState extends State<CreateList> {
                         controller: _descriptionController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16))),
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                          ),
                           labelText: 'Descrição da Lista',
                         ),
                         onChanged: (value) {
@@ -283,8 +279,10 @@ class _CreateListState extends State<CreateList> {
                     SizedBox(
                       // Width of the screen divided by 3
                       width: MediaQuery.of(context).size.width / 4,
-                      child:
-                          const Text('Simples', style: TextStyle(fontSize: 20)),
+                      child: const Text(
+                        'Simples',
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                     SizedBox(
                       // Width of the screen divided by 3
@@ -300,9 +298,11 @@ class _CreateListState extends State<CreateList> {
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 4,
-                      child: const Text('Detalhada',
-                          style: TextStyle(fontSize: 20)),
-                    )
+                      child: const Text(
+                        'Detalhada',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -319,10 +319,7 @@ class _CreateListState extends State<CreateList> {
                         });
                       }
                     },
-                    icon: const Icon(
-                      Icons.add,
-                      color: Colors.greenAccent,
-                    ),
+                    icon: const Icon(Icons.add, color: Colors.greenAccent),
                   ),
                 ),
               ],

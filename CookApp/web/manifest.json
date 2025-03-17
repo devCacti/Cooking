@@ -1,6 +1,6 @@
 {
-    "name": "cooking_app",
-    "short_name": "cooking_app",
+    "name": "cookapp",
+    "short_name": "cookapp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
