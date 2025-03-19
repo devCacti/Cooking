@@ -37,7 +37,6 @@ class _RegisterPageState extends State<RegisterPage> {
             Icon(
               Icons.person_add_rounded,
               size: 100.0,
-              color: Theme.of(context).primaryColor,
               shadows: const [
                 BoxShadow(
                   color: Colors.grey,
@@ -61,13 +60,9 @@ class _RegisterPageState extends State<RegisterPage> {
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
                 hintText: "António",
-                labelText: "Nome",
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 16.0,
-                ),
+                labelText: "Nome *",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               validator: (String? value) {
@@ -84,25 +79,12 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(
                 hintText: "da Silva Lopes",
                 labelText: "Apelidos",
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 16.0,
-                ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
             ),
             const SizedBox(height: 32.0),
-            // Divider
-            const Divider(
-              color: Colors.black,
-              thickness: 1,
-              height: 0.1,
-              indent: 20,
-              endIndent: 20,
-            ),
-            const SizedBox(height: 24.0),
             const Text(
               "Credenciais",
               textAlign: TextAlign.center,
@@ -117,13 +99,9 @@ class _RegisterPageState extends State<RegisterPage> {
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 hintText: "o_seu_nome",
-                labelText: "Username",
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 16.0,
-                ),
+                labelText: "Username *",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               validator: (String? value) {
@@ -142,13 +120,9 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: _emailController,
               decoration: InputDecoration(
                 hintText: "exemplo@email.com",
-                labelText: "Email",
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 16.0,
-                ),
+                labelText: "eMail *",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               validator: (String? value) {
@@ -165,15 +139,6 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
             const SizedBox(height: 32.0),
-            // Divider
-            const Divider(
-              color: Colors.black,
-              thickness: 1,
-              height: 0.1,
-              indent: 20,
-              endIndent: 20,
-            ),
-            const SizedBox(height: 32.0),
 
             //* Password
             TextFormField(
@@ -183,16 +148,13 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: _passwordController,
               decoration: InputDecoration(
                 hintText: "@Password123",
-                labelText: "Password",
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 16.0,
-                ),
+                labelText: "Password *",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.remove_red_eye),
+                  icon: Icon(
+                      _isObscure ? Icons.visibility : Icons.visibility_off),
                   onPressed: () {
                     setState(() {
                       _isObscure = !_isObscure;
@@ -223,16 +185,13 @@ class _RegisterPageState extends State<RegisterPage> {
               autocorrect: false,
               decoration: InputDecoration(
                 hintText: "@Password123",
-                labelText: "Confirmar Password",
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 16.0,
-                ),
+                labelText: "Confirmar Password *",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.remove_red_eye),
+                  icon: Icon(
+                      _isObscureConf ? Icons.visibility : Icons.visibility_off),
                   onPressed: () {
                     setState(() {
                       _isObscureConf = !_isObscureConf;

@@ -49,7 +49,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
               itemCount: lists.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(4),
                   child: Row(
                     children: [
                       Material(
@@ -78,7 +78,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                       Expanded(
                         child: Material(
                           elevation: 4,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(20),
                           child: ListTile(
                             title: Text(lists[index].nome),
                             subtitle: Text(
@@ -177,7 +177,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         heroTag: 'Nova Lista',
         onPressed: () {
           Navigator.push(
@@ -188,7 +188,11 @@ class _ShoppingListsState extends State<ShoppingLists> {
           ).then((value) => initializeData());
         },
         tooltip: 'Nova Lista',
-        child: const Icon(Icons.add),
+        label: const Text('Nova Lista'),
+        icon: const Icon(Icons.add),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
       ),
     );
   }

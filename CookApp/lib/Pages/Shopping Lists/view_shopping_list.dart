@@ -292,8 +292,8 @@ class _ViewListState extends State<ViewList> {
                     child: Text(
                       'Esta lista não tem itens',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 12,
                       ),
                     ),
                   )
@@ -475,8 +475,8 @@ class _ViewListState extends State<ViewList> {
               children: [
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Colors.white.withOpacity(0.4)),
+                    backgroundColor: WidgetStateProperty.all(
+                        const Color.fromARGB(154, 255, 255, 255)),
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -487,8 +487,10 @@ class _ViewListState extends State<ViewList> {
                         color: Colors.black,
                       ),
                       SizedBox(width: 20),
-                      Text('Adicionar Item',
-                          style: TextStyle(fontSize: 20, color: Colors.black)),
+                      Text(
+                        'Adicionar Item',
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      ),
                     ],
                   ),
                   onPressed: () {

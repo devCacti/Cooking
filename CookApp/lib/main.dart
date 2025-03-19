@@ -223,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: CarouselView.weighted(
                     controller: CarouselController(),
                     itemSnapping: true,
-                    flexWeights: const <int>[1, 7, 1],
+                    flexWeights: const <int>[1, 9, 1],
                     onTap: (index) {
                       Navigator.push(
                         context,
