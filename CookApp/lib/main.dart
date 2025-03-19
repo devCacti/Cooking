@@ -167,11 +167,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          const Divider(
-            indent: 50,
-            endIndent: 50,
-            color: Colors.black,
-          ),
 
           //* Recommended Recipes
           Padding(
@@ -242,129 +237,81 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 )
-              : Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 32, right: 32),
-                    child: ListView.builder(
-                      itemCount: recommended.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              top: 2, bottom: 10, left: 10, right: 10),
-                          child: Material(
-                            elevation: 5,
-                            borderRadius: BorderRadius.circular(16),
-                            child: ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              leading: FutureBuilder<Image>(
-                                future: getRecipeImage(
-                                    recommended[index].id, imageCache),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    imageCache[recommended[index].id] =
-                                        snapshot.data!;
-                                    if (snapshot.hasError) {
-                                      return const Icon(Icons.error);
-                                    }
-                                    if (snapshot.data?.image ==
-                                        const AssetImage(
-                                            'assets/images/placeholder.png')) {
-                                      return const Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child: Icon(
-                                          Icons.image_not_supported_rounded,
-                                          size: 50,
-                                          color: Colors.black38,
-                                        ),
-                                      );
-                                    } else {
-                                      return ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: snapshot.data!,
-                                      );
-                                    }
-                                  } else {
-                                    return const CircularProgressIndicator();
-                                  }
-                                },
-                              ),
-                              title: Text(recommended[index].title),
-                              subtitle: Text(recommended[index].description),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => RecipeDetail(
-                                      recipe: recommended[index],
-                                      image: imageCache[recommended[index].id]!,
+              : ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxHeight: MediaQuery.sizeOf(context).height / 2.5),
+                  child: CarouselView.weighted(
+                    controller: CarouselController(),
+                    itemSnapping: true,
+                    flexWeights: const <int>[1, 7, 1],
+                    onTap: (index) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RecipeDetail(
+                            recipe: recommended[index],
+                          ),
+                        ),
+                      );
+                    },
+                    children: recommended.map((recipe) {
+                      return Stack(
+                        children: [
+                          ClipRect(
+                            child: Center(
+                              child: Image(
+                                height: double.infinity,
+                                image: imageCache[recipe.id]?.image ??
+                                    const AssetImage(
+                                      'Assets/Images/LittleMan.png',
                                     ),
-                                  ),
-                                );
-                              },
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        );
-                      },
-                    ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    const Color.fromARGB(127, 0, 0, 0),
+                                  ],
+                                ),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  recipe.title,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: false,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  recipe.description,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: false,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ),
                 ),
-          rMax == 0 //? If there are no pages, show a loading indicator
-              ? const Column(
-                  children: [
-                    Icon(Icons.sync_problem_rounded, size: 50),
-                    SizedBox(height: 10),
-                  ],
-                )
-              : Column(
-                  children: [
-                    const Text("Página", style: TextStyle(fontSize: 18)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.keyboard_arrow_left_rounded),
-                          iconSize: 30,
-                          onPressed: () {
-                            if (rIndex > 0) {
-                              int index = rIndex - 1;
-                              getPopularRecipes(index).then((value) {
-                                setState(() {
-                                  recommended = value;
-                                  rLoaded = true;
-                                  rIndex = index;
-                                });
-                              });
-                            }
-                          },
-                        ),
-                        Text(
-                          '${rIndex + 1} / $rMax',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.keyboard_arrow_right_rounded),
-                          iconSize: 30,
-                          onPressed: () {
-                            if (rIndex < rMax - 1) {
-                              int index = rIndex + 1;
-                              getPopularRecipes(index).then((value) {
-                                setState(() {
-                                  recommended = value;
-                                  rLoaded = true;
-                                  rIndex = index;
-                                });
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+
           const SizedBox(height: 32),
         ],
       ),

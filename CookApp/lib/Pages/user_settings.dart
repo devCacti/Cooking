@@ -8,7 +8,7 @@ import 'register_page.dart';
 import '../Functions/show_conf_dialog.dart';
 
 class UserSettings extends StatefulWidget {
-  const UserSettings({Key? key}) : super(key: key);
+  const UserSettings({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -216,7 +216,10 @@ class _UserSettingsState extends State<UserSettings> {
         // Button on the right side of the app bar to exit
         actions: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: const Icon(
+              Icons.home_rounded,
+              opticalSize: 50,
+            ),
             iconSize: 30.0,
             onPressed: () {
               Navigator.pop(context);
@@ -242,6 +245,7 @@ class _UserSettingsState extends State<UserSettings> {
         ),
       ),
       drawer: Drawer(
+        semanticLabel: "Menu de Navegação",
         child: drawerItems,
       ),
     );
