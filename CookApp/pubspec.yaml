@@ -67,6 +67,7 @@ flutter:
   
   assets:
     - assets/images/placeholder.png
+    - assets/images/LittleMan.png
 
 flutter_gen:
   git:

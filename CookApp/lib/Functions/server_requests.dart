@@ -33,7 +33,7 @@ Future<Image> getRecipeImage(String id,
     await user.getInstance();
   } catch (e) {
     print('Error: $e');
-    return Image.asset('assets/images/placeholder.png');
+    return Image.asset('assets/images/LittleMan.png');
   }
   var request =
       http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
@@ -58,15 +58,15 @@ Future<Image> getRecipeImage(String id,
         return Image.memory(bytes);
       } else {
         print('Failed to get image: Invalid content type');
-        return Image.asset('assets/images/placeholder.png');
+        return Image.asset('assets/images/LittleMan.png');
       }
     } else {
       print(" ---> (0009) ${response.reasonPhrase}");
-      return Image.asset('assets/images/placeholder.png');
+      return Image.asset('assets/images/LittleMan.png');
     }
   } catch (e) {
     print('Error: $e');
-    return Image.asset('assets/images/placeholder.png');
+    return Image.asset('assets/images/LittleMan.png');
   }
 }
 

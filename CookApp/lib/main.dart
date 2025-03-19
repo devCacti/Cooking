@@ -51,8 +51,6 @@ class _MyHomePageState extends State<MyHomePage> {
   //User user = User.defaultU();
   List<Recipe> recommended = [];
   bool rLoaded = false;
-  int rIndex = 0;
-  int rMax = 0;
   Map<String, Image> imageCache = {};
 
   //* Load the recommended recipes (TODO Done ✅)
@@ -69,26 +67,12 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     // Gets the Popular Recipes from the server (Not the recommended ones)
-    getPopularRecipes(rIndex).then((value) {
+    getPopularRecipes().then((value) {
       setState(() {
         recommended = value;
         rLoaded = true;
       });
     });
-
-    // Gets the number of pages of the popular recipes
-    fetchPopularPages().then((value) {
-      setState(() {
-        rMax = value;
-      });
-    });
-
-    // // Get the user instance
-    // user.getInstance().then((value) {
-    //   setState(() {
-    //     user = value;
-    //   });
-    // });
   }
 
   @override
@@ -196,23 +180,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          rLoaded = false;
-                        });
-                        getPopularRecipes(0).then((value) {
-                          setState(() {
-                            rIndex = 0;
-                            recommended = value;
-                            rLoaded = true;
-                          });
-                        });
-                        fetchPopularPages().then((value) {
-                          setState(() {
-                            rMax = value;
-                          });
-                        });
-                      },
+                      onPressed: rLoaded
+                          ? () {
+                              setState(() {
+                                rLoaded = false;
+                              });
+                              getPopularRecipes().then((value) {
+                                setState(() {
+                                  recommended = value;
+                                  rLoaded = true;
+                                });
+                              });
+                            }
+                          : null,
                       icon: const Icon(Icons.refresh),
                     ),
                   ),
@@ -260,10 +240,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           ClipRect(
                             child: Center(
                               child: Image(
+                                width: double.infinity,
                                 height: double.infinity,
                                 image: imageCache[recipe.id]?.image ??
                                     const AssetImage(
-                                      'Assets/Images/LittleMan.png',
+                                      'assets/images/LittleMan.png',
                                     ),
                                 fit: BoxFit.cover,
                               ),
