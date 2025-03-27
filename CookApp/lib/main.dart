@@ -53,9 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool rLoaded = false;
   Map<String, Image> imageCache = {};
 
-  //* Load the recommended recipes (TODO Done ✅)
-  //? The recommended Recipes are the ones from the getPopularRecipes(rMax,) Future<List<Recipes>> function
-
   @override
   void initState() {
     User user = User.defaultU();

@@ -63,8 +63,7 @@ class Login {
           name: name,
           surname: surname,
         );
-        user.save();
-
+        await user.save();
         return true;
       } else {
         print('Login failed');
@@ -148,7 +147,7 @@ class Register {
           name: name,
           surname: surname,
         );
-        user.save();
+        await user.save();
 
         return true;
       } else {
@@ -183,14 +182,7 @@ class User {
     this.name = '',
     this.surname,
     //this.phone,
-  }) {
-    // Get the user data from the user.json file
-    try {
-      getInstance();
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
+  });
 
   factory User.defaultU() {
     return User(cookie: '', guid: '', email: '', username: '', name: '');
@@ -204,6 +196,13 @@ class User {
     username = await storage.read(key: 'username') ?? '';
     name = await storage.read(key: 'name') ?? '';
     surname = await storage.read(key: 'surname') ?? '';
+
+    print('Cookie: $cookie');
+    print('Guid: $guid');
+    print('Email: $email');
+    print('Username: $username');
+    print('Name: $name');
+    print('Surname: $surname');
 
     //! It's triggering a terrible error that doesn't allow app manipulation
     //! [ERROR:flutter/shell/platform/windows/task_runner_window.cc(56)] Failed to post message to main thread.
@@ -279,7 +278,7 @@ class User {
       await storage.delete(key: 'name');
       await storage.delete(key: 'surname');
     } catch (e) {
-      print('Error: $e');
+      print('Deletting Error: $e');
       return false;
     }
 
@@ -287,14 +286,25 @@ class User {
   }
 
   // Save to local storage (user.json)
-  void save() async {
+  Future<void> save() async {
+    print('Saving user data to the secure storage');
+    print('Cookie: $cookie');
+    print('Guid: $guid');
+    print('Email: $email');
+    print('Username: $username');
+    print('Name: $name');
+    print('Surname: $surname');
     // Save the user data to the secure storage
-    await storage.write(key: 'cookie', value: cookie);
-    await storage.write(key: 'guid', value: guid);
-    await storage.write(key: 'email', value: email);
-    await storage.write(key: 'username', value: username);
-    await storage.write(key: 'name', value: name);
-    await storage.write(key: 'surname', value: surname ?? '');
+    try {
+      await storage.write(key: 'cookie', value: cookie);
+      await storage.write(key: 'guid', value: guid);
+      await storage.write(key: 'email', value: email);
+      await storage.write(key: 'username', value: username);
+      await storage.write(key: 'name', value: name);
+      await storage.write(key: 'surname', value: surname ?? '');
+    } catch (e) {
+      print('writting Error: $e');
+    }
 
     print('Saved user data to the secure storage');
   }

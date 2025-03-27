@@ -20,9 +20,9 @@ class _UserSettingsState extends State<UserSettings> {
   @override
   void initState() {
     super.initState();
-    user!.getInstance().then((value) => setState(() {
-          user = value;
-        }));
+    user!.getInstance().then(
+          (value) => setState(() {}),
+        );
   }
 
   String page = "details";
