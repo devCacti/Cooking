@@ -1,1 +1,0 @@
-C:\Dev\Projects\CookApp\build\app\intermediates\cxx\Debug\5c421d2m\obj\arm64-v8a

@@ -1,1 +1,0 @@
-C:\Dev\Projects\CookApp\build\app\intermediates\cxx\Debug\5c421d2m\obj\armeabi-v7a
