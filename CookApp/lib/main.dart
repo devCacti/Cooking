@@ -233,6 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialPageRoute(
                           builder: (context) => RecipeDetail(
                             recipe: recommended[index],
+                            image: imageCache[recommended[index].id],
                           ),
                         ),
                       );

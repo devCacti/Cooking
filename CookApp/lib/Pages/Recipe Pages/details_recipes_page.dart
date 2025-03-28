@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
+//import 'dart:io';
 
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+//import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-import '../Classes/receita.dart';
+import '../../Classes/receita.dart';
 
 class DetailsForm extends StatefulWidget {
   final Recipe detailRecipe;
-  final bool? isEdit;
+  final Image? image;
 
   const DetailsForm({
     required this.detailRecipe,
-    this.isEdit,
-    Key? key,
-  }) : super(key: key);
+    this.image,
+    super.key,
+  });
 
   @override
   // ignore: library_private_types_in_public_api
@@ -24,6 +24,13 @@ class _DetailsFormState extends State<DetailsForm> {
   @override
   void initState() {
     super.initState();
+
+    // Check if the image is null and set it to a default image
+    if (widget.image == null) {
+      print('Image is null, setting to default image');
+    } else {
+      print('Image is not null, setting to image');
+    }
   }
 
   @override
@@ -53,14 +60,12 @@ class _DetailsFormState extends State<DetailsForm> {
                     padding: const EdgeInsets.only(left: 55, right: 55),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: widget.detailRecipe.foto == null
-                          ? const Icon(
+                      child: widget.image != null
+                          ? widget.image!
+                          : const Icon(
                               Icons.image_not_supported,
                               size: 100,
                               color: Colors.grey,
-                            )
-                          : Image.file(
-                              File(widget.detailRecipe.foto!),
                             ),
                     ),
                   ),
@@ -343,37 +348,37 @@ class _DetailsFormState extends State<DetailsForm> {
       ),
       //Bottom app bar with a radial menu, the button should be a circle in the center
       //of the screen
-      floatingActionButton: widget.isEdit == true
-          ? SpeedDial(
-              icon: Icons.menu,
-              visible: true,
-              closeManually: false,
-              children: [
-                SpeedDialChild(
-                  child: const Icon(
-                    Icons.list,
-                    size: 35,
-                  ),
-                  label: 'Lista de compras',
-                  onTap: null,
-                ),
-                SpeedDialChild(
-                  child: const Icon(
-                    Icons.edit,
-                    size: 35,
-                  ),
-                  label: 'Editar receita',
-                ),
-                SpeedDialChild(
-                  child: const Icon(
-                    Icons.delete,
-                    size: 35,
-                  ),
-                  label: 'Eliminar receita',
-                ),
-              ],
-            )
-          : null,
+      //floatingActionButton: widget.isEdit
+      //    ? SpeedDial(
+      //        icon: Icons.menu,
+      //        visible: true,
+      //        closeManually: false,
+      //        children: [
+      //          SpeedDialChild(
+      //            child: const Icon(
+      //              Icons.list,
+      //              size: 35,
+      //            ),
+      //            label: 'Lista de compras',
+      //            onTap: null,
+      //          ),
+      //          SpeedDialChild(
+      //            child: const Icon(
+      //              Icons.edit,
+      //              size: 35,
+      //            ),
+      //            label: 'Editar receita',
+      //          ),
+      //          SpeedDialChild(
+      //            child: const Icon(
+      //              Icons.delete,
+      //              size: 35,
+      //            ),
+      //            label: 'Eliminar receita',
+      //          ),
+      //        ],
+      //      )
+      //    : null,
     );
   }
 }

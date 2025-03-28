@@ -197,12 +197,12 @@ class User {
     name = await storage.read(key: 'name') ?? '';
     surname = await storage.read(key: 'surname') ?? '';
 
-    print('Cookie: $cookie');
-    print('Guid: $guid');
-    print('Email: $email');
-    print('Username: $username');
-    print('Name: $name');
-    print('Surname: $surname');
+    ////print('Cookie: $cookie');
+    ////print('Guid: $guid');
+    ////print('Email: $email');
+    ////print('Username: $username');
+    ////print('Name: $name');
+    ////print('Surname: $surname');
 
     //! It's triggering a terrible error that doesn't allow app manipulation
     //! [ERROR:flutter/shell/platform/windows/task_runner_window.cc(56)] Failed to post message to main thread.
@@ -287,13 +287,13 @@ class User {
 
   // Save to local storage (user.json)
   Future<void> save() async {
-    print('Saving user data to the secure storage');
-    print('Cookie: $cookie');
-    print('Guid: $guid');
-    print('Email: $email');
-    print('Username: $username');
-    print('Name: $name');
-    print('Surname: $surname');
+    ////print('Saving user data to the secure storage');
+    ////print('Cookie: $cookie');
+    ////print('Guid: $guid');
+    ////print('Email: $email');
+    ////print('Username: $username');
+    ////print('Name: $name');
+    ////print('Surname: $surname');
     // Save the user data to the secure storage
     try {
       await storage.write(key: 'cookie', value: cookie);

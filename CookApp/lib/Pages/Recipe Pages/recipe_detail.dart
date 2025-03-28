@@ -9,8 +9,7 @@ class RecipeDetail extends StatefulWidget {
   final Recipe recipe;
   final Image? image;
 
-  const RecipeDetail({Key? key, required this.recipe, this.image})
-      : super(key: key);
+  const RecipeDetail({super.key, required this.recipe, this.image});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -22,7 +21,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
   List<Ingredient> ingredients = [];
   bool loading = true;
   bool imageIsPlaceholder = false;
-  int imageHeight = 100;
+  final int imageHeight = 100;
 
   @override
   void initState() {
@@ -37,8 +36,10 @@ class _RecipeDetailState extends State<RecipeDetail> {
           loading = false;
         }));
 
-    // Check if the image returned is the same as the placeholder image
-    if (widget.image?.image == const AssetImage("assets/placeholder.png")) {
+    // Check if the image is a placeholder
+    if (widget.image == null ||
+        widget.image!.image ==
+            const AssetImage("assets/images/LittleMan.png")) {
       imageIsPlaceholder = true;
     }
   }
@@ -60,7 +61,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
             child: SizedBox(
               // Just use the height of the image if it doesn't exceed the width of the screen
               width: MediaQuery.of(context).size.width / 2,
-              child: imageIsPlaceholder
+              child: !imageIsPlaceholder
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image(
