@@ -21,8 +21,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   Recipe? novaReceita; //? Variável principal
 
   int id = 1;
-  Image? _image; //* Recipe Image
-  File? imageFile; //* Recipe Image File
+  File? _imageFile; //? Recipe Image File
   String? nameR; //* Recipe Name
   String? descR; //* Recipe Description
   String? ingsR; //* Recipe Ingredients
@@ -53,12 +52,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   final TextEditingController _procController = TextEditingController();
   List<String> procedimentos = [];
 
-  final TextEditingController _tempoController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController _porcoesController = TextEditingController(
-    text: '0',
-  );
+  final TextEditingController _tempoController =
+      TextEditingController(text: '0');
+  final TextEditingController _porcoesController =
+      TextEditingController(text: '0');
 
   List<TextEditingController> procsControllers = [];
 
@@ -68,7 +65,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Sair?', style: TextStyle(color: Colors.red)),
+          title: const Text(
+            'Sair?',
+            style: TextStyle(color: Colors.red),
+          ),
           content: const Text(
             'Esta ação é irrevertível.\nQualquer progresso feito será perdido!',
             style: TextStyle(color: Colors.black),
@@ -96,13 +96,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   }
 
   Future<void> _getImage() async {
-    final XFile? image = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
+    final XFile? image =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        _image = Image.file(File(image.path));
-        imageFile = File(image.path);
+        _imageFile = File(image.path);
       });
     }
   }
@@ -115,14 +113,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (_image == null) {
-      isPublic = false;
-    }
-    super.setState(fn);
   }
 
   @override
@@ -151,41 +141,39 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     bottom: 16,
                     //bottom: 32,
                   ),
-                  child:
-                      _image == null
-                          ? Material(
-                            elevation: 10,
-                            shape: //const
-                                CircleBorder(),
-                            child: IconButton(
-                              icon: Icon(Icons.camera_alt_outlined),
-                              iconSize: 75,
-                              onPressed: _getImage,
-                              tooltip: 'Escolher Foto',
-                            ),
-                          )
-                          : Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child:
-                                    _image ??
-                                    const Icon(
-                                      Icons.image_not_supported_rounded,
-                                    ),
-                              ),
-                              Positioned(
-                                top: 10,
-                                right: 10,
-                                child: IconButton(
-                                  icon: const Icon(Icons.edit_outlined),
-                                  onPressed: _getImage,
-                                  tooltip: 'Mudar Foto',
-                                  iconSize: 40,
-                                ),
-                              ),
-                            ],
+                  child: _imageFile == null
+                      ? Material(
+                          elevation: 10,
+                          shape: //const
+                              CircleBorder(),
+                          child: IconButton(
+                            icon: Icon(Icons.camera_alt_outlined),
+                            iconSize: 75,
+                            onPressed: _getImage,
+                            tooltip: 'Escolher Foto',
                           ),
+                        )
+                      : Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: _imageFile != null
+                                  ? Image.file(_imageFile!)
+                                  : const Icon(
+                                      Icons.image_not_supported_rounded),
+                            ),
+                            Positioned(
+                              top: 10,
+                              right: 10,
+                              child: IconButton(
+                                icon: const Icon(Icons.edit_outlined),
+                                onPressed: _getImage,
+                                tooltip: 'Mudar Foto',
+                                iconSize: 40,
+                              ),
+                            ),
+                          ],
+                        ),
                 ),
                 const Text(
                   'Funcionalidade ainda não disponível',
@@ -222,11 +210,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                    right: 32,
-                    left: 32,
-                    top: 16,
-                    bottom: 12,
-                  ),
+                      right: 32, left: 32, top: 16, bottom: 12),
                   child: TextFormField(
                     key: _descKey,
                     maxLines: null,
@@ -256,64 +240,68 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   height: 1,
                   color: Colors.grey,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(
+                  height: 20,
+                ),
 
                 //* Ingredients
                 const Center(
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: Text('Ingredientes', style: TextStyle(fontSize: 20)),
+                    padding: EdgeInsets.only(
+                      bottom: 16,
+                    ),
+                    child: Text(
+                      'Ingredientes',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
                   ),
                 ),
                 ingredients.isEmpty
                     ? Container()
                     : const Text(
-                      'Toque e segure para eliminar um ingrediente',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black54,
-                        fontStyle: FontStyle.italic,
+                        'Toque e segure para eliminar um ingrediente',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
-                    ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child:
-                        ingredients.isEmpty
-                            ? const Center(
-                              child: Text(
-                                'Nenhum ingrediente',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black54,
-                                ),
+                    child: ingredients.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Nenhum ingrediente',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
                               ),
-                            )
-                            : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: ingredients.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: 8,
-                                    left: 24,
-                                    right: 24,
-                                  ),
-                                  child: Material(
-                                    elevation: 5,
-                                    borderRadius: BorderRadius.circular(25),
-                                    child: ListTile(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      onLongPress: () {
-                                        showConfirmationDialog(context).then((
-                                          value,
-                                        ) {
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: ingredients.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    bottom: 8, left: 24, right: 24),
+                                child: Material(
+                                  elevation: 5,
+                                  borderRadius: BorderRadius.circular(25),
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    onLongPress: () {
+                                      showConfirmationDialog(context).then(
+                                        (value) {
                                           if (value) {
                                             setState(() {
                                               ingredients.removeAt(index);
@@ -321,91 +309,89 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                               ingsQaunt.removeAt(index);
                                             });
                                           }
-                                        });
-                                      },
-                                      title: Text(
-                                        ingredients[index],
-                                        style: const TextStyle(fontSize: 18),
-                                      ),
-                                      trailing: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Semantics(
-                                            label: 'quantidade',
-                                            child: SizedBox(
-                                              width: 32,
-                                              height: 44,
-                                              child: TextField(
-                                                style: const TextStyle(
-                                                  color: Colors.black54,
-                                                  fontSize: 16,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                                onChanged: (value) {
-                                                  final newValue =
-                                                      double.tryParse(value);
-                                                  if (newValue != null &&
-                                                      newValue !=
-                                                          ingsQaunt[index]) {
-                                                    setState(() {
-                                                      ingsQaunt[index] =
-                                                          newValue;
-                                                    });
-                                                  } else {
-                                                    ingsQaunt[index] = 0;
-                                                  }
-                                                },
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                decoration:
-                                                    const InputDecoration(
-                                                      hintText: '0',
-                                                      border: InputBorder.none,
-                                                    ),
+                                        },
+                                      );
+                                    },
+                                    title: Text(
+                                      ingredients[index],
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Semantics(
+                                          label: 'quantidade',
+                                          child: SizedBox(
+                                            width: 32,
+                                            height: 44,
+                                            child: TextField(
+                                              style: const TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 16,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                              onChanged: (value) {
+                                                final newValue =
+                                                    double.tryParse(value);
+                                                if (newValue != null &&
+                                                    newValue !=
+                                                        ingsQaunt[index]) {
+                                                  setState(() {
+                                                    ingsQaunt[index] = newValue;
+                                                  });
+                                                } else {
+                                                  ingsQaunt[index] = 0;
+                                                }
+                                              },
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              decoration: const InputDecoration(
+                                                hintText: '0',
+                                                border: InputBorder.none,
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(width: 10),
-                                          DropdownButton<String>(
-                                            value: ingsOpts[index],
-                                            style: const TextStyle(
-                                              color: Colors.black54,
-                                              fontSize: 20,
-                                            ),
-                                            items:
-                                                <String>[
-                                                  'Kg',
-                                                  'g',
-                                                  'L',
-                                                  'mL',
-                                                  'unid.',
-                                                  'colh.',
-                                                  'chav.',
-                                                ].map<DropdownMenuItem<String>>(
-                                                  (String value) {
-                                                    return DropdownMenuItem<
-                                                      String
-                                                    >(
-                                                      value: value,
-                                                      child: Text(value),
-                                                    );
-                                                  },
-                                                ).toList(),
-                                            onChanged: (String? newValue) {
-                                              setState(() {
-                                                ingsOpts[index] = newValue!;
-                                              });
-                                            },
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        DropdownButton<String>(
+                                          value: ingsOpts[index],
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 20,
                                           ),
-                                        ],
-                                      ),
+                                          items: <String>[
+                                            'Kg',
+                                            'g',
+                                            'L',
+                                            'mL',
+                                            'unid.',
+                                            'colh.',
+                                            'chav.',
+                                          ].map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            },
+                                          ).toList(),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              ingsOpts[index] = newValue!;
+                                            });
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
+                          ),
                   ),
                 ),
                 Padding(
@@ -422,9 +408,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             labelText: 'Novo Ingrediente',
                             hintText: 'Nome de um ingrediente',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(16),
-                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)),
                             ),
                           ),
                           onChanged: (value) {
@@ -432,7 +417,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       Expanded(
                         flex: 0,
                         child: Material(
@@ -441,7 +428,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           child: IconButton(
                             tooltip: 'Adicionar',
                             splashRadius: 25,
-                            iconSize: 35,
+                            iconSize: 40,
                             splashColor: Colors.black12,
                             icon: const Icon(Icons.add),
                             onPressed: () {
@@ -468,13 +455,26 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     ],
                   ),
                 ),
-                const Divider(thickness: 1, indent: 35, endIndent: 35),
-                const SizedBox(height: 20),
+                const Divider(
+                  thickness: 1,
+                  indent: 35,
+                  endIndent: 35,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
                 //* Procedure
                 const Center(
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: Text('Procedimento', style: TextStyle(fontSize: 20)),
+                    padding: EdgeInsets.only(
+                      bottom: 16,
+                    ),
+                    child: Text(
+                      'Procedimento',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
                   ),
                 ),
                 Padding(
@@ -483,225 +483,209 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child:
-                        procedimentos.isEmpty
-                            ? const Center(
-                              child: Text(
-                                'Nenhum passo',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black54,
-                                ),
+                    child: procedimentos.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Nenhum passo',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
                               ),
-                            )
-                            : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: procedimentos.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: 8,
-                                    left: 24,
-                                    right: 24,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Passo N.º ${index + 1}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: procedimentos.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: 8,
+                                  left: 24,
+                                  right: 24,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Passo N.º ${index + 1}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    TextFormField(
+                                      controller: procsControllers[index],
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                      decoration: const InputDecoration(
+                                        label: Text('Procedimento'),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(16)),
                                         ),
                                       ),
-                                      const SizedBox(height: 10),
-                                      TextFormField(
-                                        controller: procsControllers[index],
-                                        style: const TextStyle(fontSize: 16),
-                                        decoration: const InputDecoration(
-                                          label: Text('Procedimento'),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(16),
-                                            ),
-                                          ),
-                                        ),
-                                        maxLines: null,
-                                        textAlign: TextAlign.justify,
-                                        onChanged: (value) {
-                                          setState(() {
+                                      maxLines: null,
+                                      textAlign: TextAlign.justify,
+                                      onChanged: (value) {
+                                        setState(
+                                          () {
                                             procedimentos[index] = value;
-                                          });
-                                        },
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          //* Move up button
-                                          IconButton(
-                                            onPressed:
-                                                index < 1
-                                                    ? null
-                                                    : () {
-                                                      String temp;
-                                                      setState(() {
-                                                        temp =
-                                                            procedimentos[index -
-                                                                1];
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        //* Move up button
+                                        IconButton(
+                                          onPressed: index < 1
+                                              ? null
+                                              : () {
+                                                  String temp;
+                                                  setState(() {
+                                                    temp = procedimentos[
+                                                        index - 1];
 
-                                                        procedimentos[index -
-                                                                1] =
-                                                            procedimentos[index];
-                                                        procedimentos[index] =
-                                                            temp;
+                                                    procedimentos[index - 1] =
+                                                        procedimentos[index];
+                                                    procedimentos[index] = temp;
 
-                                                        procsControllers[index -
-                                                                    1]
-                                                                .text =
-                                                            procsControllers[index]
-                                                                .text;
+                                                    procsControllers[index - 1]
+                                                            .text =
                                                         procsControllers[index]
-                                                            .text = temp;
-                                                      });
-                                                    },
-                                            icon: const Icon(
-                                              Icons.arrow_upward,
-                                            ),
-                                            tooltip: 'Mover para cima',
-                                          ),
-                                          //* Delete button
-                                          IconButton(
-                                            tooltip: 'Eliminar',
-                                            icon: const Icon(
-                                              Icons.delete_outlined,
-                                              color: Colors.red,
-                                            ),
-                                            iconSize: 40,
-                                            onPressed: () {
-                                              showDialog<bool>(
-                                                context: context,
-                                                builder: (
-                                                  BuildContext context,
-                                                ) {
-                                                  return Theme(
-                                                    data: ThemeData(
-                                                      brightness:
-                                                          Brightness.light,
-                                                      textTheme:
-                                                          const TextTheme(
-                                                            titleMedium:
-                                                                TextStyle(
-                                                                  color:
-                                                                      Colors
-                                                                          .blue,
-                                                                ),
-                                                          ),
-                                                    ),
-                                                    child: AlertDialog(
-                                                      title: const Text(
-                                                        'Eliminar',
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      ),
-                                                      content: const Text(
-                                                        'Tem a certeza que deseja eliminar este passo?',
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                        ),
-                                                      ),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                              context,
-                                                            );
-                                                          },
-                                                          child: const Text(
-                                                            'Cancelar',
-                                                          ),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              procedimentos
-                                                                  .removeAt(
-                                                                    index,
-                                                                  );
-                                                              procsControllers
-                                                                  .removeAt(
-                                                                    index,
-                                                                  );
-                                                            });
-                                                            Navigator.pop(
-                                                              context,
-                                                            );
-                                                          },
-                                                          style: ButtonStyle(
-                                                            foregroundColor:
-                                                                MaterialStateProperty.all<
-                                                                  Color
-                                                                >(Colors.red),
-                                                          ),
-                                                          child: const Text(
-                                                            'Sim',
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
+                                                            .text;
+                                                    procsControllers[index]
+                                                        .text = temp;
+                                                  });
                                                 },
-                                              );
-                                            },
+                                          icon: const Icon(Icons.arrow_upward),
+                                          tooltip: 'Mover para cima',
+                                        ),
+                                        //* Delete button
+                                        IconButton(
+                                          tooltip: 'Eliminar',
+                                          icon: const Icon(
+                                            Icons.delete_outlined,
+                                            color: Colors.red,
                                           ),
-                                          //* Move down button
-                                          IconButton(
-                                            onPressed:
-                                                index ==
-                                                        procedimentos.length - 1
-                                                    ? null
-                                                    : () {
-                                                      String temp;
-                                                      setState(() {
-                                                        temp =
-                                                            procedimentos[index +
-                                                                1];
-                                                        procedimentos[index +
-                                                                1] =
-                                                            procedimentos[index];
-                                                        procedimentos[index] =
-                                                            temp;
-                                                        procsControllers[index +
-                                                                    1]
-                                                                .text =
-                                                            procsControllers[index]
-                                                                .text;
+                                          iconSize: 40,
+                                          onPressed: () {
+                                            showDialog<bool>(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Theme(
+                                                  data: ThemeData(
+                                                    brightness:
+                                                        Brightness.light,
+                                                    textTheme: const TextTheme(
+                                                      titleMedium: TextStyle(
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  child: AlertDialog(
+                                                    title: const Text(
+                                                      'Eliminar',
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                    content: const Text(
+                                                      'Tem a certeza que deseja eliminar este passo?',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            'Cancelar'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            procedimentos
+                                                                .removeAt(
+                                                                    index);
+                                                            procsControllers
+                                                                .removeAt(
+                                                                    index);
+                                                          });
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        style: ButtonStyle(
+                                                          foregroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                                      Colors
+                                                                          .red),
+                                                        ),
+                                                        child:
+                                                            const Text('Sim'),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        //* Move down button
+                                        IconButton(
+                                          onPressed: index ==
+                                                  procedimentos.length - 1
+                                              ? null
+                                              : () {
+                                                  String temp;
+                                                  setState(() {
+                                                    temp = procedimentos[
+                                                        index + 1];
+                                                    procedimentos[index + 1] =
+                                                        procedimentos[index];
+                                                    procedimentos[index] = temp;
+                                                    procsControllers[index + 1]
+                                                            .text =
                                                         procsControllers[index]
-                                                            .text = temp;
-                                                      });
-                                                    },
-                                            icon: const Icon(
-                                              Icons.arrow_downward,
-                                            ),
-                                            tooltip: 'Mover para cima',
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-                                      index < procedimentos.length - 1
-                                          ? const Divider(
+                                                            .text;
+                                                    procsControllers[index]
+                                                        .text = temp;
+                                                  });
+                                                },
+                                          icon:
+                                              const Icon(Icons.arrow_downward),
+                                          tooltip: 'Mover para cima',
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    index < procedimentos.length - 1
+                                        ? const Divider(
                                             thickness: 1,
                                             indent: 30,
                                             endIndent: 30,
                                           )
-                                          : const SizedBox(),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
+                                        : const SizedBox(),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                   ),
                 ),
                 //* Procedure
@@ -719,9 +703,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             labelText: 'Preparação',
                             hintText: 'Descreva o procedimento',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(16),
-                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)),
                             ),
                           ),
                           onChanged: (value) {
@@ -731,7 +714,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       Expanded(
                         flex: 0,
                         child: Material(
@@ -739,8 +724,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           shape: const CircleBorder(),
                           child: IconButton(
                             tooltip: 'Adicionar',
-                            iconSize: 35,
-                            icon: const Icon(Icons.add, opticalSize: 40),
+                            splashRadius: 35,
+                            iconSize: 40,
+                            icon: const Icon(Icons.add),
                             onPressed: () {
                               setState(() {
                                 try {
@@ -748,8 +734,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     procedimentos.add(procR!);
                                     _procController.text = '';
                                     procsControllers.add(
-                                      TextEditingController(text: procR),
-                                    );
+                                        TextEditingController(text: procR));
                                     procR = '';
                                   }
                                 } catch (e) {
@@ -763,21 +748,30 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(
+                  height: 20,
+                ),
                 const Divider(
                   indent: 75,
                   endIndent: 75,
                   height: 2,
                   color: Colors.grey,
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(
+                  height: 25,
+                ),
                 //* Other options
                 const Center(
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 16),
+                    padding: EdgeInsets.only(
+                      bottom: 16,
+                    ),
                     child: Text(
                       'Outros detalhes',
-                      style: TextStyle(fontSize: 20, color: Colors.black54),
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black54,
+                      ),
                     ),
                   ),
                 ),
@@ -810,14 +804,23 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const SizedBox(width: 20, height: 1),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
                                   Container(
                                     decoration: const BoxDecoration(
                                       color: Colors.grey,
                                     ),
-                                    child: const SizedBox(width: 50, height: 1),
+                                    child: const SizedBox(
+                                      width: 50,
+                                      height: 1,
+                                    ),
                                   ),
-                                  const SizedBox(width: 20, height: 1),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
                                 ],
                               ),
                             ),
@@ -837,9 +840,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                         ),
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
-                                          final newValue = double.tryParse(
-                                            value,
-                                          );
+                                          final newValue =
+                                              double.tryParse(value);
                                           if (newValue != null &&
                                               newValue != cookTime) {
                                             setState(() {
@@ -881,14 +883,23 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const SizedBox(width: 20, height: 1),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
                                   Container(
                                     decoration: const BoxDecoration(
                                       color: Colors.grey,
                                     ),
-                                    child: const SizedBox(width: 50, height: 1),
+                                    child: const SizedBox(
+                                      width: 50,
+                                      height: 1,
+                                    ),
                                   ),
-                                  const SizedBox(width: 20, height: 1),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
                                 ],
                               ),
                             ),
@@ -908,9 +919,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                         ),
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
-                                          final newValue = double.tryParse(
-                                            value,
-                                          );
+                                          final newValue =
+                                              double.tryParse(value);
                                           if (newValue != null &&
                                               newValue != portions) {
                                             setState(() {
@@ -952,14 +962,23 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const SizedBox(width: 20, height: 1),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
                                   Container(
                                     decoration: const BoxDecoration(
                                       color: Colors.grey,
                                     ),
-                                    child: const SizedBox(width: 50, height: 1),
+                                    child: const SizedBox(
+                                      width: 50,
+                                      height: 1,
+                                    ),
                                   ),
-                                  const SizedBox(width: 20, height: 1),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
                                 ],
                               ),
                             ),
@@ -971,21 +990,18 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                   color: Colors.black54,
                                   fontSize: 16.8,
                                 ),
-                                items:
-                                    <String>[
-                                      'Geral',
-                                      'Bolos',
-                                      'Tartes',
-                                      'Sobremesas',
-                                      'Pratos',
-                                    ].map<DropdownMenuItem<String>>((
-                                      String value,
-                                    ) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
+                                items: <String>[
+                                  'Geral',
+                                  'Bolos',
+                                  'Tartes',
+                                  'Sobremesas',
+                                  'Pratos'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                                 onChanged: (String? newValue) {
                                   setState(() {
                                     _selectedValue = newValue!;
@@ -1017,14 +1033,23 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const SizedBox(width: 20, height: 1),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
                                   Container(
                                     decoration: const BoxDecoration(
                                       color: Colors.grey,
                                     ),
-                                    child: const SizedBox(width: 50, height: 1),
+                                    child: const SizedBox(
+                                      width: 50,
+                                      height: 1,
+                                    ),
                                   ),
-                                  const SizedBox(width: 20, height: 1),
+                                  const SizedBox(
+                                    width: 20,
+                                    height: 1,
+                                  ),
                                 ],
                               ),
                             ),
@@ -1032,34 +1057,24 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               width: MediaQuery.of(context).size.width * 0.3,
                               child: Switch(
                                 value: isPublic!,
-                                onChanged:
-                                    _image == null
-                                        ? null
-                                        : (bool value) {
-                                          setState(() {
-                                            isPublic = value;
-                                          });
-                                        },
+                                onChanged: (value) {
+                                  setState(() {
+                                    isPublic = value;
+                                  });
+                                },
                               ),
                             ),
                           ],
                         ),
                       ),
-                      _image == null
-                          ? const Text(
-                            'A receita não pode ser pública sem uma imagem.',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          )
-                          : Container(),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 32, bottom: 48),
+                  padding: const EdgeInsets.only(
+                    top: 32,
+                    bottom: 48,
+                  ),
                   child: Material(
                     elevation: 5,
                     shape: const CircleBorder(),
@@ -1079,8 +1094,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           _descKey.currentState!.validate();
 
                           //Verification
-                          validate =
-                              _nameKey.currentState!.validate() &&
+                          validate = _nameKey.currentState!.validate() &&
                               _descKey.currentState!.validate();
                           if (validate == true) {
                             //! TODO: Finish Changing the Recipe Creation Process
@@ -1114,7 +1128,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               }
                               // Using a new type of class to send the data to the server
                               RecipeC(
-                                image: imageFile,
+                                image: _imageFile,
                                 title: nameR!,
                                 description: descR!,
                                 ////ingTipo: ingsOpts,
@@ -1127,30 +1141,26 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 ingredientIds: ingIds,
                               ).send().then((value) {
                                 if (value) {
-                                  ScaffoldMessenger.of(
-                                    context,
-                                  ).hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: const Text(
                                         'A receita foi guardada com sucesso.',
                                       ),
                                       action: SnackBarAction(
-                                        label: 'OK',
-                                        onPressed: () {
-                                          ScaffoldMessenger.of(
-                                            widget.context,
-                                          ).hideCurrentSnackBar();
-                                        },
-                                      ),
+                                          label: 'OK',
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
+                                          }),
                                     ),
                                   );
 
                                   Navigator.pop(context);
                                 } else {
-                                  ScaffoldMessenger.of(
-                                    context,
-                                  ).hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       shape: RoundedRectangleBorder(
@@ -1165,14 +1175,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                         ),
                                       ),
                                       action: SnackBarAction(
-                                        label: 'OK',
-                                        textColor: Colors.white,
-                                        onPressed: () {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).hideCurrentSnackBar();
-                                        },
-                                      ),
+                                          label: 'OK',
+                                          textColor: Colors.white,
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
+                                          }),
                                     ),
                                   );
                                 }
@@ -1191,13 +1199,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                   'Por favor insira um nome e uma descrição.',
                                 ),
                                 action: SnackBarAction(
-                                  label: 'OK',
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(
-                                      context,
-                                    ).hideCurrentSnackBar();
-                                  },
-                                ),
+                                    label: 'OK',
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                    }),
                               ),
                             );
                           }

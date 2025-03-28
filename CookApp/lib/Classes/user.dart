@@ -27,15 +27,10 @@ class Login {
     print('Logging in with email: $email and password: $password');
 
     // Do an API call to the server to login
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('$url/Account/AppLogin'),
-    );
-    request.fields.addAll({
-      'email': email,
-      'password': password,
-      'remember me': 'true',
-    });
+    var request =
+        http.MultipartRequest('POST', Uri.parse('$url/Account/AppLogin'));
+    request.fields
+        .addAll({'email': email, 'password': password, 'remember me': 'true'});
 
     //request.headers.addAll(headers); // no headers needed, we only need to get the cookie from the response
 
@@ -68,8 +63,7 @@ class Login {
           name: name,
           surname: surname,
         );
-        print('User data: ${user.toJson()}');
-        user.save();
+        await user.save();
         return true;
       } else {
         print('Login failed');
@@ -110,10 +104,8 @@ class Register {
     print('Registering with email: $email, username: $username, name: $name');
 
     // Do an API call to the server to register
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('$url/Account/AppRegister'),
-    );
+    var request =
+        http.MultipartRequest('POST', Uri.parse('$url/Account/AppRegister'));
     request.fields.addAll({
       'email': email,
       'username': username,
@@ -155,7 +147,7 @@ class Register {
           name: name,
           surname: surname,
         );
-        user.save();
+        await user.save();
 
         return true;
       } else {
@@ -190,57 +182,33 @@ class User {
     this.name = '',
     this.surname,
     //this.phone,
-  }) {
-    // Get the user data from the user.json file
-    try {
-      //getInstance("User Constructor");
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
+  });
 
   factory User.defaultU() {
     return User(cookie: '', guid: '', email: '', username: '', name: '');
   }
 
-  Future<User> getInstance([String iCalledThis = '']) async {
-    Map<String, String> allValues = {};
-    try {
-      allValues = await storage.readAll();
-    } catch (e) {
-      print('Error: $e');
-    }
+  Future<User> getInstance() async {
+    // Returns the information about the user that is saved in the user.json file
+    cookie = await storage.read(key: 'cookie') ?? '';
+    guid = await storage.read(key: 'guid') ?? '';
+    email = await storage.read(key: 'email') ?? '';
+    username = await storage.read(key: 'username') ?? '';
+    name = await storage.read(key: 'name') ?? '';
+    surname = await storage.read(key: 'surname') ?? '';
 
-    cookie = allValues['cookie'] ?? '';
-    guid = allValues['guid'] ?? '';
-    email = allValues['email'] ?? '';
-    username = allValues['username'] ?? '';
-    name = allValues['name'] ?? '';
-    surname = allValues['surname'] ?? '';
-
-    print('Called by: $iCalledThis');
-    print('Cookie: $cookie');
-    print('Guid: $guid');
-    print('Email: $email');
-    print('Username: $username');
-    print('Name: $name');
-    print('Surname: $surname');
-    print('Got user data from the secure storage');
-
-    //! This is causing an error
-    //? Failed to decrypt data: Error 0x00000057: Failure on CryptUnprotectData() Delete corrupt file
-    ////cookie = await storage.read(key: 'cookie') ?? '';
-    ////guid = await storage.read(key: 'guid') ?? '';
-    ////email = await storage.read(key: 'email') ?? '';
-    ////username = await storage.read(key: 'username') ?? '';
-    ////name = await storage.read(key: 'name') ?? '';
-    ////surname = await storage.read(key: 'surname') ?? '';
+    ////print('Cookie: $cookie');
+    ////print('Guid: $guid');
+    ////print('Email: $email');
+    ////print('Username: $username');
+    ////print('Name: $name');
+    ////print('Surname: $surname');
 
     //! It's triggering a terrible error that doesn't allow app manipulation
-    //? [ERROR:flutter/shell/platform/windows/task_runner_window.cc(56)] Failed to post message to main thread.
-    ////if (guid != '') {
-    ////  return User.defaultU();
-    ////}
+    //! [ERROR:flutter/shell/platform/windows/task_runner_window.cc(56)] Failed to post message to main thread.
+    //!if (guid != '') {
+    //!  return User.defaultU();
+    //!}
 
     return this;
   }
@@ -310,7 +278,7 @@ class User {
       await storage.delete(key: 'name');
       await storage.delete(key: 'surname');
     } catch (e) {
-      print('Error: $e');
+      print('Deletting Error: $e');
       return false;
     }
 
@@ -318,17 +286,25 @@ class User {
   }
 
   // Save to local storage (user.json)
-  void save() async {
-    print(toJson());
+  Future<void> save() async {
+    ////print('Saving user data to the secure storage');
+    ////print('Cookie: $cookie');
+    ////print('Guid: $guid');
+    ////print('Email: $email');
+    ////print('Username: $username');
+    ////print('Name: $name');
+    ////print('Surname: $surname');
     // Save the user data to the secure storage
-    await storage.write(key: 'cookie', value: cookie);
-    await storage.write(key: 'guid', value: guid);
-    await storage.write(key: 'email', value: email);
-    await storage.write(key: 'username', value: username);
-    await storage.write(key: 'name', value: name);
-    await storage.write(key: 'surname', value: surname ?? '');
-
-    print(toJson());
+    try {
+      await storage.write(key: 'cookie', value: cookie);
+      await storage.write(key: 'guid', value: guid);
+      await storage.write(key: 'email', value: email);
+      await storage.write(key: 'username', value: username);
+      await storage.write(key: 'name', value: name);
+      await storage.write(key: 'surname', value: surname ?? '');
+    } catch (e) {
+      print('writting Error: $e');
+    }
 
     print('Saved user data to the secure storage');
   }

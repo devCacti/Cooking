@@ -1,8 +1,8 @@
-import 'package:cookapp/Functions/server_requests.dart';
-import 'package:cookapp/Pages/Recipe%20Pages/recipe_detail.dart';
+import 'package:cooking_app/Functions/server_requests.dart';
+import 'package:cooking_app/Pages/Recipe%20Pages/recipe_detail.dart';
 import 'package:flutter/material.dart';
 import '../Classes/recipes.dart';
-import 'Recipe Pages/edit_recipe_page.dart';
+import 'edit_recipe_page.dart';
 //? List of recipes page
 //* Only shows the recipes that are created by the user
 
@@ -39,15 +39,18 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
   GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
-  Future decisionDialog(BuildContext context, String id, int index) async {
+  Future decisionDialog(
+    BuildContext context,
+    String id,
+    int index,
+  ) async {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Editar ou Eliminar'),
           content: const Text(
-            'Deseja editar esta receita ou eliminá-la permanentemente?',
-          ),
+              'Deseja editar esta receita ou eliminá-la permanentemente?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -55,7 +58,9 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditForm(toEditR: _recipes[index]),
+                    builder: (context) => EditForm(
+                      toEditR: _recipes[index],
+                    ),
                   ),
                 ).then((_) {
                   refreshIndicatorKey.currentState?.show();
@@ -82,8 +87,12 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Eliminar?'),
-          content: const Text('Esta ação é irrevertível!'),
+          title: const Text(
+            'Eliminar?',
+          ),
+          content: const Text(
+            'Esta ação é irrevertível!',
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -123,21 +132,23 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
             padding: const EdgeInsets.all(8),
             child: DropdownButton<String>(
               value: categoria,
-              style: const TextStyle(color: Colors.black, fontSize: 20),
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+              ),
               dropdownColor: Colors.white,
-              items:
-                  <String>[
-                    'Geral',
-                    'Bolos',
-                    'Tartes',
-                    'Sobremesas',
-                    'Pratos',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+              items: <String>[
+                'Geral',
+                'Bolos',
+                'Tartes',
+                'Sobremesas',
+                'Pratos',
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               onChanged: (String? novaCategoria) {
                 setState(() {
                   categoria = novaCategoria!;
@@ -170,88 +181,84 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                         });
                       });
                     },
-                    child:
-                        _recipes.isEmpty == true
-                            ? const Text('Nenhuma receita encontrada...')
-                            : ListView.builder(
-                              itemCount: _recipes.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                if (_recipes[index].getType() != categoria &&
-                                    categoria != 'Geral') {
-                                  return Container();
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 12,
-                                    right: 12,
-                                    top: 4,
-                                    bottom: 4,
-                                  ),
-                                  child: Material(
-                                    elevation: 5,
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) => RecipeDetail(
-                                                  recipe: _recipes[index],
-                                                ),
-                                          ),
-                                        );
-                                      },
-                                      onLongPress: () {
-                                        decisionDialog(
-                                          context,
-                                          _recipes[index].id,
-                                          index,
-                                        );
-                                      },
-                                      title: Text(
-                                        _recipes[index].title,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style: const TextStyle(fontSize: 20),
-                                      ),
-                                      subtitle: Text(
-                                        _recipes[index].description,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                      leading:
-                                          _recipes[index].image != null
-                                              ? SizedBox(
-                                                width: 50,
-                                                height: 50,
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                        Radius.circular(4),
-                                                      ),
-                                                  child: Image(
-                                                    image:
-                                                        _recipes[index].image!
-                                                            as ImageProvider,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              )
-                                              : const Icon(
-                                                Icons.image_not_supported,
-                                                color: Colors.grey,
-                                                size: 50,
-                                              ),
+                    child: _recipes.isEmpty == true
+                        ? const Text('Nenhuma receita encontrada...')
+                        : ListView.builder(
+                            itemCount: _recipes.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (_recipes[index].getType() != categoria &&
+                                  categoria != 'Geral') {
+                                return Container();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 12,
+                                  right: 12,
+                                  top: 4,
+                                  bottom: 4,
+                                ),
+                                child: Material(
+                                  elevation: 5,
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => RecipeDetail(
+                                            recipe: _recipes[index],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    onLongPress: () {
+                                      decisionDialog(
+                                        context,
+                                        _recipes[index].id,
+                                        index,
+                                      );
+                                    },
+                                    title: Text(
+                                      _recipes[index].title,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      _recipes[index].description,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    leading: _recipes[index].image != null
+                                        ? SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                            child: ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(4)),
+                                                child: Image(
+                                                  image: _recipes[index].image!
+                                                      as ImageProvider,
+                                                  fit: BoxFit.cover,
+                                                )),
+                                          )
+                                        : const Icon(
+                                            Icons.image_not_supported,
+                                            color: Colors.grey,
+                                            size: 50,
+                                          ),
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
+                          ),
                   ),
                 ),
               ),

@@ -1,11 +1,7 @@
 //? Imports
-//import 'package:cookapp/Classes/server_info.dart';
-import 'dart:ui';
-
-import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
-import 'package:cookapp/Pages/Elements/early_access.dart';
+//import 'package:cooking_app/Classes/server_info.dart';
+import 'package:cooking_app/Pages/Elements/bottom_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'Classes/server_info.dart';
 import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
@@ -31,9 +27,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Cooking',
-      theme: ThemeData(primarySwatch: Colors.green),
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
       //debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Cooking'),
+      home: const MyHomePage(
+        title: 'Cooking',
+      ),
     );
   }
 }
@@ -51,37 +51,43 @@ class _MyHomePageState extends State<MyHomePage> {
   //User user = User.defaultU();
   List<Recipe> recommended = [];
   bool rLoaded = false;
-  int rMax = 0;
   Map<String, Image> imageCache = {};
-  final CarouselController controller = CarouselController(initialItem: 1);
 
-  //* Load the recommended recipes (TODO Done ✅)
-  //? The recommended Recipes are the ones from the getPopularRecipes(rMax,) Future<List<Recipes>> function
+  Future<void> getRecipeimage(String id) async {
+    getRecipeImage(id, imageCache).then((value) {
+      setState(() {
+        imageCache[id] = value;
+      });
+    });
+  }
+
+  Future<void> fullRefreshRecipes() async {
+    setState(() {
+      rLoaded = false;
+    });
+    await getPopularRecipes().then((value) {
+      setState(() {
+        for (Recipe recipe in value) {
+          getRecipeimage(recipe.id);
+        }
+        recommended = value;
+        rLoaded = true;
+      });
+    });
+  }
 
   @override
   void initState() {
     User user = User.defaultU();
-    user.getInstance("Main").then((value) {
+    user.getInstance().then((value) {
       setState(() {
         user = value;
       });
     });
     super.initState();
 
-    // Gets the Popular Recipes from the server (Not the recommended ones)
-    getPopularRecipes().then((value) {
-      setState(() {
-        recommended = value;
-        rLoaded = true;
-      });
-    });
-
-    // Gets the number of pages of the popular recipes
-    fetchPopularPages().then((value) {
-      setState(() {
-        rMax = value;
-      });
-    });
+    // Refresh the recipes
+    fullRefreshRecipes();
   }
 
   @override
@@ -99,26 +105,71 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           const SizedBox(height: 10),
           //*Early Access
-          version.startsWith('v3') ? const SizedBox() : earlyAccess,
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 30, right: 16),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.grey[200],
+              ),
+              // Early Access Warning
+              child: const ListTile(
+                title: Text(
+                  'ACESSO ANTECIPADO',
+                  style: TextStyle(fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+                subtitle: Text(
+                  'Pode perder tudo o que tiver durante esta fase!',
+                  style: TextStyle(fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+                leading: Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.red,
+                  size: 30,
+                ),
+                trailing: Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.red,
+                  size: 30,
+                ),
+              ),
+            ),
+          ),
           const Padding(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.fastfood_rounded, size: 40),
-                SizedBox(width: 20),
+                Icon(
+                  Icons.fastfood_rounded,
+                  size: 40,
+                ),
+                SizedBox(
+                  width: 20,
+                ),
                 Text(
                   'Cooking',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 40),
+                  style: TextStyle(
+                    fontSize: 40,
+                  ),
                 ),
-                SizedBox(width: 20),
-                Icon(Icons.local_dining_sharp, size: 40),
+                SizedBox(
+                  width: 20,
+                ),
+                Icon(
+                  Icons.local_dining_sharp,
+                  size: 40,
+                ),
               ],
             ),
           ),
+
+          //* Recommended Recipes
           Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12),
+            padding: const EdgeInsets.only(left: 40, right: 32, top: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -126,38 +177,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: MediaQuery.of(context).size.width * 0.3,
                   child: const Text(
                     'Tendências',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.15,
                   height: 1,
-                  child: const Divider(color: Colors.black45),
+                  child: const Divider(
+                    color: Colors.black45,
+                  ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.3,
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
-                      onPressed:
-                          !rLoaded
-                              ? null
-                              : () {
-                                setState(() {
-                                  rLoaded = false;
-                                });
-                                getPopularRecipes(0).then((value) {
-                                  setState(() {
-                                    recommended = value;
-                                    rLoaded = true;
-                                  });
-                                });
-                                fetchPopularPages().then((value) {
-                                  setState(() {
-                                    rMax = value;
-                                  });
-                                });
-                              },
+                      onPressed: rLoaded ? () => fullRefreshRecipes() : null,
                       icon: const Icon(Icons.refresh),
                     ),
                   ),
@@ -165,104 +203,101 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          //* Recommended Recipes Carousel
-          recommended.isEmpty
-              ? rLoaded
-                  ? const SizedBox()
-                  : const CircularProgressIndicator()
+          recommended.isEmpty //? If there are no recipes, show a message
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        rLoaded
+                            ? recommended.isEmpty
+                                ? const Text(
+                                    'Não existem receitas recomendadas')
+                                : const Text(
+                                    'Aqui estão as receitas recomendadas')
+                            : const CircularProgressIndicator(),
+                      ],
+                    ),
+                  ),
+                )
               : ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.sizeOf(context).height / 2.5,
-                ),
-                child: CarouselView.weighted(
-                  onTap: (index) {
-                    Recipe recipe = recommended[index];
-                    print("Recipe: ${recipe.title}");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => RecipeDetail(
-                              recipe: recipe,
-                              image: imageCache[recipe.id],
-                            ),
-                      ),
-                    );
-                  },
-                  padding: EdgeInsets.all(4),
-                  itemSnapping: true,
-                  controller: controller,
-                  elevation: 4,
-                  flexWeights: const <int>[1, 10, 1],
-                  children:
-                      recommended.map((recipe) {
-                        if (!imageCache.containsKey(recipe.id)) {
-                          getRecipeImage(recipe.id).then((value) {
-                            setState(() {
-                              imageCache[recipe.id] = value;
-                            });
-                          });
-                        }
-                        return Stack(
-                          children: [
-                            Center(
-                              child: SizedBox(
+                  constraints: BoxConstraints(
+                      maxHeight: MediaQuery.sizeOf(context).height / 2.5),
+                  child: CarouselView.weighted(
+                    controller: CarouselController(),
+                    itemSnapping: true,
+                    flexWeights: const <int>[1, 9, 1],
+                    onTap: (index) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RecipeDetail(
+                            recipe: recommended[index],
+                            image: imageCache[recommended[index].id],
+                          ),
+                        ),
+                      );
+                    },
+                    children: recommended.map((recipe) {
+                      return Stack(
+                        children: [
+                          ClipRect(
+                            child: Center(
+                              child: Image(
                                 width: double.infinity,
                                 height: double.infinity,
-                                child: ClipRect(
-                                  child: Image(
-                                    image:
-                                        imageCache[recipe.id]?.image ??
-                                        const AssetImage(
-                                          'Assets/Images/LittleMan.png',
-                                        ),
-                                    fit: BoxFit.cover,
+                                image: imageCache[recipe.id]?.image ??
+                                    const AssetImage(
+                                      'assets/images/LittleMan.png',
+                                    ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    const Color.fromARGB(127, 0, 0, 0),
+                                  ],
+                                ),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  recipe.title,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: false,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  recipe.description,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: false,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ),
                             ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                      const Color.fromARGB(127, 0, 0, 0),
-                                    ],
-                                  ),
-                                ),
-                                child: ListTile(
-                                  title: Text(
-                                    recipe.title,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    recipe.description,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
+
+          const SizedBox(height: 32),
         ],
       ),
       bottomNavigationBar: bottomAppBar(context),

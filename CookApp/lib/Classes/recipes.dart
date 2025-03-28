@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'ingredients.dart';
 import 'server_info.dart';
 import 'user.dart';
@@ -44,33 +45,26 @@ class Recipe {
       //image: json['image'],
       title: json['Title'],
       description: json['Description'] ?? '',
-      bridges:
-          (json['Ingredients'] is List)
-              ? (json['Ingredients'] as List<dynamic>?)
-                  ?.map<IngBridge>((bridge) => IngBridge.fromJson(bridge))
-                  .toList()
-              : [IngBridge.fromJson(json['Ingredients'])],
-      steps:
-          (json['Steps'] is List)
-              ? (json['Steps'] as List<dynamic>?)
-                  ?.map<String>(
-                    (step) =>
-                        (step as Map<String, dynamic>)['Details'].toString(),
-                  )
-                  .toList()
-              : [json['Steps'].toString()],
-      time:
-          (json['Time'] is int)
-              ? (json['Time'] as int).toDouble()
-              : (json['Time'] ?? 0.0) as double,
-      servings:
-          (json['Portions'] is int)
-              ? (json['Portions'] as int).toDouble()
-              : (json['Portions'] ?? 0.0) as double,
-      type:
-          (json['Type'] is int)
-              ? json['Type']
-              : (json['Type'] as double).toInt(),
+      bridges: (json['Ingredients'] is List)
+          ? (json['Ingredients'] as List<dynamic>?)
+              ?.map<IngBridge>((bridge) => IngBridge.fromJson(bridge))
+              .toList()
+          : [IngBridge.fromJson(json['Ingredients'])],
+      steps: (json['Steps'] is List)
+          ? (json['Steps'] as List<dynamic>?)
+              ?.map<String>((step) =>
+                  (step as Map<String, dynamic>)['Details'].toString())
+              .toList()
+          : [json['Steps'].toString()],
+      time: (json['Time'] is int)
+          ? (json['Time'] as int).toDouble()
+          : (json['Time'] ?? 0.0) as double,
+      servings: (json['Portions'] is int)
+          ? (json['Portions'] as int).toDouble()
+          : (json['Portions'] ?? 0.0) as double,
+      type: (json['Type'] is int)
+          ? json['Type']
+          : (json['Type'] as double).toInt(),
       //isAllowed: json['isAllowed'],
       isPublic: json['isPublic'] ?? false,
       author: json['Author'] ?? '',
@@ -171,10 +165,8 @@ class Recipe {
       // The image is received as an actual image file, not a string
       // To receive it, a id needs to be sent in the arguments
       // Example: $url/Recipes/RecipeImage?id=630fd198-beba-4f57-944d-8eb7907d8f65
-      var request = http.Request(
-        'GET',
-        Uri.parse('$url/Recipes/RecipeImage?id=$id'),
-      );
+      var request =
+          http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
 
       try {
         var response = await request.send();
@@ -229,7 +221,7 @@ class RecipeC {
   String title;
   String? description;
   List<Map<String, String>>?
-  customIngM; // Custom ingredient measurement(s) id:amount;id:amount;
+      customIngM; // Custom ingredient measurement(s) id:amount;id:amount;
   List<double>? ingramounts; // ing1Ammout;ing2Amount;ing3Amount;...
   List<String>? steps;
   double time = 0;
@@ -279,10 +271,8 @@ class RecipeC {
     }
 
     // The recipe creation follows a specific structure to ensure compatibility with the server
-    var request = http.MultipartRequest(
-      'PUT',
-      Uri.parse('$url/Recipes/NewRecipe'),
-    );
+    var request =
+        http.MultipartRequest('PUT', Uri.parse('$url/Recipes/NewRecipe'));
     request.headers.addAll({'cookie': user.cookie});
 
     //* Create the strings for: customIngM, ingramounts, steps, ingredientIds
@@ -339,9 +329,17 @@ class RecipeC {
 
       //? ----------- Add the image to the request ------------
       if (image != null) {
-        request.files.add(
-          http.MultipartFile.fromBytes('image', image!.readAsBytesSync()),
-        );
+        try {
+          request.files.add(await http.MultipartFile.fromPath(
+            'image',
+            image!.path,
+            filename: 'image.png',
+            contentType: MediaType('image', 'png'),
+          ));
+          print("image file: ${image!.path}");
+        } catch (e) {
+          print('Error Adding Foto before sending: $e');
+        }
       }
 
       //? Debugging prints
@@ -357,9 +355,8 @@ class RecipeC {
         'portions': portions.toString().replaceAll(',', '.'),
         'steps': steps,
         //!'type': type.toString(), //TODO: Make this ERROR PROOF
-        'isPublic':
-            isPublic
-                .toString(), // If isPublic is true, it will send a value of 'true' telling the server that the recipe is public
+        'isPublic': isPublic
+            .toString(), // If isPublic is true, it will send a value of 'true' telling the server that the recipe is public
         'ingredientIds': ingredientIds,
       });
       print(request.fields);
@@ -413,10 +410,8 @@ class RecipeC {
     // That compatibility is very similar to the one used to send a brand new recipe, the only
     //difference is that this one includes a GUID to tell the server which recipe to update
 
-    var request = http.MultipartRequest(
-      'PUT',
-      Uri.parse('$url/Recipes/UpdateRecipe'),
-    );
+    var request =
+        http.MultipartRequest('PUT', Uri.parse('$url/Recipes/UpdateRecipe'));
 
     // Set the cookie, this lets the server know which user is making the request
     request.headers.addAll({'cookie': user.cookie});
@@ -471,13 +466,12 @@ class RecipeC {
 
       //? ----------- Add the image to the request ------------
       if (image != null) {
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'image',
-            image!.readAsBytesSync(),
-            filename: 'image.png',
-          ),
-        );
+        request.files.add(await http.MultipartFile.fromPath(
+          'image',
+          image!.path,
+          filename: 'image.png',
+          contentType: MediaType('image', 'png'),
+        ));
       }
 
       //? Debugging prints
