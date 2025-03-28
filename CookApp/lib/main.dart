@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -53,6 +53,29 @@ class _MyHomePageState extends State<MyHomePage> {
   bool rLoaded = false;
   Map<String, Image> imageCache = {};
 
+  Future<void> getRecipeimage(String id) async {
+    getRecipeImage(id, imageCache).then((value) {
+      setState(() {
+        imageCache[id] = value;
+      });
+    });
+  }
+
+  Future<void> fullRefreshRecipes() async {
+    setState(() {
+      rLoaded = false;
+    });
+    await getPopularRecipes().then((value) {
+      setState(() {
+        for (Recipe recipe in value) {
+          getRecipeimage(recipe.id);
+        }
+        recommended = value;
+        rLoaded = true;
+      });
+    });
+  }
+
   @override
   void initState() {
     User user = User.defaultU();
@@ -63,13 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     super.initState();
 
-    // Gets the Popular Recipes from the server (Not the recommended ones)
-    getPopularRecipes().then((value) {
-      setState(() {
-        recommended = value;
-        rLoaded = true;
-      });
-    });
+    // Refresh the recipes
+    fullRefreshRecipes();
   }
 
   @override
@@ -177,19 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
-                      onPressed: rLoaded
-                          ? () {
-                              setState(() {
-                                rLoaded = false;
-                              });
-                              getPopularRecipes().then((value) {
-                                setState(() {
-                                  recommended = value;
-                                  rLoaded = true;
-                                });
-                              });
-                            }
-                          : null,
+                      onPressed: rLoaded ? () => fullRefreshRecipes() : null,
                       icon: const Icon(Icons.refresh),
                     ),
                   ),

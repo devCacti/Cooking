@@ -26,6 +26,12 @@ const storage = FlutterSecureStorage();
 // Request the image of a recipe
 Future<Image> getRecipeImage(String id,
     [Map<String, Image>? imageCache]) async {
+  imageCache ??= {};
+
+  // If the imageCache already has an image associated with the id, return that image
+  if (imageCache.containsKey(id)) {
+    return imageCache[id]!;
+  }
   // Declaring the User object
   User user = User();
   try {
@@ -41,12 +47,6 @@ Future<Image> getRecipeImage(String id,
 
   // Prevents "null check operator used on a null value" error
   // If the imageCache is null, it will be set to an empty map
-  imageCache ??= {};
-
-  // If the imageCache already has an image associated with the id, return that image
-  if (imageCache.containsKey(id)) {
-    return imageCache[id]!;
-  }
 
   try {
     var response = await request.send();

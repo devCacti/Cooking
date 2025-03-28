@@ -3,7 +3,7 @@ import '../Shopping%20Lists/shopping_lists.dart';
 import '../list_recipes.dart';
 //*import '../list_favourites.dart';
 import '../user_settings.dart';
-import '../new_recipe.dart';
+import '../Recipe Pages/new_recipe.dart';
 
 // Bottom App Bar Widget
 Widget bottomAppBar(BuildContext context) => BottomAppBar(

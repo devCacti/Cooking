@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'ingredients.dart';
 import 'server_info.dart';
 import 'user.dart';
@@ -300,7 +301,7 @@ class RecipeC {
         // Remove the last semicolon
         ingramounts = ingramounts.substring(0, ingramounts.length - 1);
         // Replace any dots with commas -> Standardize the format | The server expects commas | 0.5 -> 0,5
-        ingramounts = ingramounts.replaceAll('.', ',');
+        ingramounts = ingramounts.replaceAll(',', '.');
       }
 
       //? ----------- Steps string ----------------------------
@@ -328,11 +329,17 @@ class RecipeC {
 
       //? ----------- Add the image to the request ------------
       if (image != null) {
-        request.files.add(http.MultipartFile.fromBytes(
-          'image',
-          image!.readAsBytesSync(),
-          filename: 'image.png',
-        ));
+        try {
+          request.files.add(await http.MultipartFile.fromPath(
+            'image',
+            image!.path,
+            filename: 'image.png',
+            contentType: MediaType('image', 'png'),
+          ));
+          print("image file: ${image!.path}");
+        } catch (e) {
+          print('Error Adding Foto before sending: $e');
+        }
       }
 
       //? Debugging prints
@@ -431,7 +438,7 @@ class RecipeC {
         // Remove the last semicolon
         ingramounts = ingramounts.substring(0, ingramounts.length - 1);
         // Replace any dots with commas -> Standardize the format | The server expects commas | 0.5 -> 0,5
-        ingramounts = ingramounts.replaceAll('.', ',');
+        ingramounts = ingramounts.replaceAll(',', '.');
       }
 
       //? ----------- Steps string ----------------------------
@@ -459,10 +466,11 @@ class RecipeC {
 
       //? ----------- Add the image to the request ------------
       if (image != null) {
-        request.files.add(http.MultipartFile.fromBytes(
+        request.files.add(await http.MultipartFile.fromPath(
           'image',
-          image!.readAsBytesSync(),
+          image!.path,
           filename: 'image.png',
+          contentType: MediaType('image', 'png'),
         ));
       }
 
@@ -476,8 +484,8 @@ class RecipeC {
         'description': description ?? '',
         'customIngM': customIngM,
         'ingramounts': ingramounts,
-        'time': time.toString().replaceAll('.', ','),
-        'portions': portions.toString().replaceAll('.', ','),
+        'time': time.toString().replaceAll(',', '.'),
+        'portions': portions.toString().replaceAll(',', '.'),
         'steps': steps,
         //!'type': type.toString(), //TODO: Make this not give an error
         'isPublic': isPublic.toString(), // True for now

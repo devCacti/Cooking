@@ -3,13 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../Functions/server_requests.dart';
-import '../Classes/recipes.dart';
-import '../Classes/ingredients.dart';
+import '../../Functions/server_requests.dart';
+import '../../Classes/recipes.dart';
+import '../../Classes/ingredients.dart';
 
 class NewRecipeForm extends StatefulWidget {
   final BuildContext context;
-  const NewRecipeForm({Key? key, required this.context}) : super(key: key);
+  const NewRecipeForm({super.key, required this.context});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -21,7 +21,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   Recipe? novaReceita; //? Variável principal
 
   int id = 1;
-  Image? _image; //* Recipe Image
+  File? _imageFile; //? Recipe Image File
   String? nameR; //* Recipe Name
   String? descR; //* Recipe Description
   String? ingsR; //* Recipe Ingredients
@@ -100,7 +100,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        _image = image as Image?;
+        _imageFile = File(image.path);
       });
     }
   }
@@ -141,25 +141,27 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                     bottom: 16,
                     //bottom: 32,
                   ),
-                  child: _image == null
-                      ? const Material(
+                  child: _imageFile == null
+                      ? Material(
                           elevation: 10,
                           shape: //const
                               CircleBorder(),
                           child: IconButton(
                             icon: Icon(Icons.camera_alt_outlined),
                             iconSize: 75,
-                            onPressed: null, // _getImage,
+                            onPressed: _getImage,
                             tooltip: 'Escolher Foto',
                           ),
                         )
                       : Stack(
                           children: [
                             ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: _image ??
-                                    const Icon(
-                                        Icons.image_not_supported_rounded)),
+                              borderRadius: BorderRadius.circular(10),
+                              child: _imageFile != null
+                                  ? Image.file(_imageFile!)
+                                  : const Icon(
+                                      Icons.image_not_supported_rounded),
+                            ),
                             Positioned(
                               top: 10,
                               right: 10,
@@ -1126,7 +1128,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               }
                               // Using a new type of class to send the data to the server
                               RecipeC(
-                                image: _image != null ? _image as File : null,
+                                image: _imageFile,
                                 title: nameR!,
                                 description: descR!,
                                 ////ingTipo: ingsOpts,
