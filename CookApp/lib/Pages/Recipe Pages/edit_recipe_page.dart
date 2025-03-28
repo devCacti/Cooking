@@ -1,7 +1,7 @@
 //import 'dart:io';
-import 'package:cookapp/Functions/server_requests.dart';
 import 'package:flutter/material.dart';
 //import 'package:image_picker/image_picker.dart';
+import '../../Functions/server_requests.dart';
 import '../../Classes/recipes.dart';
 import '../../Classes/ingredients.dart';
 import '../../Functions/show_conf_dialog.dart';
@@ -158,55 +158,54 @@ class _EditFormState extends State<EditForm> {
                                         'Assets/Images/LittleMan.png',
                                       )
                                   ? const IconButton(
-                                    icon: Icon(Icons.image_not_supported),
-                                    iconSize: 100,
-                                    splashRadius: 65,
-                                    color: Colors.grey,
-                                    onPressed: null,
-                                    //?() async {
-                                    //?  var image = await ImagePicker()
-                                    //?      .pickImage(
-                                    //?          source: ImageSource.gallery);
-                                    //?  setState(() {
-                                    //?    foto = image == null
-                                    //?        ? null
-                                    //?        : Image.file(File(image.path));
-                                    //?  });
-                                    //?},
-                                  )
+                                      icon: Icon(Icons.image_not_supported),
+                                      iconSize: 100,
+                                      splashRadius: 65,
+                                      color: Colors.grey,
+                                      onPressed: null,
+                                      //?() async {
+                                      //?  var image = await ImagePicker()
+                                      //?      .pickImage(
+                                      //?          source: ImageSource.gallery);
+                                      //?  setState(() {
+                                      //?    foto = image == null
+                                      //?        ? null
+                                      //?        : Image.file(File(image.path));
+                                      //?  });
+                                      //?},
+                                    )
                                   : Padding(
-                                    padding: const EdgeInsets.all(30),
-                                    child: Stack(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
+                                      padding: const EdgeInsets.all(30),
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            child: foto ??
+                                                const Icon(
+                                                  Icons.image_not_supported,
+                                                  size: 100,
+                                                  color: Colors.grey,
+                                                ),
                                           ),
-                                          child:
-                                              foto ??
-                                              const Icon(
-                                                Icons.image_not_supported,
-                                                size: 100,
-                                                color: Colors.grey,
-                                              ),
-                                        ),
-                                        const Positioned(
-                                          right: 10,
-                                          top: 10,
-                                          child: IconButton(
-                                            icon: Icon(Icons.edit_outlined),
-                                            onPressed: null,
-                                            //() async {
-                                            //! Foto is a "IMAGE" type
-                                            //},
-                                            tooltip: 'Mudar Foto',
-                                            iconSize: 40,
-                                            color: Colors.green,
+                                          const Positioned(
+                                            right: 10,
+                                            top: 10,
+                                            child: IconButton(
+                                              icon: Icon(Icons.edit_outlined),
+                                              onPressed: null,
+                                              //() async {
+                                              //! Foto is a "IMAGE" type
+                                              //},
+                                              tooltip: 'Mudar Foto',
+                                              iconSize: 40,
+                                              color: Colors.green,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
                               Padding(
                                 padding: const EdgeInsets.all(16),
                                 child: TextFormField(
@@ -283,151 +282,144 @@ class _EditFormState extends State<EditForm> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child:
-                                ings!.isEmpty
-                                    ? const Center(
-                                      child: Text(
-                                        'Nenhum ingrediente',
-                                        style: TextStyle(fontSize: 22),
-                                      ),
-                                    )
-                                    : ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: ings!.length,
-                                      itemBuilder: (
-                                        BuildContext context,
-                                        int index,
-                                      ) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 12,
-                                            left: 10,
-                                            right: 10,
+                            child: ings!.isEmpty
+                                ? const Center(
+                                    child: Text(
+                                      'Nenhum ingrediente',
+                                      style: TextStyle(fontSize: 22),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: ings!.length,
+                                    itemBuilder: (
+                                      BuildContext context,
+                                      int index,
+                                    ) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 12,
+                                          left: 10,
+                                          right: 10,
+                                        ),
+                                        child: Material(
+                                          elevation: 5,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
                                           ),
-                                          child: Material(
-                                            elevation: 5,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
+                                          child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
-                                            child: ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
+                                            onLongPress: () {
+                                              setState(() {
+                                                ingredients.removeAt(index);
+                                                ings!.remove(ings![index]);
+                                                ////ingsT!.remove(ingsT![index]);
+                                                ingsQ!.remove(ingsQ![index]);
+                                                hintControllers.removeAt(
+                                                  index,
+                                                );
+                                              });
+                                            },
+                                            leading: const SizedBox(),
+                                            title: Text(
+                                              ings![index],
+                                              style: const TextStyle(
+                                                fontSize: 18,
                                               ),
-                                              onLongPress: () {
-                                                setState(() {
-                                                  ingredients.removeAt(index);
-                                                  ings!.remove(ings![index]);
-                                                  ////ingsT!.remove(ingsT![index]);
-                                                  ingsQ!.remove(ingsQ![index]);
-                                                  hintControllers.removeAt(
-                                                    index,
-                                                  );
-                                                });
-                                              },
-                                              leading: const SizedBox(),
-                                              title: Text(
-                                                ings![index],
-                                                style: const TextStyle(
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                              trailing: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Semantics(
-                                                    label: 'quantidade',
-                                                    child: SizedBox(
-                                                      width: 32,
-                                                      height: 44,
-                                                      child: TextField(
-                                                        controller:
-                                                            hintControllers[index],
-                                                        style: const TextStyle(
-                                                          color: Colors.black54,
-                                                          fontSize: 16,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        onChanged: (value) {
-                                                          final newValue =
-                                                              double.tryParse(
-                                                                value,
-                                                              );
-                                                          if (newValue !=
-                                                              null) {
-                                                            setState(() {
-                                                              ingsQ![index] =
-                                                                  newValue;
-                                                            });
-                                                          } else {
-                                                            ingsQ![index] = 0;
-                                                          }
-                                                        },
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        decoration:
-                                                            const InputDecoration(
-                                                              border:
-                                                                  InputBorder
-                                                                      .none,
-                                                              hintText: '0',
-                                                            ),
+                                            ),
+                                            trailing: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Semantics(
+                                                  label: 'quantidade',
+                                                  child: SizedBox(
+                                                    width: 32,
+                                                    height: 44,
+                                                    child: TextField(
+                                                      controller:
+                                                          hintControllers[
+                                                              index],
+                                                      style: const TextStyle(
+                                                        color: Colors.black54,
+                                                        fontSize: 16,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      onChanged: (value) {
+                                                        final newValue =
+                                                            double.tryParse(
+                                                          value,
+                                                        );
+                                                        if (newValue != null) {
+                                                          setState(() {
+                                                            ingsQ![index] =
+                                                                newValue;
+                                                          });
+                                                        } else {
+                                                          ingsQ![index] = 0;
+                                                        }
+                                                      },
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      decoration:
+                                                          const InputDecoration(
+                                                        border:
+                                                            InputBorder.none,
+                                                        hintText: '0',
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 10),
-                                                  DropdownButton<String>(
-                                                    value: ingsT![index],
-                                                    style: const TextStyle(
-                                                      color: Colors.black54,
-                                                      fontSize: 20,
-                                                    ),
-                                                    items:
-                                                        <String>[
-                                                          'Kg',
-                                                          'g',
-                                                          'L',
-                                                          'mL',
-                                                          'unid.',
-                                                          'colh.',
-                                                          'chav.',
-                                                        ].map<
-                                                          DropdownMenuItem<
-                                                            String
-                                                          >
-                                                        >((String value) {
-                                                          return DropdownMenuItem<
-                                                            String
-                                                          >(
-                                                            value: value,
-                                                            child: Text(value),
-                                                          );
-                                                        }).toList(),
-                                                    onChanged: (
-                                                      String? newValue,
-                                                    ) {
-                                                      setState(() {
-                                                        ingsT![index] =
-                                                            newValue!;
-                                                      });
-                                                    },
+                                                ),
+                                                const SizedBox(width: 10),
+                                                DropdownButton<String>(
+                                                  value: ingsT![index],
+                                                  style: const TextStyle(
+                                                    color: Colors.black54,
+                                                    fontSize: 20,
                                                   ),
-                                                  const SizedBox(width: 10),
-                                                ],
-                                              ),
+                                                  items: <String>[
+                                                    'Kg',
+                                                    'g',
+                                                    'L',
+                                                    'mL',
+                                                    'unid.',
+                                                    'colh.',
+                                                    'chav.',
+                                                  ].map<
+                                                          DropdownMenuItem<
+                                                              String>>(
+                                                      (String value) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (
+                                                    String? newValue,
+                                                  ) {
+                                                    setState(() {
+                                                      ingsT![index] = newValue!;
+                                                    });
+                                                  },
+                                                ),
+                                                const SizedBox(width: 10),
+                                              ],
                                             ),
                                           ),
-                                        );
-                                      },
-                                    ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                           ),
                         ),
                         Padding(
@@ -505,214 +497,206 @@ class _EditFormState extends State<EditForm> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child:
-                                procs!.isEmpty
-                                    ? const Center(
-                                      child: Text(
-                                        'Nenhum passo',
-                                        style: TextStyle(fontSize: 22),
-                                      ),
-                                    )
-                                    : ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: procs!.length,
-                                      itemBuilder: (
-                                        BuildContext context,
-                                        int index,
-                                      ) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 16,
-                                            left: 8,
-                                            right: 8,
-                                            top: 24,
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                'Passo N.º ${index + 1}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
-                                                ),
+                            child: procs!.isEmpty
+                                ? const Center(
+                                    child: Text(
+                                      'Nenhum passo',
+                                      style: TextStyle(fontSize: 22),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: procs!.length,
+                                    itemBuilder: (
+                                      BuildContext context,
+                                      int index,
+                                    ) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 16,
+                                          left: 8,
+                                          right: 8,
+                                          top: 24,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Passo N.º ${index + 1}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
                                               ),
-                                              const SizedBox(height: 10),
-                                              TextFormField(
-                                                controller:
-                                                    procsControllers[index],
-                                                style: const TextStyle(
-                                                  fontSize: 16,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            TextFormField(
+                                              controller:
+                                                  procsControllers[index],
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                              decoration: const InputDecoration(
+                                                label: Text(
+                                                  'Procedimento',
                                                 ),
-                                                decoration:
-                                                    const InputDecoration(
-                                                      label: Text(
-                                                        'Procedimento',
-                                                      ),
-                                                      border: OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                              Radius.circular(
-                                                                16,
-                                                              ),
-                                                            ),
-                                                      ),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(
+                                                      16,
                                                     ),
-                                                textAlign: TextAlign.justify,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    procs![index] = value;
-                                                  });
-                                                },
+                                                  ),
+                                                ),
                                               ),
-                                              const SizedBox(height: 20),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: [
-                                                  //* Botões:
-                                                  //* Mover para cima
-                                                  //* Eliminar
-                                                  //* Mover para baixo
-                                                  IconButton(
-                                                    onPressed:
-                                                        index < 1
-                                                            ? null
-                                                            : () {
-                                                              String temp;
-                                                              setState(() {
-                                                                temp =
-                                                                    procs![index -
-                                                                        1];
-                                                                procs![index -
-                                                                        1] =
-                                                                    procs![index];
-                                                                procs![index] =
-                                                                    temp;
+                                              textAlign: TextAlign.justify,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  procs![index] = value;
+                                                });
+                                              },
+                                            ),
+                                            const SizedBox(height: 20),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                //* Botões:
+                                                //* Mover para cima
+                                                //* Eliminar
+                                                //* Mover para baixo
+                                                IconButton(
+                                                  onPressed: index < 1
+                                                      ? null
+                                                      : () {
+                                                          String temp;
+                                                          setState(() {
+                                                            temp = procs![
+                                                                index - 1];
+                                                            procs![index - 1] =
+                                                                procs![index];
+                                                            procs![index] =
+                                                                temp;
 
-                                                                procsControllers[index -
-                                                                            1]
-                                                                        .text =
-                                                                    procsControllers[index]
-                                                                        .text;
-                                                                procsControllers[index]
-                                                                        .text =
-                                                                    temp;
-                                                              });
-                                                            },
-                                                    icon: const Icon(
-                                                      Icons.arrow_upward,
-                                                    ),
-                                                    tooltip: 'Mover para cima',
-                                                  ),
-                                                  IconButton(
-                                                    tooltip: 'Eliminar',
-                                                    icon: const Icon(
-                                                      Icons.delete_outlined,
-                                                      color: Colors.red,
-                                                    ),
-                                                    iconSize: 40,
-                                                    onPressed: () {
-                                                      showDialog<bool>(
-                                                        context: context,
-                                                        builder: (
-                                                          BuildContext context,
-                                                        ) {
-                                                          return AlertDialog(
-                                                            title: const Text(
-                                                              'Eliminar?',
-                                                            ),
-                                                            content: const Text(
-                                                              'Deseja eliminar este procedimento permanentemente?',
-                                                            ),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                    context,
-                                                                  );
-                                                                },
-                                                                child:
-                                                                    const Text(
-                                                                      'Cancelar',
-                                                                    ),
-                                                              ),
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    procs!.remove(
-                                                                      procs![index],
-                                                                    );
-                                                                    procsControllers
-                                                                        .remove(
-                                                                          procsControllers[index],
-                                                                        );
-                                                                  });
-                                                                  Navigator.pop(
-                                                                    context,
-                                                                  );
-                                                                },
-                                                                child:
-                                                                    const Text(
-                                                                      'Eliminar',
-                                                                    ),
-                                                              ),
-                                                            ],
-                                                          );
+                                                            procsControllers[
+                                                                        index - 1]
+                                                                    .text =
+                                                                procsControllers[
+                                                                        index]
+                                                                    .text;
+                                                            procsControllers[
+                                                                    index]
+                                                                .text = temp;
+                                                          });
                                                         },
-                                                      );
-                                                    },
+                                                  icon: const Icon(
+                                                    Icons.arrow_upward,
                                                   ),
-                                                  IconButton(
-                                                    onPressed:
-                                                        index ==
-                                                                procs!.length -
-                                                                    1
-                                                            ? null
-                                                            : () {
-                                                              String temp;
-                                                              setState(() {
-                                                                temp =
-                                                                    procs![index +
-                                                                        1];
-                                                                procs![index +
-                                                                        1] =
-                                                                    procs![index];
-                                                                procs![index] =
-                                                                    temp;
-                                                                procsControllers[index +
-                                                                            1]
-                                                                        .text =
-                                                                    procsControllers[index]
-                                                                        .text;
-                                                                procsControllers[index]
-                                                                        .text =
-                                                                    temp;
-                                                              });
-                                                            },
-                                                    icon: const Icon(
-                                                      Icons.arrow_downward,
-                                                    ),
-                                                    tooltip: 'Mover para cima',
+                                                  tooltip: 'Mover para cima',
+                                                ),
+                                                IconButton(
+                                                  tooltip: 'Eliminar',
+                                                  icon: const Icon(
+                                                    Icons.delete_outlined,
+                                                    color: Colors.red,
                                                   ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 10),
-                                              index < procs!.length - 1
-                                                  ? const Divider(
+                                                  iconSize: 40,
+                                                  onPressed: () {
+                                                    showDialog<bool>(
+                                                      context: context,
+                                                      builder: (
+                                                        BuildContext context,
+                                                      ) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                            'Eliminar?',
+                                                          ),
+                                                          content: const Text(
+                                                            'Deseja eliminar este procedimento permanentemente?',
+                                                          ),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                              },
+                                                              child: const Text(
+                                                                'Cancelar',
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  procs!.remove(
+                                                                    procs![
+                                                                        index],
+                                                                  );
+                                                                  procsControllers
+                                                                      .remove(
+                                                                    procsControllers[
+                                                                        index],
+                                                                  );
+                                                                });
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
+                                                              },
+                                                              child: const Text(
+                                                                'Eliminar',
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                                IconButton(
+                                                  onPressed: index ==
+                                                          procs!.length - 1
+                                                      ? null
+                                                      : () {
+                                                          String temp;
+                                                          setState(() {
+                                                            temp = procs![
+                                                                index + 1];
+                                                            procs![index + 1] =
+                                                                procs![index];
+                                                            procs![index] =
+                                                                temp;
+                                                            procsControllers[
+                                                                        index + 1]
+                                                                    .text =
+                                                                procsControllers[
+                                                                        index]
+                                                                    .text;
+                                                            procsControllers[
+                                                                    index]
+                                                                .text = temp;
+                                                          });
+                                                        },
+                                                  icon: const Icon(
+                                                    Icons.arrow_downward,
+                                                  ),
+                                                  tooltip: 'Mover para cima',
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
+                                            index < procs!.length - 1
+                                                ? const Divider(
                                                     thickness: 1,
                                                     indent: 30,
                                                     endIndent: 30,
                                                     color: Colors.black,
                                                   )
-                                                  : const SizedBox(),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                                : const SizedBox(),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                           ),
                         ),
                         Padding(
@@ -960,21 +944,20 @@ class _EditFormState extends State<EditForm> {
                                 color: Colors.black54,
                                 fontSize: 18,
                               ),
-                              items:
-                                  <String>[
-                                    'Geral',
-                                    'Bolos',
-                                    'Tartes',
-                                    'Sobremesas',
-                                    'Pratos',
-                                  ].map<DropdownMenuItem<String>>((
-                                    String value,
-                                  ) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
+                              items: <String>[
+                                'Geral',
+                                'Bolos',
+                                'Tartes',
+                                'Sobremesas',
+                                'Pratos',
+                              ].map<DropdownMenuItem<String>>((
+                                String value,
+                              ) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                               onChanged: (String? newValue) {
                                 setState(() {
                                   categ = newValue!;
@@ -1099,13 +1082,12 @@ class _EditFormState extends State<EditForm> {
                             });
                           }
 
-                          final List<Ingredient> noIdIngs =
-                              ingredients
-                                  .where(
-                                    (element) =>
-                                        element.id.isEmpty || element.id == "",
-                                  )
-                                  .toList();
+                          final List<Ingredient> noIdIngs = ingredients
+                              .where(
+                                (element) =>
+                                    element.id.isEmpty || element.id == "",
+                              )
+                              .toList();
 
                           // Send the ingredients to the server
                           newIngredients(noIdIngs).then((value) {
