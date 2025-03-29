@@ -1,2 +1,0 @@
-C:/Dev/Projects/CookApp/android/app/.cxx/Debug/5c421d2m/x86/CMakeFiles/edit_cache.dir
-C:/Dev/Projects/CookApp/android/app/.cxx/Debug/5c421d2m/x86/CMakeFiles/rebuild_cache.dir
