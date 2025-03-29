@@ -329,7 +329,7 @@ class ListClass {
         'descricao': descricao,
         'data': data,
         'loja': loja,
-        'color': color!.value.toRadixString(16),
+        'color': color!.toARGB32().toRadixString(16),
         'detalhada': detalhada,
         'items': items!.map((item) => item.toJson()).toList(),
       };
@@ -370,7 +370,7 @@ class PartialList {
         'nome': nome,
         'descricao': descricao,
         'data': data,
-        'color': color!.value.toRadixString(16),
+        'color': color!.toARGB32().toRadixString(16),
         'detalhada': detalhada,
       };
 }
