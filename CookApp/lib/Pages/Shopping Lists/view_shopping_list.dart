@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ViewList extends StatefulWidget {
   final ListClass list;
 
-  const ViewList({Key? key, required this.list}) : super(key: key);
+  const ViewList({super.key, required this.list});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -144,6 +144,15 @@ class _ViewListState extends State<ViewList> {
     );
   }
 
+  //? Reorder Items based on checked status
+  void reorderItems() {
+    widget.list.items!.sort((a, b) {
+      if (a.checked && !b.checked) return 1; // Checked goes to bottom
+      if (!a.checked && b.checked) return -1; // Unchecked goes to top
+      return 0; // Otherwise, maintain order
+    });
+  }
+
   // ...
   @override
   Widget build(BuildContext context) {
@@ -152,7 +161,8 @@ class _ViewListState extends State<ViewList> {
         title: const Text('Lista de Compras'),
         centerTitle: true,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: ListView(
           children: [
             const SizedBox(height: 20),
@@ -196,84 +206,64 @@ class _ViewListState extends State<ViewList> {
               color: Colors.black38,
             ),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                //Checked
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 10,
-                  child: Checkbox(
-                    tristate: true,
-                    value: allItemsChecked
-                        ? true
-                        : widget.list.items!.any((item) => item.checked)
-                            ? null
-                            : false,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value == null) {
-                          // Handle the indeterminate state if needed, for example, by checking all items
-                          allItemsChecked = true;
-                          for (var item in widget.list.items!) {
-                            item.checked = true;
-                          }
-                        }
+            ListTile(
+              leading: Checkbox(
+                tristate: true,
+                value: allItemsChecked
+                    ? true
+                    : widget.list.items!.any((item) => item.checked)
+                        ? null
+                        : false,
+                onChanged: (value) {
+                  setState(() {
+                    if (value == null) {
+                      // Handle the indeterminate state if needed, for example, by checking all items
+                      allItemsChecked = true;
+                      for (var item in widget.list.items!) {
+                        item.checked = true;
+                      }
+                    }
 
-                        if (allItemsChecked) {
-                          allItemsChecked = false;
-                          for (var item in widget.list.items!) {
-                            item.checked = false;
-                          }
-                        } else if (value!) {
-                          allItemsChecked = true;
-                          for (var item in widget.list.items!) {
-                            item.checked = true;
-                          }
-                        } else {
-                          for (var item in widget.list.items!) {
-                            item.checked = true;
-                          }
-                        }
-                        updateListById(widget.list);
-                      });
-                    },
+                    if (allItemsChecked) {
+                      allItemsChecked = false;
+                      for (var item in widget.list.items!) {
+                        item.checked = false;
+                      }
+                    } else if (value!) {
+                      allItemsChecked = true;
+                      for (var item in widget.list.items!) {
+                        item.checked = true;
+                      }
+                    } else {
+                      for (var item in widget.list.items!) {
+                        item.checked = true;
+                      }
+                    }
+                    updateListById(widget.list);
+                  });
+                },
+              ),
+              title:
+                  // Item Name
+                  SizedBox(
+                child: Text(
+                  "Item",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 2.5,
-                  child: const Text(
-                    'Item',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+              ),
+              trailing: SizedBox(
+                width: MediaQuery.of(context).size.width / 5,
+                child: Icon(
+                  Icons.add_shopping_cart_rounded,
+                  size: 30,
+                  color: Colors.black87,
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 7,
-                  child: const Text(
-                    'Quant',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 4,
-                  child: const Text(
-                    'Valor',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-
             const SizedBox(height: 5),
             //? Divider
             const Divider(
@@ -300,53 +290,36 @@ class _ViewListState extends State<ViewList> {
                 //? If there are items
                 : ListView.builder(
                     itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5, right: 5),
-                            child: GestureDetector(
-                              onLongPress: () {
-                                deleteConfirmationDialog(context, 'item')
-                                    .then((value) {
-                                  if (value != null && value) {
+                      return AnimatedOpacity(
+                        duration: const Duration(milliseconds: 500),
+                        opacity: widget.list.items![index].checked
+                            ? 0.5
+                            : 1.0, // Fade effect for checked items
+                        child: Column(
+                          children: [
+                            Material(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              elevation: 5,
+                              child: ListTile(
+                                leading: Checkbox(
+                                  value: widget.list.items![index].checked,
+                                  onChanged: (value) {
                                     setState(() {
-                                      widget.list.items!.removeAt(index);
-                                      updateListById(widget.list);
+                                      widget.list.items![index].checked =
+                                          value!;
+                                      updateListById(
+                                          widget.list); // Your update logic
+                                      reorderItems(); // Reorder the list
                                     });
-                                  }
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black12,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
+                                  },
                                 ),
-                                child: Row(
+                                title: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    //Checked
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width /
-                                          10,
-                                      child: Checkbox(
-                                        value:
-                                            widget.list.items![index].checked,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            widget.list.items![index].checked =
-                                                value!;
-                                            updateListById(widget.list);
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width /
-                                          2.5,
                                       child: Text(
                                         widget.list.items![index].nome,
                                         textAlign: TextAlign.start,
@@ -355,55 +328,41 @@ class _ViewListState extends State<ViewList> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width / 7,
-                                      child: Text(
-                                        // Avoiding x.0 values instead just x
-                                        widget.list.items![index].quantidade
-                                            .toStringAsFixed(widget
-                                                        .list
-                                                        .items![index]
-                                                        .quantidade
-                                                        .truncateToDouble() ==
-                                                    widget.list.items![index]
-                                                        .quantidade
-                                                ? 0
-                                                : widget.list.items![index]
-                                                    .quantidade
-                                                    .toString()
-                                                    .split('.')
-                                                    .last
-                                                    .length)
-                                            .replaceAll('.', ','),
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width / 4,
-                                      child: Text(
-                                        '${widget.list.items![index].preco.toStringAsFixed(widget.list.items![index].preco.truncateToDouble() == widget.list.items![index].preco ? 0 : widget.list.items![index].preco.toString().split('.').last.length).replaceAll('.', ',')}€',
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
                                   ],
+                                ),
+                                trailing: SizedBox(
+                                  width: MediaQuery.of(context).size.width / 5,
+                                  child: Text(
+                                    widget.list.items![index].quantidade
+                                        .toStringAsFixed(widget.list
+                                                    .items![index].quantidade
+                                                    .truncateToDouble() ==
+                                                widget.list.items![index]
+                                                    .quantidade
+                                            ? 0
+                                            : widget
+                                                .list.items![index].quantidade
+                                                .toString()
+                                                .split('.')
+                                                .last
+                                                .length)
+                                        .replaceAll('.', ','),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                        ],
+                            const SizedBox(height: 10),
+                          ],
+                        ),
                       );
                     },
                     itemCount: widget.list.items!.length,
                     shrinkWrap: true,
+                    // Don't allow for scrolling
                     physics: const NeverScrollableScrollPhysics(),
                   ),
             //? Divider
@@ -416,90 +375,99 @@ class _ViewListState extends State<ViewList> {
             ),
 
             const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(width: MediaQuery.of(context).size.width / 10),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 2.5,
-                  child: const Text(
-                    'Total',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            ListTile(
+              leading: Checkbox(
+                tristate: true,
+                value: allItemsChecked
+                    ? true
+                    : widget.list.items!.any((item) => item.checked)
+                        ? null
+                        : false,
+                onChanged: (value) {
+                  setState(() {
+                    if (value == null) {
+                      // Handle the indeterminate state if needed, for example, by checking all items
+                      allItemsChecked = true;
+                      for (var item in widget.list.items!) {
+                        item.checked = true;
+                      }
+                    }
+
+                    if (allItemsChecked) {
+                      allItemsChecked = false;
+                      for (var item in widget.list.items!) {
+                        item.checked = false;
+                      }
+                    } else if (value!) {
+                      allItemsChecked = true;
+                      for (var item in widget.list.items!) {
+                        item.checked = true;
+                      }
+                    } else {
+                      for (var item in widget.list.items!) {
+                        item.checked = true;
+                      }
+                    }
+                    updateListById(widget.list);
+                  });
+                },
+              ),
+              title: SizedBox(
+                width: MediaQuery.of(context).size.width / 2.5,
+                child: const Text(
+                  'Total',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 7,
-                  child: Text(
-                    totalQuantidade
-                        .toStringAsFixed(totalQuantidade.truncateToDouble() ==
-                                totalQuantidade
-                            ? 0
-                            : totalQuantidade.toString().split('.').last.length)
-                        .replaceAll('.', ','),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+              ),
+
+              trailing: SizedBox(
+                width: MediaQuery.of(context).size.width / 5,
+                child: Text(
+                  totalQuantidade
+                      .toStringAsFixed(totalQuantidade.truncateToDouble() ==
+                              totalQuantidade
+                          ? 0
+                          : totalQuantidade.toString().split('.').last.length)
+                      .replaceAll('.', ','),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 4,
-                  child: Text(
-                    '${totalValor.toStringAsFixed(totalValor.truncateToDouble() == totalValor ? 0 : totalValor.toString().split('.').last.length).replaceAll('.', ',')}€',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+              ),
+              ////SizedBox(
+              ////  width: MediaQuery.of(context).size.width / 4,
+              ////  child: Text(
+              ////    '${totalValor.toStringAsFixed(totalValor.truncateToDouble() == totalValor ? 0 : totalValor.toString().split('.').last.length).replaceAll('.', ',')}€',
+              ////    textAlign: TextAlign.center,
+              ////    style: const TextStyle(
+              ////      fontSize: 20,
+              ////      fontWeight: FontWeight.bold,
+              ////    ),
+              ////  ),
+              ////),
             ),
-            const SizedBox(height: 10),
-            const Divider(
-              height: 20,
-              thickness: 1,
-              indent: 20,
-              endIndent: 20,
-              color: Colors.black12,
-            ),
-            const SizedBox(height: 10),
-            //? Add button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(
-                        const Color.fromARGB(154, 255, 255, 255)),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add,
-                        size: 45,
-                        color: Colors.black,
-                      ),
-                      SizedBox(width: 20),
-                      Text(
-                        'Adicionar Item',
-                        style: TextStyle(fontSize: 20, color: Colors.black),
-                      ),
-                    ],
-                  ),
-                  onPressed: () {
-                    _addItemDialog();
-                  },
-                ),
-              ],
-            ),
+            const SizedBox(height: 25),
           ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        onPressed: () {
+          _addItemDialog().then((value) {
+            setState(() {});
+          });
+        },
+        child: const Icon(
+          Icons.add_rounded,
+          size: 45,
         ),
       ),
     );
