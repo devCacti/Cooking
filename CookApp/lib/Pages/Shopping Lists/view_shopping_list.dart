@@ -108,25 +108,46 @@ class _ViewListState extends State<ViewList> {
                 TextButton(
                   child: const Text('Adicionar'),
                   onPressed: () {
-                    if (nomeController.text != '' &&
-                        nomeController.text.isNotEmpty) {
-                      if (quantidadeController.text.isNotEmpty) {
-                        //replace , with . if it exists
-                        quantidadeController.text =
-                            quantidadeController.text.replaceAll(',', '.');
+                    try {
+                      if (nomeController.text != '' &&
+                          nomeController.text.isNotEmpty) {
+                        if (quantidadeController.text.isNotEmpty) {
+                          //replace , with . if it exists
+                          quantidadeController.text =
+                              quantidadeController.text.replaceAll(',', '.');
+                        }
+                        widget.list.addItem(
+                          ListItem(
+                            nome: nomeController.text,
+                            quantidade: quantidadeController.text == '' ||
+                                    quantidadeController.text == '1'
+                                ? 1
+                                : double.parse(quantidadeController.text),
+                            preco: precoController.text == ''
+                                ? 0
+                                : double.parse(
+                                    precoController.text,
+                                  ),
+                          ),
+                        );
                       }
-                      widget.list.addItem(
-                        ListItem(
-                          nome: nomeController.text,
-                          quantidade: quantidadeController.text == '' ||
-                                  quantidadeController.text == '1'
-                              ? 1
-                              : double.parse(quantidadeController.text),
-                          preco: precoController.text == ''
-                              ? 0
-                              : double.parse(
-                                  precoController.text,
-                                ),
+                    } catch (e) {
+                      // Handle the error
+                      // Show a snackbar or toast
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(25.0),
+                            ),
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          showCloseIcon: true,
+                          content: Text(
+                            'Erro ao adicionar o item',
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       );
                     }
