@@ -59,84 +59,87 @@ class _ViewListState extends State<ViewList> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Adicionar Item'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+          title: const Text(
+            'Adicionar Item',
+            textAlign: TextAlign.center,
+          ),
+          content: Wrap(
             children: [
-              TextField(
+              TextFormField(
                 controller: nomeController,
                 decoration: const InputDecoration(
-                  hintText: 'Item',
+                  hintText: 'Nome do Item',
+                  // All around border
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                    borderSide: BorderSide(color: Colors.black38),
+                  ),
                 ),
               ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: quantidadeController,
-                      decoration: const InputDecoration(
-                        hintText: 'Quantidade',
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
+              const SizedBox(height: 55),
+              TextField(
+                controller: quantidadeController,
+                decoration: const InputDecoration(
+                  hintText: 'Quantidade',
+                  // All around border
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                    borderSide: BorderSide(color: Colors.black38),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: precoController,
-                      decoration: const InputDecoration(
-                        hintText: 'Preço',
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
+                ),
+                keyboardType: TextInputType.number,
               ),
             ],
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () {
-                nomeController.clear();
-                quantidadeController.clear();
-                precoController.clear();
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  child: const Text('Cancelar'),
+                  onPressed: () {
+                    nomeController.clear();
+                    quantidadeController.clear();
+                    precoController.clear();
 
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Adicionar'),
-              onPressed: () {
-                if (nomeController.text != '' &&
-                    nomeController.text.isNotEmpty) {
-                  if (quantidadeController.text.isNotEmpty) {
-                    //replace , with . if it exists
-                    quantidadeController.text =
-                        quantidadeController.text.replaceAll(',', '.');
-                  }
-                  widget.list.addItem(
-                    ListItem(
-                      nome: nomeController.text,
-                      quantidade: quantidadeController.text == '' ||
-                              quantidadeController.text == '1'
-                          ? 1
-                          : double.parse(quantidadeController.text),
-                      preco: precoController.text == ''
-                          ? 0
-                          : double.parse(
-                              precoController.text,
-                            ),
-                    ),
-                  );
-                }
-                updateListById(widget.list);
-                nomeController.clear();
-                quantidadeController.clear();
-                precoController.clear();
-                Navigator.of(context).pop();
-              },
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Adicionar'),
+                  onPressed: () {
+                    if (nomeController.text != '' &&
+                        nomeController.text.isNotEmpty) {
+                      if (quantidadeController.text.isNotEmpty) {
+                        //replace , with . if it exists
+                        quantidadeController.text =
+                            quantidadeController.text.replaceAll(',', '.');
+                      }
+                      widget.list.addItem(
+                        ListItem(
+                          nome: nomeController.text,
+                          quantidade: quantidadeController.text == '' ||
+                                  quantidadeController.text == '1'
+                              ? 1
+                              : double.parse(quantidadeController.text),
+                          preco: precoController.text == ''
+                              ? 0
+                              : double.parse(
+                                  precoController.text,
+                                ),
+                        ),
+                      );
+                    }
+                    updateListById(widget.list);
+                    // Clear the text fields
+                    nomeController.clear();
+                    quantidadeController.clear();
+                    precoController.clear();
+                    // Close the dialog
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             ),
           ],
         );
@@ -158,11 +161,14 @@ class _ViewListState extends State<ViewList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 5,
+        shadowColor: Colors.white,
+        surfaceTintColor: Colors.white,
         title: const Text('Lista de Compras'),
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: ListView(
           children: [
             const SizedBox(height: 20),
@@ -206,61 +212,64 @@ class _ViewListState extends State<ViewList> {
               color: Colors.black38,
             ),
             const SizedBox(height: 20),
-            ListTile(
-              leading: Checkbox(
-                tristate: true,
-                value: allItemsChecked
-                    ? true
-                    : widget.list.items!.any((item) => item.checked)
-                        ? null
-                        : false,
-                onChanged: (value) {
-                  setState(() {
-                    if (value == null) {
-                      // Handle the indeterminate state if needed, for example, by checking all items
-                      allItemsChecked = true;
-                      for (var item in widget.list.items!) {
-                        item.checked = true;
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: ListTile(
+                leading: Checkbox(
+                  tristate: true,
+                  value: allItemsChecked
+                      ? true
+                      : widget.list.items!.any((item) => item.checked)
+                          ? null
+                          : false,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value == null) {
+                        // Handle the indeterminate state if needed, for example, by checking all items
+                        allItemsChecked = true;
+                        for (var item in widget.list.items!) {
+                          item.checked = true;
+                        }
                       }
-                    }
 
-                    if (allItemsChecked) {
-                      allItemsChecked = false;
-                      for (var item in widget.list.items!) {
-                        item.checked = false;
+                      if (allItemsChecked) {
+                        allItemsChecked = false;
+                        for (var item in widget.list.items!) {
+                          item.checked = false;
+                        }
+                      } else if (value!) {
+                        allItemsChecked = true;
+                        for (var item in widget.list.items!) {
+                          item.checked = true;
+                        }
+                      } else {
+                        for (var item in widget.list.items!) {
+                          item.checked = true;
+                        }
                       }
-                    } else if (value!) {
-                      allItemsChecked = true;
-                      for (var item in widget.list.items!) {
-                        item.checked = true;
-                      }
-                    } else {
-                      for (var item in widget.list.items!) {
-                        item.checked = true;
-                      }
-                    }
-                    updateListById(widget.list);
-                  });
-                },
-              ),
-              title:
-                  // Item Name
-                  SizedBox(
-                child: Text(
-                  "Item",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                      updateListById(widget.list);
+                    });
+                  },
+                ),
+                title:
+                    // Item Name
+                    SizedBox(
+                  child: Text(
+                    "Item",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              trailing: SizedBox(
-                width: MediaQuery.of(context).size.width / 5,
-                child: Icon(
-                  Icons.add_shopping_cart_rounded,
-                  size: 30,
-                  color: Colors.black87,
+                trailing: SizedBox(
+                  width: MediaQuery.of(context).size.width / 5,
+                  child: Icon(
+                    Icons.add_shopping_cart_rounded,
+                    size: 30,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
             ),
@@ -293,63 +302,115 @@ class _ViewListState extends State<ViewList> {
                       return AnimatedOpacity(
                         duration: const Duration(milliseconds: 500),
                         opacity: widget.list.items![index].checked
-                            ? 0.5
+                            ? 0.45
                             : 1.0, // Fade effect for checked items
                         child: Column(
                           children: [
-                            Material(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              elevation: 5,
-                              child: ListTile(
-                                leading: Checkbox(
-                                  value: widget.list.items![index].checked,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      widget.list.items![index].checked =
-                                          value!;
-                                      updateListById(
-                                          widget.list); // Your update logic
-                                      reorderItems(); // Reorder the list
-                                    });
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Material(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                elevation: 5,
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  onLongPress: () {
+                                    //? Delete Item
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text(
+                                            'Apagar Item',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          content: const Text(
+                                            'Tem certeza que deseja apagar este item?',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              child: const Text('Cancelar'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text('Apagar'),
+                                              onPressed: () {
+                                                try {
+                                                  widget.list.items!
+                                                      .removeAt(index);
+                                                  //widget.list.removeItem(widget
+                                                  //    .list.items![index].id!);
+                                                } catch (e) {
+                                                  // Handle the error
+                                                  // Show a snackbar or toast
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                        'Erro ao apagar o item',
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                updateListById(widget.list);
+                                                Navigator.of(context).pop();
+                                                setState(() {});
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
                                   },
-                                ),
-                                title: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    SizedBox(
-                                      child: Text(
-                                        widget.list.items![index].nome,
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                trailing: SizedBox(
-                                  width: MediaQuery.of(context).size.width / 5,
-                                  child: Text(
-                                    widget.list.items![index].quantidade
-                                        .toStringAsFixed(widget.list
-                                                    .items![index].quantidade
-                                                    .truncateToDouble() ==
-                                                widget.list.items![index]
-                                                    .quantidade
-                                            ? 0
-                                            : widget
-                                                .list.items![index].quantidade
-                                                .toString()
-                                                .split('.')
-                                                .last
-                                                .length)
-                                        .replaceAll('.', ','),
+                                  leading: Checkbox(
+                                    value: widget.list.items![index].checked,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        widget.list.items![index].checked =
+                                            value!;
+                                        updateListById(
+                                            widget.list); // Your update logic
+                                        reorderItems(); // Reorder the list
+                                      });
+                                    },
+                                  ),
+                                  title: Text(
+                                    widget.list.items![index].nome,
                                     textAlign: TextAlign.center,
+                                    overflow: TextOverflow.fade,
                                     style: const TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  trailing: SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 5,
+                                    child: Text(
+                                      widget.list.items![index].quantidade
+                                          .toStringAsFixed(widget.list
+                                                      .items![index].quantidade
+                                                      .truncateToDouble() ==
+                                                  widget.list.items![index]
+                                                      .quantidade
+                                              ? 0
+                                              : widget
+                                                  .list.items![index].quantidade
+                                                  .toString()
+                                                  .split('.')
+                                                  .last
+                                                  .length)
+                                          .replaceAll('.', ','),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -452,7 +513,7 @@ class _ViewListState extends State<ViewList> {
               ////  ),
               ////),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 60),
           ],
         ),
       ),

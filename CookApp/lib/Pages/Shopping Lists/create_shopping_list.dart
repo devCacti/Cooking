@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class CreateList extends StatefulWidget {
-  const CreateList({Key? key}) : super(key: key);
+  const CreateList({super.key});
 
   @override
 
@@ -70,7 +70,7 @@ class _CreateListState extends State<CreateList> {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.only(left: 20, right: 20),
           child: SingleChildScrollView(
             child: Column(
               //Body of the creating of a new shopping list
