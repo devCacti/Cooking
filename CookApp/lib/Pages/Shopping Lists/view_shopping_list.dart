@@ -1,4 +1,4 @@
-import '../../Classes/lista_compra.dart';
+import 'package:cookapp/Classes/lista_compra.dart';
 import 'package:flutter/material.dart';
 
 class ViewList extends StatefulWidget {

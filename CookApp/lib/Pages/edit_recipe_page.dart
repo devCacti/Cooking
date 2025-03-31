@@ -1,5 +1,5 @@
 //import 'dart:io';
-import 'package:cooking_app/Functions/server_requests.dart';
+import 'package:cookapp/Functions/server_requests.dart';
 import 'package:flutter/material.dart';
 //import 'package:image_picker/image_picker.dart';
 import '../Classes/recipes.dart';

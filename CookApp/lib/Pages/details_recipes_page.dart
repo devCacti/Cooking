@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 import '../Classes/receita.dart';

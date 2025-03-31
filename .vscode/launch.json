@@ -25,21 +25,21 @@
             "flutterMode": "release"
         },
         {
-            "name": "cooking_app",
-            "cwd": "cooking_app",
+            "name": "cookapp",
+            "cwd": "cookapp",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "cooking_app (profile mode)",
-            "cwd": "cooking_app",
+            "name": "cookapp (profile mode)",
+            "cwd": "cookapp",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "cooking_app (release mode)",
-            "cwd": "cooking_app",
+            "name": "cookapp (release mode)",
+            "cwd": "cookapp",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

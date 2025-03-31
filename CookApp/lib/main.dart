@@ -1,6 +1,6 @@
 //? Imports
-//import 'package:cooking_app/Classes/server_info.dart';
-import 'package:cooking_app/Pages/Elements/bottom_app_bar.dart';
+//import 'package:cookapp/Classes/server_info.dart';
+import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';

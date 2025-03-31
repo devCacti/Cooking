@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_const
 
-import 'package:cooking_app/Classes/server_info.dart';
+import 'package:cookapp/Classes/server_info.dart';
 import 'package:flutter/material.dart';
 import '../Classes/user.dart';
 import 'login_page.dart';

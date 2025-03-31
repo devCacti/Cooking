@@ -1,11 +1,11 @@
-import 'package:cooking_app/Classes/lista_compra.dart';
-import 'package:cooking_app/Pages/Shopping%20Lists/create_shopping_list.dart';
 import 'package:flutter/material.dart';
 
+import 'package:cookapp/Classes/lista_compra.dart';
+import 'create_shopping_list.dart';
 import 'view_shopping_list.dart';
 
 class ShoppingLists extends StatefulWidget {
-  const ShoppingLists({Key? key}) : super(key: key);
+  const ShoppingLists({super.key});
 
   @override
 
@@ -118,7 +118,9 @@ class _ShoppingListsState extends State<ShoppingLists> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ViewList(list: value),
+                                    builder: (context) => ViewList(
+                                      list: value,
+                                    ),
                                   ),
                                 );
                               });
