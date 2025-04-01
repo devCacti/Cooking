@@ -457,82 +457,85 @@ class _ViewListState extends State<ViewList> {
             ),
 
             const SizedBox(height: 10),
-            ListTile(
-              leading: Checkbox(
-                tristate: true,
-                value: allItemsChecked
-                    ? true
-                    : widget.list.items!.any((item) => item.checked)
-                        ? null
-                        : false,
-                onChanged: (value) {
-                  setState(() {
-                    if (value == null) {
-                      // Handle the indeterminate state if needed, for example, by checking all items
-                      allItemsChecked = true;
-                      for (var item in widget.list.items!) {
-                        item.checked = true;
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: ListTile(
+                leading: Checkbox(
+                  tristate: true,
+                  value: allItemsChecked
+                      ? true
+                      : widget.list.items!.any((item) => item.checked)
+                          ? null
+                          : false,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value == null) {
+                        // Handle the indeterminate state if needed, for example, by checking all items
+                        allItemsChecked = true;
+                        for (var item in widget.list.items!) {
+                          item.checked = true;
+                        }
                       }
-                    }
 
-                    if (allItemsChecked) {
-                      allItemsChecked = false;
-                      for (var item in widget.list.items!) {
-                        item.checked = false;
+                      if (allItemsChecked) {
+                        allItemsChecked = false;
+                        for (var item in widget.list.items!) {
+                          item.checked = false;
+                        }
+                      } else if (value!) {
+                        allItemsChecked = true;
+                        for (var item in widget.list.items!) {
+                          item.checked = true;
+                        }
+                      } else {
+                        for (var item in widget.list.items!) {
+                          item.checked = true;
+                        }
                       }
-                    } else if (value!) {
-                      allItemsChecked = true;
-                      for (var item in widget.list.items!) {
-                        item.checked = true;
-                      }
-                    } else {
-                      for (var item in widget.list.items!) {
-                        item.checked = true;
-                      }
-                    }
-                    updateListById(widget.list);
-                  });
-                },
-              ),
-              title: SizedBox(
-                width: MediaQuery.of(context).size.width / 2.5,
-                child: const Text(
-                  'Total',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                      updateListById(widget.list);
+                    });
+                  },
+                ),
+                title: SizedBox(
+                  width: MediaQuery.of(context).size.width / 2.5,
+                  child: const Text(
+                    'Total',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
 
-              trailing: SizedBox(
-                width: MediaQuery.of(context).size.width / 5,
-                child: Text(
-                  totalQuantidade
-                      .toStringAsFixed(totalQuantidade.truncateToDouble() ==
-                              totalQuantidade
-                          ? 0
-                          : totalQuantidade.toString().split('.').last.length)
-                      .replaceAll('.', ','),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                trailing: SizedBox(
+                  width: MediaQuery.of(context).size.width / 5,
+                  child: Text(
+                    totalQuantidade
+                        .toStringAsFixed(totalQuantidade.truncateToDouble() ==
+                                totalQuantidade
+                            ? 0
+                            : totalQuantidade.toString().split('.').last.length)
+                        .replaceAll('.', ','),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+                ////SizedBox(
+                ////  width: MediaQuery.of(context).size.width / 4,
+                ////  child: Text(
+                ////    '${totalValor.toStringAsFixed(totalValor.truncateToDouble() == totalValor ? 0 : totalValor.toString().split('.').last.length).replaceAll('.', ',')}€',
+                ////    textAlign: TextAlign.center,
+                ////    style: const TextStyle(
+                ////      fontSize: 20,
+                ////      fontWeight: FontWeight.bold,
+                ////    ),
+                ////  ),
+                ////),
               ),
-              ////SizedBox(
-              ////  width: MediaQuery.of(context).size.width / 4,
-              ////  child: Text(
-              ////    '${totalValor.toStringAsFixed(totalValor.truncateToDouble() == totalValor ? 0 : totalValor.toString().split('.').last.length).replaceAll('.', ',')}€',
-              ////    textAlign: TextAlign.center,
-              ////    style: const TextStyle(
-              ////      fontSize: 20,
-              ////      fontWeight: FontWeight.bold,
-              ////    ),
-              ////  ),
-              ////),
             ),
             const SizedBox(height: 60),
           ],
