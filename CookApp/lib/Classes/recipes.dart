@@ -522,4 +522,54 @@ class RecipeC {
       return false;
     }
   }
+
+  // Function for deleting a recipe from the server
+  Future<int> delete(String GUID) async {
+    User? user = User();
+    try {
+      await user.getInstance();
+    } catch (e) {
+      print('Error: $e');
+      return 1;
+    }
+
+    // The recipe update follows a specific structure to ensure compatibility with the server
+    // That compatibility is very similar to the one used to send a brand new recipe, the only
+    //difference is that this one includes a GUID to tell the server which recipe to update
+
+    var request = http.MultipartRequest(
+        'DELETE', Uri.parse('$url/Recipes/DeleteRecipeById'));
+
+    // Set the cookie, this lets the server know which user is making the request
+    request.headers.addAll({'cookie': user.cookie});
+
+    // Add the fields to the request | All the names of the atributes of the class match the body field names
+    request.fields.addAll({
+      'GUID': GUID,
+    });
+
+    // Send the request
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      // if success field is true, save the user data
+      var responseBody = await response.stream.bytesToString();
+      if (responseBody.contains('"error":""')) {
+        print('Recipe deleted successfully');
+
+        // Parse the JSON response and return the recipe
+        var json = jsonDecode(responseBody);
+
+        print(json);
+
+        return 0;
+      } else {
+        print('Failed to delete recipe');
+        print('Response: $responseBody');
+        return -1;
+      }
+    } else {
+      print(" ---> (0009) ${response.reasonPhrase}");
+      return 2;
+    }
+  }
 }

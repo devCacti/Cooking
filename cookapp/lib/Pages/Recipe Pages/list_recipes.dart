@@ -100,14 +100,16 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
             ),
             TextButton(
               onPressed: () {
+                // Deletes the recipe from the database
+                RecipeC instance = RecipeC.defaultR();
                 confirm = true;
-                //!deleteRecipeById(id).then((_) {
-                //!  loadRecipes().then((recipes) {
-                //!    setState(() {
-                //!      _recipes = recipes;
-                //!    });
-                //!  });
-                //!});
+                instance.delete(id).then((_) {
+                  getMyRecipes().then((recipes) {
+                    setState(() {
+                      _recipes = recipes;
+                    });
+                  });
+                });
                 Navigator.pop(context);
               },
               child: const Text('Sim'),
