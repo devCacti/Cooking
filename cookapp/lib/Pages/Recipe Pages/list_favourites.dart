@@ -3,7 +3,7 @@ import 'package:cookapp/Pages/Recipe%20Pages/recipe_detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'edit_recipe_page.dart';
-import '../Classes/recipes.dart';
+import '../../Classes/recipes.dart';
 
 class ListFavoutiresForm extends StatefulWidget {
   const ListFavoutiresForm({Key? key}) : super(key: key);

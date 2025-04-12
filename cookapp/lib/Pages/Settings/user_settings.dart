@@ -2,10 +2,10 @@
 
 import 'package:cookapp/Classes/server_info.dart';
 import 'package:flutter/material.dart';
-import '../Classes/user.dart';
+import '../../Classes/user.dart';
 import 'login_page.dart';
 import 'register_page.dart';
-import '../Functions/show_conf_dialog.dart';
+import '../../Functions/show_conf_dialog.dart';
 
 class UserSettings extends StatefulWidget {
   const UserSettings({super.key});
