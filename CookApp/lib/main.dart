@@ -121,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
-                color: const Color.fromARGB(20, 255, 255, 255),
+                color: const Color.fromARGB(19, 115, 115, 115),
               ),
               // Early Access Warning
               child: const ListTile(
