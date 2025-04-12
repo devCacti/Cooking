@@ -274,7 +274,6 @@ class _EditFormState extends State<EditForm> {
                         const Divider(
                           indent: 40,
                           endIndent: 40,
-                          color: Colors.black,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8),
@@ -307,13 +306,13 @@ class _EditFormState extends State<EditForm> {
                                         child: Material(
                                           elevation: 5,
                                           borderRadius: BorderRadius.circular(
-                                            10,
+                                            25,
                                           ),
                                           child: ListTile(
                                             contentPadding: EdgeInsets.zero,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                                  BorderRadius.circular(25),
                                             ),
                                             onLongPress: () {
                                               setState(() {
@@ -349,7 +348,6 @@ class _EditFormState extends State<EditForm> {
                                                           hintControllers[
                                                               index],
                                                       style: const TextStyle(
-                                                        color: Colors.black54,
                                                         fontSize: 16,
                                                       ),
                                                       textAlign:
@@ -383,7 +381,6 @@ class _EditFormState extends State<EditForm> {
                                                 DropdownButton<String>(
                                                   value: ingsT![index],
                                                   style: const TextStyle(
-                                                    color: Colors.black54,
                                                     fontSize: 20,
                                                   ),
                                                   items: <String>[
@@ -489,7 +486,6 @@ class _EditFormState extends State<EditForm> {
                         const Divider(
                           indent: 40,
                           endIndent: 40,
-                          color: Colors.black,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8),
@@ -689,7 +685,6 @@ class _EditFormState extends State<EditForm> {
                                                     thickness: 1,
                                                     indent: 30,
                                                     endIndent: 30,
-                                                    color: Colors.black,
                                                   )
                                                 : const SizedBox(),
                                           ],
@@ -763,7 +758,6 @@ class _EditFormState extends State<EditForm> {
                         const Divider(
                           indent: 40,
                           endIndent: 40,
-                          color: Colors.black,
                         ),
                         const SizedBox(height: 10),
                         //* Outras edições
@@ -786,7 +780,6 @@ class _EditFormState extends State<EditForm> {
                                 'Tempo',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.black54,
                                 ),
                               ),
                             ),
@@ -812,9 +805,7 @@ class _EditFormState extends State<EditForm> {
                                       width: 48,
                                       height: 48,
                                       child: TextField(
-                                        style: const TextStyle(
-                                          color: Colors.black54,
-                                        ),
+                                        style: const TextStyle(),
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
                                           final newValue = double.tryParse(
@@ -839,7 +830,6 @@ class _EditFormState extends State<EditForm> {
                                     'min',
                                     style: TextStyle(
                                       fontSize: 18,
-                                      color: Colors.black54,
                                     ),
                                   ),
                                 ],
@@ -858,7 +848,6 @@ class _EditFormState extends State<EditForm> {
                                 'Porções',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.black54,
                                 ),
                               ),
                             ),
@@ -884,9 +873,7 @@ class _EditFormState extends State<EditForm> {
                                       width: 48,
                                       height: 48,
                                       child: TextField(
-                                        style: const TextStyle(
-                                          color: Colors.black54,
-                                        ),
+                                        style: const TextStyle(),
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
                                           final newValue = double.tryParse(
@@ -924,7 +911,6 @@ class _EditFormState extends State<EditForm> {
                                 'Categoria',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.black54,
                                 ),
                               ),
                             ),
@@ -941,7 +927,6 @@ class _EditFormState extends State<EditForm> {
                             DropdownButton<String>(
                               value: categ,
                               style: const TextStyle(
-                                color: Colors.black54,
                                 fontSize: 18,
                               ),
                               items: <String>[
@@ -977,7 +962,6 @@ class _EditFormState extends State<EditForm> {
                                 'Pública',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.black54,
                                 ),
                               ),
                             ),

@@ -943,8 +943,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               width: MediaQuery.of(context).size.width * 0.3,
                               child: DropdownButton<String>(
                                 value: _selectedValue,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16.8,
+                                  color: themeNotifier.value == ThemeMode.dark
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                                 items: <String>[
                                   'Geral',
