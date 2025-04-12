@@ -783,16 +783,7 @@ class _EditFormState extends State<EditForm> {
                                 ),
                               ),
                             ),
-                            Container(
-                              alignment: Alignment.center,
-                              width: 125,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(width: 75, height: 1),
-                              ),
-                            ),
+                            Spacer(flex: 1),
                             Container(
                               alignment: Alignment.center,
                               width: 125,
@@ -851,16 +842,7 @@ class _EditFormState extends State<EditForm> {
                                 ),
                               ),
                             ),
-                            Container(
-                              alignment: Alignment.center,
-                              width: 125,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(width: 75, height: 1),
-                              ),
-                            ),
+                            Spacer(flex: 1),
                             Container(
                               alignment: Alignment.center,
                               width: 125,
@@ -914,16 +896,7 @@ class _EditFormState extends State<EditForm> {
                                 ),
                               ),
                             ),
-                            Container(
-                              alignment: Alignment.center,
-                              width: 125,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(width: 75, height: 1),
-                              ),
-                            ),
+                            Spacer(flex: 1),
                             DropdownButton<String>(
                               value: categ,
                               style: const TextStyle(
@@ -965,16 +938,7 @@ class _EditFormState extends State<EditForm> {
                                 ),
                               ),
                             ),
-                            Container(
-                              alignment: Alignment.center,
-                              width: 125,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.grey,
-                                ),
-                                child: const SizedBox(width: 75, height: 1),
-                              ),
-                            ),
+                            Spacer(flex: 1),
                             Container(
                               alignment: Alignment.center,
                               width: 125,
