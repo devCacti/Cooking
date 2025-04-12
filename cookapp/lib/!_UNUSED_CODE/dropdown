@@ -1,0 +1,71 @@
+DropdownButtonFormField(
+  decoration: const InputDecoration(
+    border: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10))),
+    labelText: 'Escolher Loja',
+  ),
+  value: loja == 'Escolher Loja' ? null : loja,
+  onChanged: (value) {
+    setState(() {
+      if (value != null) {
+        if (value != 'Nova Loja') {
+          loja = value;
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Nova Loja'),
+                content: TextFormField(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(10))),
+                    labelText: 'Nome da Loja',
+                  ),
+                  onChanged: (value) {
+                    loja = value;
+                  },
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Cancelar'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Criar'),
+                    onPressed: () async {
+                      Loja lojaInstance = Loja(nome: loja);
+                      await lojaInstance.save();
+                      List<Loja> lojasTemp =
+                          await lojaInstance.load();
+                      setState(() {
+                        lojas = lojasTemp
+                            .map((loja) => loja.nome)
+                            .toList();
+                        lojas.add('Nova Loja');
+                        loja = 'Escolher Loja';
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        loja = 'Escolher Loja';
+      }
+    });
+  },
+  // Make sure to add the items for the DropdownButtonFormField
+  items: lojas.map((String value) {
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  }).toList(),
+),
