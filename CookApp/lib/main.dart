@@ -19,6 +19,7 @@ import 'Settings/settings.dart';
 void main() async {
   Settings settings = Settings.defaultS();
   bool darkMode = await settings.getDarkMode() ?? true;
+  themeNotifier.value = darkMode ? ThemeMode.dark : ThemeMode.light;
 
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp(darkMode: darkMode));
@@ -30,21 +31,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cooking',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        brightness: darkMode ? Brightness.dark : Brightness.light,
-        scaffoldBackgroundColor: darkMode ? Colors.black : Colors.white,
-        appBarTheme: AppBarTheme(
-          backgroundColor: darkMode ? Colors.black : Colors.white,
-          foregroundColor: darkMode ? Colors.white : Colors.black,
-        ),
-      ),
-      //debugShowCheckedModeBanner: false,
-      home: const MyHomePage(
-        title: 'Cooking',
-      ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (_, mode, __) {
+        return MaterialApp(
+          title: 'Cooking',
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: mode,
+          //debugShowCheckedModeBanner: false,
+          home: const MyHomePage(
+            title: 'Cooking',
+          ),
+        );
+      },
     );
   }
 }

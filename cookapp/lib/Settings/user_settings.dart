@@ -6,6 +6,7 @@ import '../Classes/user.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 import '../Functions/show_conf_dialog.dart';
+import 'settings.dart';
 
 class UserSettings extends StatefulWidget {
   const UserSettings({super.key});
@@ -23,11 +24,21 @@ class _UserSettingsState extends State<UserSettings> {
     user!.getInstance().then(
           (value) => setState(() {}),
         );
+
+    settings.getDarkMode().then(
+          (value) => setState(() {
+            darkMode = value!;
+          }),
+        );
   }
+
+  Settings settings = Settings.defaultS();
 
   String page = "details";
 
   bool isLogged = false;
+
+  bool darkMode = true;
 
   //TODO: Add user checking logic, if the user is logged in, show the user information, else, show like if isLogged is false
   //* TLDR
@@ -233,13 +244,66 @@ class _UserSettingsState extends State<UserSettings> {
           child: Padding(
             padding: const EdgeInsets.all(50.0),
             //TODO: Add user settings widgets, dark mode, notifications, reminders, etc. (Only if the user is logged in)
-            child: Text(
-              version,
-              style: const TextStyle(
-                fontSize: 20.0,
-                color: Colors.grey,
-              ),
-              textAlign: TextAlign.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Cooking",
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  version,
+                  style: const TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 50),
+                const Text(
+                  "Configurações",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                //? Dark mode switch
+                const SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Modo Escuro",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    Switch(
+                      value: darkMode,
+                      onChanged: (value) {
+                        setState(() {
+                          darkMode = value;
+                        });
+                        settings.setDarkMode(value).then((value) {
+                          setState(() {
+                            settings.darkMode = value!;
+                          });
+                        });
+                        //? Change the app theme to dark or light mode based on the switch value
+                        setState(() {
+                          themeNotifier.value =
+                              darkMode ? ThemeMode.dark : ThemeMode.light;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
