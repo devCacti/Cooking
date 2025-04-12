@@ -6,6 +6,7 @@ import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
 import 'Classes/user.dart';
+import 'Settings/settings.dart';
 //import 'Pages/new_recipe.dart';
 
 //? Unused Imports
@@ -15,13 +16,17 @@ import 'Classes/user.dart';
 ////import 'Pages/list_recipes.dart';
 ////import 'Pages/list_favourites.dart';
 
-void main() {
+void main() async {
+  Settings settings = Settings.defaultS();
+  bool darkMode = await settings.getDarkMode() ?? true;
+
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(MyApp(darkMode: darkMode));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool darkMode;
+  const MyApp({super.key, required this.darkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +34,12 @@ class MyApp extends StatelessWidget {
       title: 'Cooking',
       theme: ThemeData(
         primarySwatch: Colors.green,
+        brightness: darkMode ? Brightness.dark : Brightness.light,
+        scaffoldBackgroundColor: darkMode ? Colors.black : Colors.white,
+        appBarTheme: AppBarTheme(
+          backgroundColor: darkMode ? Colors.black : Colors.white,
+          foregroundColor: darkMode ? Colors.white : Colors.black,
+        ),
       ),
       //debugShowCheckedModeBanner: false,
       home: const MyHomePage(
@@ -110,18 +121,13 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
-                color: Colors.grey[200],
+                color: const Color.fromARGB(20, 255, 255, 255),
               ),
               // Early Access Warning
               child: const ListTile(
                 title: Text(
                   'ACESSO ANTECIPADO',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                ),
-                subtitle: Text(
-                  'Pode perder tudo o que tiver durante esta fase!',
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
                 leading: Icon(

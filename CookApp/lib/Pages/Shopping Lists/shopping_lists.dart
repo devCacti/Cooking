@@ -86,7 +86,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                               style: TextStyle(
                                 color: lists[index].data == null
                                     ? Colors.red
-                                    : Colors.black,
+                                    : Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             shape: RoundedRectangleBorder(
