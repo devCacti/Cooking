@@ -230,7 +230,6 @@ class _ViewListState extends State<ViewList> {
               thickness: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.black38,
             ),
             const SizedBox(height: 20),
             Padding(
@@ -289,7 +288,6 @@ class _ViewListState extends State<ViewList> {
                   child: Icon(
                     Icons.add_shopping_cart_rounded,
                     size: 30,
-                    color: Colors.black87,
                   ),
                 ),
               ),
@@ -301,7 +299,6 @@ class _ViewListState extends State<ViewList> {
               thickness: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.black12,
             ),
             const SizedBox(height: 5),
 
@@ -453,7 +450,6 @@ class _ViewListState extends State<ViewList> {
               thickness: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.black12,
             ),
 
             const SizedBox(height: 10),

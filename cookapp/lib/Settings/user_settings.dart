@@ -38,7 +38,7 @@ class _UserSettingsState extends State<UserSettings> {
 
   bool isLogged = false;
 
-  bool darkMode = true;
+  bool darkMode = themeNotifier.value == ThemeMode.dark ? true : false;
 
   //TODO: Add user checking logic, if the user is logged in, show the user information, else, show like if isLogged is false
   //* TLDR
@@ -52,6 +52,9 @@ class _UserSettingsState extends State<UserSettings> {
           "@${user?.username}" == "@" ? "Sem Username" : "@${user?.username}"),
       currentAccountPicture: const CircleAvatar(
         child: Icon(Icons.person_rounded, size: 42.0),
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.deepPurpleAccent,
       ),
     );
 

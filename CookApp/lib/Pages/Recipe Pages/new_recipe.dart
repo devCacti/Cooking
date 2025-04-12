@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -70,8 +71,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             style: TextStyle(color: Colors.red),
           ),
           content: const Text(
-            'Esta ação é irrevertível.\nQualquer progresso feito será perdido!',
-            style: TextStyle(color: Colors.black),
+            'Esta ação é irrevertível. Tudo o que tenha feito será perdido!',
           ),
           actions: <Widget>[
             TextButton(
@@ -126,7 +126,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
         appBar: AppBar(
           title: const Text('Nova Receita'),
           centerTitle: true,
-          shadowColor: Colors.white,
+          shadowColor: Colors.black54,
         ),
         body: SingleChildScrollView(
           child: Center(
@@ -174,14 +174,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             ),
                           ],
                         ),
-                ),
-                const Text(
-                  'Funcionalidade ainda não disponível',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
-                    fontStyle: FontStyle.italic,
-                  ),
                 ),
                 const SizedBox(height: 20),
                 Padding(
@@ -264,7 +256,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         'Toque e segure para eliminar um ingrediente',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.black54,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -280,7 +271,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               'Nenhum ingrediente',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.black54,
                               ),
                             ),
                           )
@@ -328,7 +318,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                             height: 44,
                                             child: TextField(
                                               style: const TextStyle(
-                                                color: Colors.black54,
                                                 fontSize: 16,
                                               ),
                                               textAlign: TextAlign.center,
@@ -360,7 +349,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                         DropdownButton<String>(
                                           value: ingsOpts[index],
                                           style: const TextStyle(
-                                            color: Colors.black54,
                                             fontSize: 20,
                                           ),
                                           items: <String>[
@@ -489,7 +477,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               'Nenhum passo',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.black54,
                               ),
                             ),
                           )
@@ -582,63 +569,43 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                             showDialog<bool>(
                                               context: context,
                                               builder: (BuildContext context) {
-                                                return Theme(
-                                                  data: ThemeData(
-                                                    brightness:
-                                                        Brightness.light,
-                                                    textTheme: const TextTheme(
-                                                      titleMedium: TextStyle(
-                                                        color: Colors.blue,
-                                                      ),
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                    'Eliminar',
+                                                    style: TextStyle(
+                                                      color: Colors.red,
                                                     ),
                                                   ),
-                                                  child: AlertDialog(
-                                                    title: const Text(
-                                                      'Eliminar',
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                      ),
-                                                    ),
-                                                    content: const Text(
-                                                      'Tem a certeza que deseja eliminar este passo?',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            'Cancelar'),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            procedimentos
-                                                                .removeAt(
-                                                                    index);
-                                                            procsControllers
-                                                                .removeAt(
-                                                                    index);
-                                                          });
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        style: ButtonStyle(
-                                                          foregroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                                      Colors
-                                                                          .red),
-                                                        ),
-                                                        child:
-                                                            const Text('Sim'),
-                                                      ),
-                                                    ],
+                                                  content: const Text(
+                                                    'Tem a certeza que deseja eliminar este passo?',
                                                   ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text(
+                                                          'Cancelar'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          procedimentos
+                                                              .removeAt(index);
+                                                          procsControllers
+                                                              .removeAt(index);
+                                                        });
+                                                        Navigator.pop(context);
+                                                      },
+                                                      style: ButtonStyle(
+                                                        foregroundColor:
+                                                            MaterialStateProperty
+                                                                .all<Color>(
+                                                                    Colors.red),
+                                                      ),
+                                                      child: const Text('Sim'),
+                                                    ),
+                                                  ],
                                                 );
                                               },
                                             );
@@ -770,7 +737,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                       'Outros detalhes',
                       style: TextStyle(
                         fontSize: 20,
-                        color: Colors.black54,
                       ),
                     ),
                   ),
@@ -794,7 +760,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 'Tempo [min]',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.black54,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -835,9 +800,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     child: Semantics(
                                       label: 'tempo',
                                       child: TextField(
-                                        style: const TextStyle(
-                                          color: Colors.black54,
-                                        ),
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
                                           final newValue =
@@ -873,7 +835,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 'Porções',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.black54,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -914,9 +875,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     child: Semantics(
                                       label: 'porcao',
                                       child: TextField(
-                                        style: const TextStyle(
-                                          color: Colors.black54,
-                                        ),
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
                                           final newValue =
@@ -952,7 +910,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 'Categoria',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.black54,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -987,7 +944,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                               child: DropdownButton<String>(
                                 value: _selectedValue,
                                 style: const TextStyle(
-                                  color: Colors.black54,
                                   fontSize: 16.8,
                                 ),
                                 items: <String>[
@@ -1023,7 +979,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 'Pública',
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color: Colors.black54,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -1166,6 +1121,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(50),
                                       ),
+                                      backgroundColor:
+                                          themeNotifier.value == ThemeMode.dark
+                                              ? Colors.black54
+                                              : Colors.white54,
                                       behavior: SnackBarBehavior.floating,
                                       content: const Text(
                                         'Não foi possível guardar a receita!',
@@ -1176,7 +1135,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       ),
                                       action: SnackBarAction(
                                           label: 'OK',
-                                          textColor: Colors.white,
+                                          textColor: Colors.red,
                                           onPressed: () {
                                             ScaffoldMessenger.of(context)
                                                 .hideCurrentSnackBar();
@@ -1194,12 +1153,21 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50),
                                 ),
+                                backgroundColor:
+                                    themeNotifier.value == ThemeMode.dark
+                                        ? Colors.black54
+                                        : Colors.white54,
                                 behavior: SnackBarBehavior.floating,
                                 content: const Text(
-                                  'Por favor insira um nome e uma descrição.',
+                                  'Insira um nome e uma descrição.',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 action: SnackBarAction(
                                     label: 'OK',
+                                    textColor: Colors.red,
                                     onPressed: () {
                                       ScaffoldMessenger.of(context)
                                           .hideCurrentSnackBar();
