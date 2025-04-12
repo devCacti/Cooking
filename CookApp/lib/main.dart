@@ -6,6 +6,7 @@ import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
 import 'Classes/user.dart';
+import 'Settings/settings.dart';
 //import 'Pages/new_recipe.dart';
 
 //? Unused Imports
@@ -15,25 +16,35 @@ import 'Classes/user.dart';
 ////import 'Pages/list_recipes.dart';
 ////import 'Pages/list_favourites.dart';
 
-void main() {
+void main() async {
+  Settings settings = Settings.defaultS();
+  bool darkMode = await settings.getDarkMode() ?? true;
+  themeNotifier.value = darkMode ? ThemeMode.dark : ThemeMode.light;
+
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(MyApp(darkMode: darkMode));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool darkMode;
+  const MyApp({super.key, required this.darkMode});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cooking',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      //debugShowCheckedModeBanner: false,
-      home: const MyHomePage(
-        title: 'Cooking',
-      ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (_, mode, __) {
+        return MaterialApp(
+          title: 'Cooking',
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: mode,
+          //debugShowCheckedModeBanner: false,
+          home: const MyHomePage(
+            title: 'Cooking',
+          ),
+        );
+      },
     );
   }
 }
@@ -110,18 +121,13 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
-                color: Colors.grey[200],
+                color: const Color.fromARGB(20, 255, 255, 255),
               ),
               // Early Access Warning
               child: const ListTile(
                 title: Text(
                   'ACESSO ANTECIPADO',
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                ),
-                subtitle: Text(
-                  'Pode perder tudo o que tiver durante esta fase!',
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
                 leading: Icon(
