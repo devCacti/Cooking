@@ -2,6 +2,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 //? Global Variables
 ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
@@ -9,6 +10,7 @@ ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 class Settings {
   //? Variables
   bool darkMode = true;
+  String? productKey; // Used for activating the app
   ////bool notifications = true; //? Not used yet
 
   //* Default values
@@ -20,6 +22,38 @@ class Settings {
   factory Settings.defaultS() {
     return Settings();
   }
+
+  //* Get the product key from the secure_storage
+  //! If it returns null it means there was an error and the app is not activated
+  Future<String?> getProductKey() async {
+    //? Create a secure storage object
+    final storage = const FlutterSecureStorage();
+
+    //? Get the product key from the secure storage
+    String? productKey = await storage.read(key: 'productKey');
+
+    //? If the product key is null, it means the app is not activated
+    this.productKey = productKey;
+    return productKey;
+  }
+
+  //* Set the product key in the secure_storage
+  Future<bool> setProductKey(String productKey) async {
+    //? Create a secure storage object
+    final storage = const FlutterSecureStorage();
+
+    //? Set the product key in the secure storage
+    try {
+      await storage.write(key: 'productKey', value: productKey);
+      return true;
+    } catch (e) {
+      // Handle any errors that occur during secure storage operations
+      ////print("Error writing product key to secure storage: $e");
+      return false;
+    }
+  }
+
+  //* Check product key on the server (GET: )
 
   //* Get the dark mode setting from a user settings file called settings.json
   //! If it returns null it means there was an error
