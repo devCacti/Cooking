@@ -1,3 +1,4 @@
+import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:cookapp/Functions/server_requests.dart';
 import 'package:cookapp/Pages/Recipe%20Pages/recipe_detail.dart';
@@ -134,11 +135,12 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
             padding: const EdgeInsets.all(8),
             child: DropdownButton<String>(
               value: categoria,
-              style: const TextStyle(
-                color: Colors.black,
+              style: TextStyle(
                 fontSize: 20,
+                color: themeNotifier.value == ThemeMode.dark
+                    ? Colors.white
+                    : Colors.black,
               ),
-              dropdownColor: Colors.white,
               items: <String>[
                 'Geral',
                 'Bolos',
