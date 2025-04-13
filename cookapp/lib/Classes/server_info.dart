@@ -1,11 +1,11 @@
 //* Localhost
-//String url = 'https://localhost:44322';
+String url = 'https://localhost:44322';
 
 //* Release BETA
-const String url = 'https://devcacti.com';
+//const String url = 'https://devcacti.com';
 
 //* Android Version
-const String version = 'v1.5.5.2';
+const String version = 'v1.5.5.3';
 //! | v | Release | . | Edition | . | Major | . | Patch |
 //? v      : Version
 //? Release: 0 = Alpha, 1 = Beta, 2 = RC (Release Candidate), 3 = Stable (It's considered Extreme Major)

@@ -234,12 +234,12 @@ class _RegisterPageState extends State<RegisterPage> {
                             confirmPassword: _confPasswordController.text,
                           );
 
-                          final bool isRegistered = await newUser.register();
+                          int isRegistered = await newUser.register();
 
                           setState(() {
                             _isRegistering = false;
                           });
-                          if (isRegistered) {
+                          if (isRegistered == 0) {
                             // ignore: use_build_context_synchronously
                             Navigator.pop(context);
                           } else {
