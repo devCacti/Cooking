@@ -96,10 +96,10 @@ class Register {
     //this.phone,
   });
 
-  Future<bool> register() async {
+  Future<int> register() async {
     if (password != confirmPassword) {
       print('Passwords do not match');
-      return false;
+      return 1;
     }
     print('Registering with email: $email, username: $username, name: $name');
 
@@ -107,12 +107,12 @@ class Register {
     var request =
         http.MultipartRequest('POST', Uri.parse('$url/Account/AppRegister'));
     request.fields.addAll({
-      'email': email,
-      'username': username,
-      'password': password,
-      'confirmPassword': confirmPassword,
-      'name': name,
-      'surname': surname ?? '',
+      'Email': email,
+      'UserName': username,
+      'Password': password,
+      'ConfirmPassword': confirmPassword,
+      'Name': name,
+      'Surname': surname ?? '',
       //'phone': phone ?? '',
     });
 
@@ -149,15 +149,18 @@ class Register {
         );
         await user.save();
 
-        return true;
+        return 0;
       } else {
         print('Register failed');
         print('Response: $responseBody');
-        return false;
+        // Get the error -> code from the json response
+        //"error":{"code":"5","description":"Model not valid"}
+        return int.parse(
+            responseBody.split('"code":"')[1].split('"')[0]); // 2, 3, 4, 5
       }
     } else {
       print(" ---> (0003) ${response.reasonPhrase}");
-      return false;
+      return -1;
     }
   }
 }
