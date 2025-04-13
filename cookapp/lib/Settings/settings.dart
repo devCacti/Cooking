@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 //? Global Variables
-ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
 class Settings {
   //? Variables
@@ -23,10 +23,12 @@ class Settings {
 
   //* Get the dark mode setting from a user settings file called settings.json
   //! If it returns null it means there was an error
-  Future<bool?> getDarkMode() async {
+  static Future<bool> getDarkMode() async {
     //? Get the path to the application documents directory
     String filePath = await getApplicationDocumentsDirectory()
         .then((value) => "${value.path}/settings.json");
+
+    bool darkMode = false; // Default value for dark mode
 
     //? Create a file object with the path
     File file = File(filePath);
@@ -34,24 +36,24 @@ class Settings {
     try {
       //? Check if the file exists
       if (await file.exists()) {
-        String contents = await file.readAsString();
+        String contents = file.readAsStringSync();
 
         // Parse the JSON string to get the dark mode value
         Map<String, dynamic> json = jsonDecode(contents);
 
-        darkMode = json['darkMode'] ?? true; // Default to true if not found
+        darkMode = json['darkMode'] ?? false; // Default to true if not found
         return darkMode;
       } else {
         // If the file does not exist, create it with the default value
         Map<String, dynamic> json = {'darkMode': darkMode};
         // Write the JSON string to the file
-        await file.writeAsString(jsonEncode(json));
+        file.writeAsStringSync(jsonEncode(json));
         return darkMode;
       }
     } catch (e) {
       // Handle any errors that occur during file operations
       ////print("Error reading settings file: $e");
-      return null;
+      return false;
     }
   }
 

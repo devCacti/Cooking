@@ -137,9 +137,10 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
               value: categoria,
               style: TextStyle(
                 fontSize: 20,
-                color: themeNotifier.value == ThemeMode.dark
-                    ? Colors.white
-                    : Colors.black,
+                color: Colors.black,
+                // themeNotifier.value == ThemeMode.dark
+                //? Colors.white
+                //: Colors.black,
               ),
               items: <String>[
                 'Geral',

@@ -25,11 +25,11 @@ class _UserSettingsState extends State<UserSettings> {
           (value) => setState(() {}),
         );
 
-    settings.getDarkMode().then(
-          (value) => setState(() {
-            darkMode = value!;
-          }),
-        );
+    Settings.getDarkMode().then(
+      (value) => setState(() {
+        darkMode = value!;
+      }),
+    );
   }
 
   Settings settings = Settings.defaultS();
@@ -289,15 +289,8 @@ class _UserSettingsState extends State<UserSettings> {
                     Switch(
                       value: darkMode,
                       onChanged: (value) {
-                        setState(() {
-                          darkMode = value;
-                        });
-                        settings.setDarkMode(value).then((value) {
-                          setState(() {
-                            settings.darkMode = value!;
-                          });
-                        });
-                        //? Change the app theme to dark or light mode based on the switch value
+                        darkMode = value;
+                        settings.setDarkMode(value);
                         setState(() {
                           themeNotifier.value =
                               darkMode ? ThemeMode.dark : ThemeMode.light;

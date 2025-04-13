@@ -945,9 +945,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 value: _selectedValue,
                                 style: TextStyle(
                                   fontSize: 16.8,
-                                  color: themeNotifier.value == ThemeMode.dark
-                                      ? Colors.white
-                                      : Colors.black,
+                                  color: Colors.black,
+                                  // themeNotifier.value == ThemeMode.dark
+                                  //? Colors.white
+                                  //: Colors.black,
                                 ),
                                 items: <String>[
                                   'Geral',
@@ -1124,10 +1125,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(50),
                                       ),
-                                      backgroundColor:
-                                          themeNotifier.value == ThemeMode.dark
-                                              ? Colors.black54
-                                              : Colors.white54,
+                                      //backgroundColor:
+                                      //themeNotifier.value == ThemeMode.dark
+                                      //    ? Colors.black54
+                                      //    : Colors.white54,
                                       behavior: SnackBarBehavior.floating,
                                       content: const Text(
                                         'Não foi possível guardar a receita!',
@@ -1156,10 +1157,10 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor:
-                                    themeNotifier.value == ThemeMode.dark
-                                        ? Colors.black54
-                                        : Colors.white54,
+                                //backgroundColor:
+                                //    themeNotifier.value == ThemeMode.dark
+                                //        ? Colors.black54
+                                //        : Colors.white54,
                                 behavior: SnackBarBehavior.floating,
                                 content: const Text(
                                   'Insira um nome e uma descrição.',
