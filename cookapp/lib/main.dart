@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     Settings.getDarkMode().then((value) {
       setState(() {
-        themeNotifier.value = value ?? false
+        themeNotifier.value = value
             ? ThemeMode.dark
             : ThemeMode.light; // Set the theme mode based on the settings
       });
