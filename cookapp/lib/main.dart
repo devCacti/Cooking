@@ -16,31 +16,26 @@ import 'Settings/settings.dart';
 ////import 'Pages/list_recipes.dart';
 ////import 'Pages/list_favourites.dart';
 
-void main() async {
-  Settings settings = Settings.defaultS();
-  bool darkMode = await settings.getDarkMode() ?? true;
-  themeNotifier.value = darkMode ? ThemeMode.dark : ThemeMode.light;
-
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp(darkMode: darkMode));
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  final bool darkMode;
-  const MyApp({super.key, required this.darkMode});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
-      builder: (_, mode, __) {
+      builder: (_, themeMode, __) {
         return MaterialApp(
-          title: 'Cooking',
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
-          themeMode: mode,
-          //debugShowCheckedModeBanner: false,
-          home: const MyHomePage(
+          themeMode: themeMode,
+          home: MyHomePage(
             title: 'Cooking',
           ),
         );
@@ -89,6 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    Settings.getDarkMode().then((value) {
+      setState(() {
+        themeNotifier.value = value ?? false
+            ? ThemeMode.dark
+            : ThemeMode.light; // Set the theme mode based on the settings
+      });
+    });
     User user = User.defaultU();
     user.getInstance().then((value) {
       setState(() {
