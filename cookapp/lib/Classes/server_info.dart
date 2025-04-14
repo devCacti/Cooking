@@ -1,8 +1,8 @@
 //* Localhost
-String url = 'https://localhost:44322';
+//String url = 'https://localhost:44322';
 
 //* Release BETA
-//const String url = 'https://devcacti.com';
+const String url = 'https://devcacti.com';
 
 //* Android Version
 const String version = 'v1.5.5.3';

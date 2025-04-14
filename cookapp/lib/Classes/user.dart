@@ -47,10 +47,19 @@ class Login {
         var cookie = response.headers['set-cookie'];
         print('Cookie: $cookie');
 
+        print('Response: $responseBody');
+
         // Get the user data from the response
         var username = responseBody.split('username":"')[1].split('"')[0];
-        var name = responseBody.split('name":"')[1].split('"')[0];
-        var surname = responseBody.split('surname":"')[1].split('"')[0];
+
+        var name = "";
+        if (responseBody.contains('name":"')) {
+          name = responseBody.split('name":"')[1].split('"')[0];
+        }
+        var surname = "";
+        if (responseBody.contains('surname":"')) {
+          surname = responseBody.split('surname":"')[1].split('"')[0];
+        }
         var guid = responseBody.split('id":"')[1].split('"')[0];
 
         // Save the user data to user.json
