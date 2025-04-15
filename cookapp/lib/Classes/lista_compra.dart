@@ -378,8 +378,8 @@ class PartialList {
 //? >TODO: Arranjar o problema de não dar para abrir receitas.
 //* DONE
 /*
-!I/flutter (16831): /data/user/0/com.example.cookapp/app_flutter/testes_list_compras0_2.json
-![log] Error loading lists: PathNotFoundException: Cannot open file, path = '/data/user/0/com.example.cookapp/app_flutter/testes_list_compras0_2.json' (OS Error: No such file or directory, errno = 2)
+!I/flutter (16831): /data/user/0/com.devcacti.cookapp/app_flutter/testes_list_compras0_2.json
+![log] Error loading lists: PathNotFoundException: Cannot open file, path = '/data/user/0/com.devcacti.cookapp/app_flutter/testes_list_compras0_2.json' (OS Error: No such file or directory, errno = 2)
 */
 
 //List file
