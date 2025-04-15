@@ -8,7 +8,7 @@
 PRODUCT_NAME = cookapp
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.cookapp
+PRODUCT_BUNDLE_IDENTIFIER = com.devcacti.cookapp
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
