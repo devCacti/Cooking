@@ -14,5 +14,7 @@ My knowledge in GitHub is limited so that is also a way of me getting to know th
 I made this project using Flutter as the main resource (https://flutter.dev)
 
 
-Version of flutter used: 3.16.5-stable (https://docs.flutter.dev/release/archive?tab=windows) 
+Version of flutter used: ~3.16.5-stable~ (https://docs.flutter.dev/release/archive?tab=windows) 
 [Direct Download](https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.16.5-stable.zip)
+
+The version of flutter used is now: 3.29.1-stable
