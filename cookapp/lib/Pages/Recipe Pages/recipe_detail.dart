@@ -30,16 +30,14 @@ class _RecipeDetailState extends State<RecipeDetail> {
     recipe = widget.recipe;
 
     recipeIngredients(recipe.id).then((value) => setState(() {
-          print(value);
-          print(recipe.bridges.toString());
+          //print(value);
+          //print(recipe.bridges.toString());
           ingredients = value;
           loading = false;
         }));
 
     // Check if the image is a placeholder
-    if (widget.image == null ||
-        widget.image!.image ==
-            const AssetImage("assets/images/LittleMan.png")) {
+    if (widget.image == null || widget.image!.image == const AssetImage("assets/images/LittleMan.png")) {
       imageIsPlaceholder = true;
     }
   }
@@ -63,7 +61,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
               width: MediaQuery.of(context).size.width / 2,
               child: !imageIsPlaceholder
                   ? ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(25),
                       child: Image(
                         image: widget.image!.image,
                         fit: BoxFit.cover,
@@ -141,10 +139,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              recipe.bridges?[index].amount
-                                      .toString()
-                                      .replaceAll(r'.', ',') ??
-                                  "",
+                              recipe.bridges?[index].amount.toString().replaceAll(r'.', ',') ?? "",
                               style: const TextStyle(
                                 fontSize: 20,
                               ),
@@ -234,9 +229,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
               const Text("Porções", style: TextStyle(fontSize: 16)),
               Text(
                 // Remove the ".0" from the end of the number
-                recipe.servings
-                    .toString()
-                    .substring(0, recipe.servings.toString().length - 2),
+                recipe.servings.toString().substring(0, recipe.servings.toString().length - 2),
                 style: const TextStyle(
                   fontSize: 20,
                 ),

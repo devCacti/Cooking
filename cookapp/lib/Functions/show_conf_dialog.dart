@@ -1,13 +1,14 @@
+import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 
 Future<bool> showConfDialog(BuildContext context, [String? title]) {
   return showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text(
+      title: Text(
         'Confirmação',
         style: TextStyle(
-          color: Colors.black,
+          color: themeNotifier.value == ThemeMode.dark ? Colors.white : Colors.black,
           fontSize: 24,
         ),
       ),
@@ -39,11 +40,11 @@ Future<bool> showConfDialog(BuildContext context, [String? title]) {
           },
         ),
         TextButton(
-          child: const Text(
+          child: Text(
             'Não',
             style: TextStyle(
               fontSize: 18,
-              color: Colors.black,
+              color: themeNotifier.value == ThemeMode.dark ? Colors.white : Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),

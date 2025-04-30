@@ -1,3 +1,4 @@
+import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:cookapp/Functions/server_requests.dart';
 import 'package:cookapp/Pages/Recipe%20Pages/recipe_detail.dart';
@@ -131,7 +132,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
             ),
           ],
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(25),
           ),
         );
       },
@@ -150,11 +151,8 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
             child: DropdownButton<String>(
               value: categoria,
               style: TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-                // themeNotifier.value == ThemeMode.dark
-                //? Colors.white
-                //: Colors.black,
+                fontSize: 16,
+                color: themeNotifier.value == ThemeMode.dark ? Colors.white : Colors.black,
               ),
               items: <String>[
                 'Geral',
@@ -220,6 +218,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                   borderRadius: BorderRadius.circular(16),
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
+                                    minVerticalPadding: 0,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
@@ -262,7 +261,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                                 borderRadius: const BorderRadius.all(Radius.circular(4)),
                                                 child: Image(
                                                   image: imageCache[_recipes[index].id]!.image,
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fitHeight,
                                                 )),
                                           )
                                         : const Icon(
