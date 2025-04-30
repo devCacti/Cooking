@@ -153,10 +153,7 @@ class _EditFormState extends State<EditForm> {
                           padding: const EdgeInsets.only(top: 10, bottom: 20),
                           child: Column(
                             children: [
-                              foto?.image ==
-                                      const AssetImage(
-                                        'Assets/Images/LittleMan.png',
-                                      )
+                              foto == null
                                   ? const IconButton(
                                       icon: Icon(Icons.image_not_supported),
                                       iconSize: 100,

@@ -27,7 +27,7 @@ class _UserSettingsState extends State<UserSettings> {
 
     Settings.getDarkMode().then(
       (value) => setState(() {
-        darkMode = value!;
+        darkMode = value;
       }),
     );
   }

@@ -24,7 +24,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 const storage = FlutterSecureStorage();
 
 // Request the image of a recipe
-Future<Image> getRecipeImage(String id,
+Future<Image?> getRecipeImage(String id,
     [Map<String, Image>? imageCache]) async {
   imageCache ??= {};
 
@@ -58,15 +58,15 @@ Future<Image> getRecipeImage(String id,
         return Image.memory(bytes);
       } else {
         print('Failed to get image: Invalid content type');
-        return Image.asset('assets/images/LittleMan.png');
+        return null;
       }
     } else {
       print(" ---> (0009) ${response.reasonPhrase}");
-      return Image.asset('assets/images/LittleMan.png');
+      return null;
     }
   } catch (e) {
     print('Error: $e');
-    return Image.asset('assets/images/LittleMan.png');
+    return null;
   }
 }
 

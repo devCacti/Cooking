@@ -5,7 +5,7 @@
 const String url = 'https://devcacti.com';
 
 //* Android Version
-const String version = 'v1.6.0.0';
+const String version = 'v1.6.0.1';
 //! | v | Release | . | Edition | . | Major | . | Patch |
 //? v      : Version
 //? Release: 0 = Alpha, 1 = Beta, 2 = RC (Release Candidate), 3 = Stable (It's considered Extreme Major)
