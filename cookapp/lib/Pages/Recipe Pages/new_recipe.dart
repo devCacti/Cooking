@@ -945,10 +945,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 value: _selectedValue,
                                 style: TextStyle(
                                   fontSize: 16.8,
-                                  color: Colors.black,
-                                  // themeNotifier.value == ThemeMode.dark
-                                  //? Colors.white
-                                  //: Colors.black,
+                                  color: themeNotifier.value == ThemeMode.dark
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                                 items: <String>[
                                   'Geral',

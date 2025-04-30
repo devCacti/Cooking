@@ -1,4 +1,3 @@
-import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:cookapp/Functions/server_requests.dart';
 import 'package:cookapp/Pages/Recipe%20Pages/recipe_detail.dart';
@@ -8,7 +7,7 @@ import 'package:cookapp/Pages/Recipe Pages/edit_recipe_page.dart';
 //* Only shows the recipes that are created by the user
 
 class ListRecipesForm extends StatefulWidget {
-  const ListRecipesForm({Key? key}) : super(key: key);
+  const ListRecipesForm({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -18,6 +17,8 @@ class ListRecipesForm extends StatefulWidget {
 class _ListRecipesFormState extends State<ListRecipesForm> {
   List<Recipe> _recipes = [];
   String categoria = 'Geral';
+  bool rLoaded = false;
+  Map<String, Image> imageCache = {};
 
   @override
   void initState() {
@@ -30,15 +31,29 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
 
     // Gets a list of the user's recipes
     // (2025-02-12) - This function returns all of the user's recipes
+    Future<void> getRecipeimage(String id) async {
+      getRecipeImage(id, imageCache).then((value) {
+        setState(() {
+          imageCache[id] = value ?? Image.asset('assets/images/LittleMan.png');
+        });
+      });
+    }
+
+    setState(() {
+      rLoaded = false;
+    });
     getMyRecipes().then((returnedValue) {
       setState(() {
         _recipes = returnedValue;
+        rLoaded = true;
+        for (Recipe recipe in returnedValue) {
+          getRecipeimage(recipe.id);
+        }
       });
     });
   }
 
-  GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
+  GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   Future decisionDialog(
     BuildContext context,
@@ -50,8 +65,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Editar ou Eliminar'),
-          content: const Text(
-              'Deseja editar esta receita ou eliminá-la permanentemente?'),
+          content: const Text('Deseja editar esta receita ou eliminá-la permanentemente?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -176,7 +190,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  height: MediaQuery.of(context).size.height - 90,
+                  height: MediaQuery.of(context).size.height,
                   child: RefreshIndicator(
                     key: refreshIndicatorKey,
                     onRefresh: () async {
@@ -191,8 +205,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                         : ListView.builder(
                             itemCount: _recipes.length,
                             itemBuilder: (BuildContext context, int index) {
-                              if (_recipes[index].getType() != categoria &&
-                                  categoria != 'Geral') {
+                              if (_recipes[index].getType() != categoria && categoria != 'Geral') {
                                 return Container();
                               }
                               return Padding(
@@ -216,6 +229,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                         MaterialPageRoute(
                                           builder: (context) => RecipeDetail(
                                             recipe: _recipes[index],
+                                            image: imageCache[_recipes[index].id],
                                           ),
                                         ),
                                       );
@@ -240,17 +254,14 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
-                                    leading: _recipes[index].image != null
+                                    leading: imageCache[_recipes[index].id] != null
                                         ? SizedBox(
                                             width: 50,
                                             height: 50,
                                             child: ClipRRect(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(4)),
+                                                borderRadius: const BorderRadius.all(Radius.circular(4)),
                                                 child: Image(
-                                                  image: _recipes[index].image!
-                                                      as ImageProvider,
+                                                  image: imageCache[_recipes[index].id]!.image,
                                                   fit: BoxFit.cover,
                                                 )),
                                           )

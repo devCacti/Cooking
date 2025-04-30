@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> getRecipeimage(String id) async {
     getRecipeImage(id, imageCache).then((value) {
       setState(() {
-        imageCache[id] = value;
+        imageCache[id] = value ?? Image.asset('assets/images/LittleMan.png');
       });
     });
   }
