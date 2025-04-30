@@ -9,7 +9,7 @@ import '../../Functions/show_conf_dialog.dart';
 class EditForm extends StatefulWidget {
   final Recipe toEditR;
 
-  const EditForm({required this.toEditR, Key? key}) : super(key: key);
+  const EditForm({required this.toEditR, super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -287,8 +287,7 @@ class _EditFormState extends State<EditForm> {
                                   )
                                 : ListView.builder(
                                     shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
+                                    physics: const NeverScrollableScrollPhysics(),
                                     itemCount: ings!.length,
                                     itemBuilder: (
                                       BuildContext context,
@@ -308,8 +307,7 @@ class _EditFormState extends State<EditForm> {
                                           child: ListTile(
                                             contentPadding: EdgeInsets.zero,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(25),
+                                              borderRadius: BorderRadius.circular(25),
                                             ),
                                             onLongPress: () {
                                               setState(() {
@@ -330,9 +328,7 @@ class _EditFormState extends State<EditForm> {
                                               ),
                                             ),
                                             trailing: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Semantics(
@@ -341,34 +337,26 @@ class _EditFormState extends State<EditForm> {
                                                     width: 32,
                                                     height: 44,
                                                     child: TextField(
-                                                      controller:
-                                                          hintControllers[
-                                                              index],
+                                                      controller: hintControllers[index],
                                                       style: const TextStyle(
                                                         fontSize: 16,
                                                       ),
-                                                      textAlign:
-                                                          TextAlign.center,
+                                                      textAlign: TextAlign.center,
                                                       onChanged: (value) {
-                                                        final newValue =
-                                                            double.tryParse(
+                                                        final newValue = double.tryParse(
                                                           value,
                                                         );
                                                         if (newValue != null) {
                                                           setState(() {
-                                                            ingsQ![index] =
-                                                                newValue;
+                                                            ingsQ![index] = newValue;
                                                           });
                                                         } else {
                                                           ingsQ![index] = 0;
                                                         }
                                                       },
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      decoration:
-                                                          const InputDecoration(
-                                                        border:
-                                                            InputBorder.none,
+                                                      keyboardType: TextInputType.number,
+                                                      decoration: const InputDecoration(
+                                                        border: InputBorder.none,
                                                         hintText: '0',
                                                       ),
                                                     ),
@@ -388,12 +376,8 @@ class _EditFormState extends State<EditForm> {
                                                     'unid.',
                                                     'colh.',
                                                     'chav.',
-                                                  ].map<
-                                                          DropdownMenuItem<
-                                                              String>>(
-                                                      (String value) {
-                                                    return DropdownMenuItem<
-                                                        String>(
+                                                  ].map<DropdownMenuItem<String>>((String value) {
+                                                    return DropdownMenuItem<String>(
                                                       value: value,
                                                       child: Text(value),
                                                     );
@@ -499,8 +483,7 @@ class _EditFormState extends State<EditForm> {
                                   )
                                 : ListView.builder(
                                     shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
+                                    physics: const NeverScrollableScrollPhysics(),
                                     itemCount: procs!.length,
                                     itemBuilder: (
                                       BuildContext context,
@@ -524,8 +507,7 @@ class _EditFormState extends State<EditForm> {
                                             ),
                                             const SizedBox(height: 10),
                                             TextFormField(
-                                              controller:
-                                                  procsControllers[index],
+                                              controller: procsControllers[index],
                                               style: const TextStyle(
                                                 fontSize: 16,
                                               ),
@@ -534,8 +516,7 @@ class _EditFormState extends State<EditForm> {
                                                   'Procedimento',
                                                 ),
                                                 border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
+                                                  borderRadius: BorderRadius.all(
                                                     Radius.circular(
                                                       16,
                                                     ),
@@ -551,8 +532,7 @@ class _EditFormState extends State<EditForm> {
                                             ),
                                             const SizedBox(height: 20),
                                             Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                                               children: [
                                                 //* Botões:
                                                 //* Mover para cima
@@ -564,22 +544,12 @@ class _EditFormState extends State<EditForm> {
                                                       : () {
                                                           String temp;
                                                           setState(() {
-                                                            temp = procs![
-                                                                index - 1];
-                                                            procs![index - 1] =
-                                                                procs![index];
-                                                            procs![index] =
-                                                                temp;
+                                                            temp = procs![index - 1];
+                                                            procs![index - 1] = procs![index];
+                                                            procs![index] = temp;
 
-                                                            procsControllers[
-                                                                        index - 1]
-                                                                    .text =
-                                                                procsControllers[
-                                                                        index]
-                                                                    .text;
-                                                            procsControllers[
-                                                                    index]
-                                                                .text = temp;
+                                                            procsControllers[index - 1].text = procsControllers[index].text;
+                                                            procsControllers[index].text = temp;
                                                           });
                                                         },
                                                   icon: const Icon(
@@ -622,13 +592,10 @@ class _EditFormState extends State<EditForm> {
                                                               onPressed: () {
                                                                 setState(() {
                                                                   procs!.remove(
-                                                                    procs![
-                                                                        index],
+                                                                    procs![index],
                                                                   );
-                                                                  procsControllers
-                                                                      .remove(
-                                                                    procsControllers[
-                                                                        index],
+                                                                  procsControllers.remove(
+                                                                    procsControllers[index],
                                                                   );
                                                                 });
                                                                 Navigator.pop(
@@ -646,27 +613,16 @@ class _EditFormState extends State<EditForm> {
                                                   },
                                                 ),
                                                 IconButton(
-                                                  onPressed: index ==
-                                                          procs!.length - 1
+                                                  onPressed: index == procs!.length - 1
                                                       ? null
                                                       : () {
                                                           String temp;
                                                           setState(() {
-                                                            temp = procs![
-                                                                index + 1];
-                                                            procs![index + 1] =
-                                                                procs![index];
-                                                            procs![index] =
-                                                                temp;
-                                                            procsControllers[
-                                                                        index + 1]
-                                                                    .text =
-                                                                procsControllers[
-                                                                        index]
-                                                                    .text;
-                                                            procsControllers[
-                                                                    index]
-                                                                .text = temp;
+                                                            temp = procs![index + 1];
+                                                            procs![index + 1] = procs![index];
+                                                            procs![index] = temp;
+                                                            procsControllers[index + 1].text = procsControllers[index].text;
+                                                            procsControllers[index].text = temp;
                                                           });
                                                         },
                                                   icon: const Icon(
@@ -799,8 +755,7 @@ class _EditFormState extends State<EditForm> {
                                           final newValue = double.tryParse(
                                             value,
                                           );
-                                          if (newValue != null &&
-                                              newValue != time) {
+                                          if (newValue != null && newValue != time) {
                                             setState(() {
                                               time = newValue;
                                             });
@@ -858,8 +813,7 @@ class _EditFormState extends State<EditForm> {
                                           final newValue = double.tryParse(
                                             value,
                                           );
-                                          if (newValue != null &&
-                                              newValue != porcs) {
+                                          if (newValue != null && newValue != porcs) {
                                             setState(() {
                                               porcs = newValue;
                                             });
@@ -1029,8 +983,7 @@ class _EditFormState extends State<EditForm> {
 
                           final List<Ingredient> noIdIngs = ingredients
                               .where(
-                                (element) =>
-                                    element.id.isEmpty || element.id == "",
+                                (element) => element.id.isEmpty || element.id == "",
                               )
                               .toList();
 
