@@ -28,6 +28,11 @@ jobs:
         with:
           sdk: 'stable'
 
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
       - name: Install dependencies
         run: dart pub get
         working-directory: ./cookapp
