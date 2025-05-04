@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart' as path_provider;
-import 'dart:developer' as developer;
+//import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 
 //!
@@ -335,7 +335,7 @@ Future<int> nextId() async {
 //? Saves list in full and simple formats
 Future<void> saveList(ListClass list) async {
   //Save Full List
-  developer.log('Trying to save FULL list - saveList()', name: 'saveList');
+  //developer.log('Trying to save FULL list - saveList()', name: 'saveList');
   try {
     final file = await _localFile;
     List<dynamic> jsonList = [];
@@ -343,17 +343,17 @@ Future<void> saveList(ListClass list) async {
       final contents = await file.readAsString();
       if (contents.isNotEmpty && contents != '[]' && contents != '') {
         jsonList = json.decode(contents);
-        developer.log('Contents: $contents');
+        //developer.log('Contents: $contents');
       } else {
         jsonList = [];
-        developer.log('Contents: $contents');
+        //developer.log('Contents: $contents');
       }
 
       jsonList.add(list.toJson());
-      developer.log(jsonList.toString());
+      //developer.log(jsonList.toString());
       await file.writeAsString(json.encode(jsonList));
     } catch (e) {
-      developer.log('Error: $e - saveList()');
+      //developer.log('Error: $e - saveList()');
       jsonList = [];
     }
 
@@ -364,7 +364,7 @@ Future<void> saveList(ListClass list) async {
     throw Exception('Failed to save items to file: $e');
   }
 
-  developer.log('Trying to save SIMPLE list - saveList()', name: 'saveList');
+  //developer.log('Trying to save SIMPLE list - saveList()', name: 'saveList');
   //Save Simple List
   try {
     final file = await _localSimpleFile;
@@ -383,7 +383,7 @@ Future<void> saveList(ListClass list) async {
       color: list.color,
       detalhada: list.detalhada,
     ).toJson());
-    developer.log(jsonList.toString());
+    //developer.log(jsonList.toString());
     await file.writeAsString(json.encode(jsonList));
   } catch (e) {
     throw Exception('Failed to save items to file: $e');
@@ -393,31 +393,31 @@ Future<void> saveList(ListClass list) async {
 //? Loads all lists
 Future<List<ListClass>> loadLists() async {
   try {
-    developer.log('Trying to load lists - loadLists()');
+    //developer.log('Trying to load lists - loadLists()');
     final file = await _localFile.then((value) {
-      developer.log('File: $value');
+      //developer.log('File: $value');
     });
 
     if (!await file.exists()) {
-      developer.log('File does not exist - loadLists()');
+      //developer.log('File does not exist - loadLists()');
       return [];
     }
 
-    developer.log('Loaded file');
+    //developer.log('Loaded file');
 
     final contents = await file.readAsString();
-    developer.log('Contents: $contents');
+    //developer.log('Contents: $contents');
 
     final List<dynamic> jsonList = jsonDecode(contents);
-    developer.log('Decoded file');
+    //developer.log('Decoded file');
 
     final List<ListClass> lists = jsonList.map((json) => ListClass.fromJson(json)).toList();
-    developer.log('Mapped file');
+    //developer.log('Mapped file');
 
-    developer.log('Lists: $lists');
+    //developer.log('Lists: $lists');
     return lists;
   } catch (e) {
-    developer.log('Error loading lists: $e');
+    //developer.log('Error loading lists: $e');
     return [];
   }
 }
@@ -425,29 +425,29 @@ Future<List<ListClass>> loadLists() async {
 //? Loads necessary only (id, name, description, date, color) from local simple file
 Future<List<PartialList>> loadListsSimple() async {
   try {
-    developer.log('Trying to load lists - loadListsSimple()');
+    //developer.log('Trying to load lists - loadListsSimple()');
     final file = await _localSimpleFile;
 
     if (!await file.exists()) {
-      developer.log('File does not exist (yet) - loadListsSimple()');
+      //developer.log('File does not exist (yet) - loadListsSimple()');
       return [];
     }
 
-    developer.log('Loaded file');
+    //developer.log('Loaded file');
 
     final contents = await file.readAsString();
-    developer.log('Contents: $contents');
+    //developer.log('Contents: $contents');
 
     if (contents.isEmpty) {
-      developer.log('File is empty - loadListsSimple()');
+      //developer.log('File is empty - loadListsSimple()');
       return [];
     }
 
     final List<dynamic> jsonList = jsonDecode(contents);
-    developer.log('Decoded file');
+    //developer.log('Decoded file');
 
     final List<PartialList> lists = jsonList.map((json) => PartialList.fromJson(json)).toList();
-    developer.log('Mapped file');
+    //developer.log('Mapped file');
 
     final List<PartialList> filteredList = lists
         .map((list) => PartialList(
@@ -459,10 +459,10 @@ Future<List<PartialList>> loadListsSimple() async {
               detalhada: list.detalhada,
             ))
         .toList();
-    //developer.log('Filtered lists: ${filteredList.toList()}'); //! Useless
+    ////developer.log('Filtered lists: ${filteredList.toList()}'); //! Useless
     return filteredList;
   } catch (e) {
-    developer.log('Error loading lists: $e');
+    //developer.log('Error loading lists: $e');
     return [];
   }
 }
@@ -470,31 +470,31 @@ Future<List<PartialList>> loadListsSimple() async {
 //? Loads lists by id for individual loading
 Future<ListClass?> loadListById(int id) async {
   try {
-    developer.log('Trying to load lists - loadListById()');
+    //developer.log('Trying to load lists - loadListById()');
 
     final file = await _localFile;
     if (!await file.exists()) {
-      developer.log('File  > ${file.path} <  DOESN\'T EXIST');
+      //developer.log('File  > ${file.path} <  DOESN\'T EXIST');
       return null;
     }
 
     final contents = await file.readAsString();
-    developer.log('Contents: $contents');
+    //developer.log('Contents: $contents');
 
     final List<dynamic> jsonList = jsonDecode(contents);
-    developer.log('Decoded file');
+    //developer.log('Decoded file');
 
     final List<ListClass> lists = jsonList.map((json) => ListClass.fromJson(json)).toList();
-    developer.log('Mapped file');
+    //developer.log('Mapped file');
 
     final filteredList = lists.firstWhere(
       (list) => list.id == id,
     );
-    developer.log('Filtered list: $filteredList');
+    //developer.log('Filtered list: $filteredList');
 
     return filteredList;
   } catch (e) {
-    developer.log('Error loading lists: $e');
+    //developer.log('Error loading lists: $e');
     return null;
   }
 }

@@ -30,8 +30,8 @@ class _RecipeDetailState extends State<RecipeDetail> {
     recipe = widget.recipe;
 
     recipeIngredients(recipe.id).then((value) => setState(() {
-          //developer.log(value);
-          //developer.log(recipe.bridges.toString());
+          ////developer.log(value);
+          ////developer.log(recipe.bridges.toString());
           ingredients = value;
           loading = false;
         }));
@@ -120,7 +120,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: ingredients.length,
                   itemBuilder: (context, index) {
-                    //developer.log(recipe.bridges?[index].ingredient ?? "null");
+                    ////developer.log(recipe.bridges?[index].ingredient ?? "null");
                     return Column(
                       children: [
                         Text(

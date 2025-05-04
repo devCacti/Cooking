@@ -1,5 +1,5 @@
 //import 'dart:io';
-import 'dart:developer' as developer;
+//import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 //import 'package:image_picker/image_picker.dart';
@@ -968,7 +968,7 @@ class _EditFormState extends State<EditForm> {
                               // When i is at 2 it's already asking for the 3rd element
                               if (ingredients.length - 1 < i) {
                                 // create a new ingredient if it doesn't exist
-                                developer.log("Creating new ingredient");
+                                //developer.log("Creating new ingredient");
                                 ingredients.add(
                                   Ingredient(
                                     id: "",
@@ -980,9 +980,9 @@ class _EditFormState extends State<EditForm> {
                                 );
                               }
                               // TODO: PROBLEM (ISSUE: #24)
-                              developer.log("Ingredient : ${ingredients[i].id}");
-                              developer.log("Amount     : ${ingsQ?[i]}");
-                              developer.log("Custom Unit: ${ingsT?[i]}");
+                              //developer.log("Ingredient : ${ingredients[i].id}");
+                              //developer.log("Amount     : ${ingsQ?[i]}");
+                              //developer.log("Custom Unit: ${ingsT?[i]}");
                               ingsB.add(
                                 IngBridge(
                                   id: "",

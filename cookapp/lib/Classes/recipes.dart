@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:developer' as developer;
+//import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -160,26 +160,26 @@ class Recipe {
       try {
         var response = await request.send();
         if (response.statusCode == 200) {
-          //developer.log(" ---> ${await response.stream.bytesToString()}");
+          ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
           // if success field is true, save the user data
           var responseBody = await response.stream.bytesToString();
           if (responseBody.contains('"error":""')) {
-            developer.log('Got image');
+            //developer.log('Got image');
 
             // Save the image to the application files
             file.writeAsBytesSync(responseBody.codeUnits);
           } else {
-            developer.log('Failed to get image');
-            developer.log('Response: $responseBody');
+            //developer.log('Failed to get image');
+            //developer.log('Response: $responseBody');
             return;
           }
         } else {
-          developer.log(" ---> (0006) ${response.reasonPhrase}");
+          //developer.log(" ---> (0006) ${response.reasonPhrase}");
           return;
         }
       } catch (e) {
-        developer.log('Error: $e');
+        //developer.log('Error: $e');
         return;
       }
 
@@ -254,7 +254,7 @@ class RecipeC {
     try {
       await user.getInstance();
     } catch (e) {
-      developer.log('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
 
@@ -307,7 +307,7 @@ class RecipeC {
       String customIngM = '';
       for (var ing in this.customIngM ?? []) {
         customIngM += '${ing[0]}:${ing[1]};';
-        developer.log('Ing: ${ing[0]}:${ing[1]}');
+        //developer.log('Ing: ${ing[0]}:${ing[1]}');
       }
       if (customIngM.isNotEmpty) {
         // Remove the last semicolon
@@ -323,14 +323,14 @@ class RecipeC {
             filename: 'image.png',
             contentType: MediaType('image', 'png'),
           ));
-          developer.log("image file: ${image!.path}");
+          //developer.log("image file: ${image!.path}");
         } catch (e) {
-          developer.log('Error Adding Foto before sending: $e');
+          //developer.log('Error Adding Foto before sending: $e');
         }
       }
 
       //? Debugging prints
-      developer.log("Steps: $steps");
+      //developer.log("Steps: $steps");
 
       // Add the fields to the request | All the names of the atributes of the class match the body field names
       request.fields.addAll({
@@ -345,39 +345,39 @@ class RecipeC {
         'isPublic': isPublic.toString(), // If isPublic is true, it will send a value of 'true' telling the server that the recipe is public
         'ingredientIds': ingredientIds,
       });
-      developer.log(request.fields as String);
+      //developer.log(request.fields as String);
     } catch (e) {
-      developer.log('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
 
     // Send the request
     try {
-      developer.log(request as String);
+      //developer.log(request as String);
       var response = await request.send();
       if (response.statusCode == 200) {
         // if success field is true, save the user data
         var responseBody = await response.stream.bytesToString();
         if (responseBody.contains('"error":""')) {
-          developer.log('Recipe sent successfully');
+          //developer.log('Recipe sent successfully');
 
           // Parse the JSON response and return the recipe
           var json = jsonDecode(responseBody);
 
-          developer.log(json);
+          //developer.log(json);
 
           return true;
         } else {
-          developer.log('Failed to send recipe');
-          developer.log('Response: $responseBody');
+          //developer.log('Failed to send recipe');
+          //developer.log('Response: $responseBody');
           return false;
         }
       } else {
-        developer.log(" ---> (0007) ${response.reasonPhrase}");
+        //developer.log(" ---> (0007) ${response.reasonPhrase}");
         return false;
       }
     } catch (e) {
-      developer.log('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
   }
@@ -388,7 +388,7 @@ class RecipeC {
     try {
       await user.getInstance();
     } catch (e) {
-      developer.log('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
 
@@ -442,7 +442,7 @@ class RecipeC {
       String customIngM = '';
       for (var ing in this.customIngM ?? []) {
         customIngM += '${ing['IngGUID']}:${ing['CustomUnit']};';
-        developer.log('Ing: ${ing['IngGUID']}:${ing['CustomUnit']}');
+        //developer.log('Ing: ${ing['IngGUID']}:${ing['CustomUnit']}');
       }
       if (customIngM.isNotEmpty) {
         // Remove the last semicolon
@@ -460,7 +460,7 @@ class RecipeC {
       }
 
       //? Debugging prints
-      developer.log("Steps: $steps");
+      //developer.log("Steps: $steps");
 
       // Add the fields to the request | All the names of the atributes of the class match the body field names
       request.fields.addAll({
@@ -477,7 +477,7 @@ class RecipeC {
         'ingredientIds': ingredientIds,
       });
 
-      developer.log(request.fields as String);
+      //developer.log(request.fields as String);
 
       // Send the request
       var response = await request.send();
@@ -485,25 +485,25 @@ class RecipeC {
         // if success field is true, save the user data
         var responseBody = await response.stream.bytesToString();
         if (responseBody.contains('"error":""')) {
-          developer.log('Recipe updated successfully');
+          //developer.log('Recipe updated successfully');
 
           // Parse the JSON response and return the recipe
           var json = jsonDecode(responseBody);
 
-          developer.log(json);
+          //developer.log(json);
 
           return true;
         } else {
-          developer.log('Failed to update recipe');
-          developer.log('Response: $responseBody');
+          //developer.log('Failed to update recipe');
+          //developer.log('Response: $responseBody');
           return false;
         }
       } else {
-        developer.log(" ---> (0008) ${response.reasonPhrase}");
+        //developer.log(" ---> (0008) ${response.reasonPhrase}");
         return false;
       }
     } catch (e) {
-      developer.log('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
   }
@@ -514,7 +514,7 @@ class RecipeC {
     try {
       await user.getInstance();
     } catch (e) {
-      developer.log('Error: $e');
+      //developer.log('Error: $e');
       return 1;
     }
 
@@ -538,21 +538,21 @@ class RecipeC {
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
       if (responseBody.contains('"error":""')) {
-        developer.log('Recipe deleted successfully');
+        //developer.log('Recipe deleted successfully');
 
         // Parse the JSON response and return the recipe
         var json = jsonDecode(responseBody);
 
-        developer.log(json);
+        //developer.log(json);
 
         return 0;
       } else {
-        developer.log('Failed to delete recipe');
-        developer.log('Response: $responseBody');
+        //developer.log('Failed to delete recipe');
+        //developer.log('Response: $responseBody');
         return -1;
       }
     } else {
-      developer.log(" ---> (0009) ${response.reasonPhrase}");
+      //developer.log(" ---> (0009) ${response.reasonPhrase}");
       return 2;
     }
   }

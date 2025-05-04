@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'dart:developer' as developer;
+//import 'dart:developer' as developer;
 
 import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
@@ -473,7 +473,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     ingsQaunt.add(0);
                                   }
                                 } catch (e) {
-                                  developer.log('Erro: $e');
+                                  //developer.log('Erro: $e');
                                 }
                               });
                             },
@@ -721,7 +721,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     procR = '';
                                   }
                                 } catch (e) {
-                                  developer.log('Erro: $e');
+                                  //developer.log('Erro: $e');
                                 }
                               });
                             },

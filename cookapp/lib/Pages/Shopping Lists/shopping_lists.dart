@@ -120,7 +120,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                             ),
                             onTap: () async {
                               var listId = lists[index].id;
-                              //developer.log("Attempting to load list with id: $listId");
+                              ////developer.log("Attempting to load list with id: $listId");
                               await loadListById(listId).then((value) {
                                 if (value == null) {
                                   failed();

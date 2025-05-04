@@ -12,6 +12,7 @@
 
 //* Imports
 import 'dart:convert';
+//import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../Classes/recipes.dart';
@@ -37,7 +38,7 @@ Future<Image?> getRecipeImage(String id, [Map<String, Image>? imageCache]) async
     //try to get the instance of the user
     await user.getInstance();
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return Image.asset('assets/images/LittleMan.png');
   }
   var request = http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
@@ -55,15 +56,15 @@ Future<Image?> getRecipeImage(String id, [Map<String, Image>? imageCache]) async
       if (contentType != null && contentType.startsWith('image/')) {
         return Image.memory(bytes);
       } else {
-        developer.log('Failed to get image: Invalid content type');
+        //developer.log('Failed to get image: Invalid content type');
         return null;
       }
     } else {
-      developer.log(" ---> (0009) ${response.reasonPhrase}");
+      //developer.log(" ---> (0009) ${response.reasonPhrase}");
       return null;
     }
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return null;
   }
 }
@@ -74,7 +75,7 @@ Future<List<Recipe>> getMyRecipes() async {
   try {
     await user.getInstance();
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return [];
   }
   // Get the user's recipes from the server
@@ -84,18 +85,18 @@ Future<List<Recipe>> getMyRecipes() async {
   try {
     var response = await request.send();
     if (response.statusCode == 200) {
-      //developer.log(" ---> ${await response.stream.bytesToString()}");
+      ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
       if (responseBody.contains('"error":""')) {
-        developer.log('Got recipes');
+        //developer.log('Got recipes');
 
         // Parse the JSON response and return the recipes
         var json = jsonDecode(responseBody);
         var recipeinfos = json['recipes'];
 
-        developer.log(recipeinfos);
+        //developer.log(recipeinfos);
 
         // TODO: Complete this function in order to return a list of recipes
         List<Recipe> recipeList = [];
@@ -103,7 +104,7 @@ Future<List<Recipe>> getMyRecipes() async {
           try {
             Recipe rcp = Recipe.fromJson(recipe);
 
-            developer.log('Recipe: $rcp');
+            //developer.log('Recipe: $rcp');
 
             ////for (var ingredient in recipe['Ingredients']) {
             ////  var ing = Ingredient.fromJson(ingredient);
@@ -112,22 +113,22 @@ Future<List<Recipe>> getMyRecipes() async {
 
             recipeList.add(rcp);
           } catch (e) {
-            developer.log('Error: $e');
+            //developer.log('Error: $e');
           }
         }
 
         return recipeList;
       } else {
-        developer.log('Failed to get recipes');
-        developer.log('Response: $responseBody');
+        //developer.log('Failed to get recipes');
+        //developer.log('Response: $responseBody');
         return [];
       }
     } else {
-      developer.log(" ---> (0011) ${response.reasonPhrase}");
+      //developer.log(" ---> (0011) ${response.reasonPhrase}");
       return [];
     }
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return [];
   }
 }
@@ -138,7 +139,7 @@ Future<List<Recipe>> getSearchRecipes(String search, int type) async {
   try {
     await user.getInstance();
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return [];
   }
   // Get the user's recipes from the server
@@ -151,12 +152,12 @@ Future<List<Recipe>> getSearchRecipes(String search, int type) async {
   try {
     var response = await request.send();
     if (response.statusCode == 200) {
-      //developer.log(" ---> ${await response.stream.bytesToString()}");
+      ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
       if (responseBody.contains('"error":""')) {
-        developer.log('Got recipes');
+        //developer.log('Got recipes');
 
         // Parse the JSON response and return the recipes
         var json = jsonDecode(responseBody);
@@ -167,7 +168,7 @@ Future<List<Recipe>> getSearchRecipes(String search, int type) async {
             // Creates a temporary recipe object
             Recipe rcp = Recipe.fromJson(recipe);
 
-            developer.log('Recipe: $rcp');
+            //developer.log('Recipe: $rcp');
 
             //! For now it won't save the ingredients, it will load them every time
             //for (var ingredient in recipe['Ingredients']) {
@@ -178,21 +179,21 @@ Future<List<Recipe>> getSearchRecipes(String search, int type) async {
             // Adds the recipe object to the list
             recipeList.add(rcp);
           } catch (e) {
-            developer.log('Error: $e');
+            //developer.log('Error: $e');
           }
         }
         // Prints the information about the recipes on the console for debugging
-        developer.log(recipeinfos);
+        //developer.log(recipeinfos);
 
         // Returns the list of recipes
         return recipeList;
       }
     } else {
-      developer.log(" ---> (0012) ${response.reasonPhrase}");
+      //developer.log(" ---> (0012) ${response.reasonPhrase}");
       return List<Recipe>.empty();
     }
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
   }
   return List<Recipe>.empty();
 }
@@ -207,7 +208,7 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
   try {
     await user.getInstance();
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return [];
   }
   // Get the user's recipes from the server
@@ -220,18 +221,18 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
   try {
     var response = await request.send();
     if (response.statusCode == 200) {
-      //developer.log(" ---> ${await response.stream.bytesToString()}");
+      ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
       if (responseBody.contains('"error":""')) {
-        developer.log('Got popular recipes');
+        //developer.log('Got popular recipes');
 
         // Parse the JSON response and return the recipes
         var json = jsonDecode(responseBody);
         var recipeinfos = json['recipes'];
 
-        ////developer.log(recipeinfos);
+        //////developer.log(recipeinfos);
         for (var recipe in recipeinfos) {
           try {
             // Creates a temporary recipe object
@@ -240,7 +241,7 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
             recipeList.add(rcp);
           } catch (e) {
             //? This try catch is indeed inside another try catch block but it's for better error handling
-            developer.log('Error: $e');
+            //developer.log('Error: $e');
           }
         }
 
@@ -248,11 +249,11 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
         return recipeList;
       }
     } else {
-      developer.log(" ---> (0013) ${response.reasonPhrase}");
+      //developer.log(" ---> (0013) ${response.reasonPhrase}");
       return List<Recipe>.empty();
     }
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
   }
   return List<Recipe>.empty();
 }
@@ -287,7 +288,7 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
         try {
           ingredientIds.add(ingredient['IngGUID']);
         } catch (e) {
-          developer.log('Error: $e');
+          //developer.log('Error: $e');
         }
       }
 
@@ -301,13 +302,13 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
 
           ingredientList.add(Ingredient.fromJson(ingredientDecodedJson));
         } catch (e) {
-          developer.log('Error: $e');
+          //developer.log('Error: $e');
         }
       }
 
       return ingredientList;
     } catch (e) {
-      developer.log('Error fetching the ingredient $id: $e');
+      //developer.log('Error fetching the ingredient $id: $e');
       return [Ingredient(id: id, name: 'Ingredient', unit: 'Unit')];
     }
   } else {
@@ -315,7 +316,7 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
     try {
       await user.getInstance();
     } catch (e) {
-      developer.log('Error: $e');
+      //developer.log('Error: $e');
       return [];
     }
     // Fetch the recipe from the server
@@ -323,17 +324,17 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
     var request = http.Request('GET', Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$id'));
     request.headers.addAll({'cookie': user.cookie});
 
-    developer.log("Cookie: ${user.cookie}");
+    //developer.log("Cookie: ${user.cookie}");
 
     try {
       var response = await request.send();
       if (response.statusCode == 200) {
-        //developer.log(" ---> ${await response.stream.bytesToString()}");
+        ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
         // if success field is true, save the user data
         var responseBody = await response.stream.bytesToString();
         if (responseBody.contains('"error":""')) {
-          developer.log('Got ingredient');
+          //developer.log('Got ingredient');
 
           // Parse the JSON response and return the recipe
           var json = jsonDecode(responseBody);
@@ -350,7 +351,7 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
               ing.save();
               ingredientList.add(ing);
             } catch (e) {
-              developer.log('Error: $e');
+              //developer.log('Error: $e');
             }
           }
 
@@ -360,17 +361,17 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
 
           return ingredientList;
         } else {
-          developer.log('Failed to get ingredient');
-          developer.log('Response: $responseBody');
+          //developer.log('Failed to get ingredient');
+          //developer.log('Response: $responseBody');
           return [Ingredient(id: id, name: 'Ingredient Fail 1', unit: 'Unit')];
         }
       } else {
         // If the status code is anything but 200, return a default recipe
-        developer.log(" ---> (0017) ${response.reasonPhrase}");
+        //developer.log(" ---> (0017) ${response.reasonPhrase}");
         return [Ingredient(id: id, name: 'Ingredient Fail 2', unit: 'Unit')];
       }
     } catch (e) {
-      developer.log('Error: $e');
+      //developer.log('Error: $e');
       return [Ingredient(id: id, name: 'Ingredient Fail 3', unit: 'Unit')];
     }
   }
@@ -382,7 +383,7 @@ Future<List<Ingredient>> recipeIngredients(String id) async {
   try {
     await user.getInstance();
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return [];
   }
   // localhost:44322/Recipes/GetIngredientsByRecipe?Id=630fd198-beba-4f57-944d-8eb7907d8f65
@@ -393,12 +394,12 @@ Future<List<Ingredient>> recipeIngredients(String id) async {
   try {
     var response = await request.send();
     if (response.statusCode == 200) {
-      //developer.log(" ---> ${await response.stream.bytesToString()}");
+      ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
       if (responseBody.contains('"error":""')) {
-        developer.log('Got ingredient');
+        //developer.log('Got ingredient');
 
         // Parse the JSON response and return the recipe
         var json = jsonDecode(responseBody);
@@ -419,23 +420,23 @@ Future<List<Ingredient>> recipeIngredients(String id) async {
             //!ing.save();
             ingredientList.add(ing);
           } catch (e) {
-            developer.log('Error: $e');
+            //developer.log('Error: $e');
           }
         }
 
         return ingredientList;
       } else {
-        developer.log('Failed to get ingredient');
-        developer.log('Response: $responseBody');
+        //developer.log('Failed to get ingredient');
+        //developer.log('Response: $responseBody');
         return [Ingredient(id: id, name: 'Ingredient Fail 1', unit: 'Unit')];
       }
     } else {
       // If the status code is anything but 200, return a default recipe
-      developer.log(" ---> (0018) ${response.reasonPhrase}");
+      //developer.log(" ---> (0018) ${response.reasonPhrase}");
       return [Ingredient(id: id, name: 'Ingredient Fail 2', unit: 'Unit')];
     }
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return [Ingredient(id: id, name: 'Ingredient Fail 3', unit: 'Unit')];
   }
 }
@@ -446,7 +447,7 @@ Future<int> fetchPopularPages() async {
   try {
     await user.getInstance();
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return 0;
   }
   // Get the user's recipes from the server
@@ -456,7 +457,7 @@ Future<int> fetchPopularPages() async {
   try {
     var response = await request.send();
     if (response.statusCode == 200) {
-      //developer.log(" ---> ${await response.stream.bytesToString()}");
+      ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
@@ -467,16 +468,16 @@ Future<int> fetchPopularPages() async {
 
         return totalPages;
       } else {
-        developer.log('Failed to get pages');
-        developer.log('Response: $responseBody');
+        //developer.log('Failed to get pages');
+        //developer.log('Response: $responseBody');
         return 0;
       }
     } else {
-      developer.log(" ---> (0019) ${response.reasonPhrase}");
+      //developer.log(" ---> (0019) ${response.reasonPhrase}");
       return 0;
     }
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return 0;
   }
 }
@@ -487,7 +488,7 @@ Future<List<String>> newIngredients(List<Ingredient> ings) async {
   try {
     await user.getInstance();
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
     return [];
   }
   // Upload the ingredients to the server: /Recipes/NewIngredients
@@ -530,26 +531,26 @@ Future<List<String>> newIngredients(List<Ingredient> ings) async {
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
       if (responseBody.contains('"error":""')) {
-        developer.log('New ingredients added');
+        //developer.log('New ingredients added');
 
         // Parse the JSON response and return the recipes
         var json = jsonDecode(responseBody);
         var ingredientIds = json['ingredientIds'];
-        developer.log(json);
+        //developer.log(json);
 
         // Return the ingredient ids in a list
         return ingredientIds.cast<String>();
       } else {
-        developer.log('Failed to add ingredients');
-        developer.log('Response: $responseBody');
+        //developer.log('Failed to add ingredients');
+        //developer.log('Response: $responseBody');
         return List<String>.empty();
       }
     } else {
-      developer.log(" ---> (0020) ${response.reasonPhrase}");
+      //developer.log(" ---> (0020) ${response.reasonPhrase}");
       return List<String>.empty();
     }
   } catch (e) {
-    developer.log('Error: $e');
+    //developer.log('Error: $e');
   }
 
   return List<String>.empty(); //? Not implemented

@@ -1,6 +1,6 @@
 import 'package:cookapp/Classes/lista_compra.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as developer;
+//import 'dart:developer' as developer;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class CreateList extends StatefulWidget {
@@ -48,7 +48,7 @@ class _CreateListState extends State<CreateList> {
       for (var loja in lojasTemp) {
         if (loja.nome != 'Nova Loja' && loja.nome.isNotEmpty) {
           lojas.add(loja.nome);
-          developer.log('Loja: ${loja.nome}');
+          //developer.log('Loja: ${loja.nome}');
         }
       }
 
@@ -165,7 +165,7 @@ class _CreateListState extends State<CreateList> {
                     labelText: 'Loja',
                   ),
                   items: lojas.map((String value) {
-                    //developer.log("Stores: $value");
+                    ////developer.log("Stores: $value");
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
