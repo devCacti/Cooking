@@ -1,3 +1,5 @@
+//import 'dart:developer' as developer;
+
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'server_info.dart';
@@ -24,13 +26,11 @@ class Login {
   });
 
   Future<bool> send() async {
-    print('Logging in with email: $email and password: $password');
+    //developer.log('Logging in with email: $email and password: $password');
 
     // Do an API call to the server to login
-    var request =
-        http.MultipartRequest('POST', Uri.parse('$url/Account/AppLogin'));
-    request.fields
-        .addAll({'email': email, 'password': password, 'remember me': 'true'});
+    var request = http.MultipartRequest('POST', Uri.parse('$url/Account/AppLogin'));
+    request.fields.addAll({'email': email, 'password': password, 'remember me': 'true'});
 
     //request.headers.addAll(headers); // no headers needed, we only need to get the cookie from the response
 
@@ -41,13 +41,13 @@ class Login {
 
       // Check if it contains the success field and if it has the value true
       if (responseBody.contains('success":true')) {
-        print('Login successful');
+        //developer.log('Login successful');
 
         // Get the cookie from the response
         var cookie = response.headers['set-cookie'];
-        print('Cookie: $cookie');
+        //developer.log('Cookie: $cookie');
 
-        print('Response: $responseBody');
+        //developer.log('Response: $responseBody');
 
         // Get the user data from the response
         var username = responseBody.split('username":"')[1].split('"')[0];
@@ -75,12 +75,12 @@ class Login {
         await user.save();
         return true;
       } else {
-        print('Login failed');
-        print('Response: $responseBody');
+        //developer.log('Login failed');
+        //developer.log('Response: $responseBody');
         return false;
       }
     } else {
-      print(" ---> (0002) ${response.reasonPhrase}");
+      //developer.log(" ---> (0002) ${response.reasonPhrase}");
       return false;
     }
   }
@@ -107,14 +107,13 @@ class Register {
 
   Future<int> register() async {
     if (password != confirmPassword) {
-      print('Passwords do not match');
+      //developer.log('Passwords do not match');
       return 1;
     }
-    print('Registering with email: $email, username: $username, name: $name');
+    //developer.log('Registering with email: $email, username: $username, name: $name');
 
     // Do an API call to the server to register
-    var request =
-        http.MultipartRequest('POST', Uri.parse('$url/Account/AppRegister'));
+    var request = http.MultipartRequest('POST', Uri.parse('$url/Account/AppRegister'));
     request.fields.addAll({
       'Email': email,
       'UserName': username,
@@ -134,11 +133,11 @@ class Register {
 
       // Check if it contains the success field and if it has the value true
       if (responseBody.contains('success":true')) {
-        print('Register successful');
+        //developer.log('Register successful');
 
         // Get the cookie from the response
         var cookie = response.headers['set-cookie'];
-        print('Cookie: $cookie');
+        //developer.log('Cookie: $cookie');
 
         // Get the user data from the response
         var username = responseBody.split('username":"')[1].split('"')[0];
@@ -160,15 +159,14 @@ class Register {
 
         return 0;
       } else {
-        print('Register failed');
-        print('Response: $responseBody');
+        //developer.log('Register failed');
+        //developer.log('Response: $responseBody');
         // Get the error -> code from the json response
         //"error":{"code":"5","description":"Model not valid"}
-        return int.parse(
-            responseBody.split('"code":"')[1].split('"')[0]); // 2, 3, 4, 5
+        return int.parse(responseBody.split('"code":"')[1].split('"')[0]); // 2, 3, 4, 5
       }
     } else {
-      print(" ---> (0003) ${response.reasonPhrase}");
+      //developer.log(" ---> (0003) ${response.reasonPhrase}");
       return -1;
     }
   }
@@ -209,12 +207,12 @@ class User {
     name = await storage.read(key: 'name') ?? '';
     surname = await storage.read(key: 'surname') ?? '';
 
-    ////print('Cookie: $cookie');
-    ////print('Guid: $guid');
-    ////print('Email: $email');
-    ////print('Username: $username');
-    ////print('Name: $name');
-    ////print('Surname: $surname');
+    //////developer.log('Cookie: $cookie');
+    //////developer.log('Guid: $guid');
+    //////developer.log('Email: $email');
+    //////developer.log('Username: $username');
+    //////developer.log('Name: $name');
+    //////developer.log('Surname: $surname');
 
     //! It's triggering a terrible error that doesn't allow app manipulation
     //! [ERROR:flutter/shell/platform/windows/task_runner_window.cc(56)] Failed to post message to main thread.
@@ -258,24 +256,24 @@ class User {
     try {
       var response = await request.send();
       if (response.statusCode == 200) {
-        //print(" ---> ${await response.stream.bytesToString()}");
+        ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
         // if success field is true, save the user data
         var responseBody = await response.stream.bytesToString();
         if (responseBody.contains('success":true')) {
-          print('Cookie is valid');
+          //developer.log('Cookie is valid');
           return true;
         } else {
-          print('Cookie is invalid');
-          print('Response: $responseBody');
+          //developer.log('Error 0004: ${responseBody.split('"description":"')[1].split('"')[0]}');
+          //developer.log('Cookie is invalid');
           return false;
         }
       } else {
-        print(" ---> (0004) ${response.reasonPhrase}");
+        //developer.log('Error 0004: ${response.reasonPhrase}');
         return false;
       }
     } catch (e) {
-      print('Error: $e');
+      //developer.log('Error 0004: $e');
       return false;
     }
   }
@@ -290,7 +288,7 @@ class User {
       await storage.delete(key: 'name');
       await storage.delete(key: 'surname');
     } catch (e) {
-      print('Deletting Error: $e');
+      //developer.log('Error deleting user data: $e');
       return false;
     }
 
@@ -299,13 +297,13 @@ class User {
 
   // Save to local storage (user.json)
   Future<void> save() async {
-    ////print('Saving user data to the secure storage');
-    ////print('Cookie: $cookie');
-    ////print('Guid: $guid');
-    ////print('Email: $email');
-    ////print('Username: $username');
-    ////print('Name: $name');
-    ////print('Surname: $surname');
+    //////developer.log('Saving user data to the secure storage');
+    //////developer.log('Cookie: $cookie');
+    //////developer.log('Guid: $guid');
+    //////developer.log('Email: $email');
+    //////developer.log('Username: $username');
+    //////developer.log('Name: $name');
+    //////developer.log('Surname: $surname');
     // Save the user data to the secure storage
     try {
       await storage.write(key: 'cookie', value: cookie);
@@ -315,9 +313,9 @@ class User {
       await storage.write(key: 'name', value: name);
       await storage.write(key: 'surname', value: surname ?? '');
     } catch (e) {
-      print('writting Error: $e');
+      //developer.log('writting Error: $e');
     }
 
-    print('Saved user data to the secure storage');
+    //developer.log('Saved user data to the secure storage');
   }
 }

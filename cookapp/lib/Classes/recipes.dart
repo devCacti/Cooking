@@ -1,4 +1,5 @@
 import 'dart:convert';
+//import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -46,25 +47,14 @@ class Recipe {
       title: json['Title'],
       description: json['Description'] ?? '',
       bridges: (json['Ingredients'] is List)
-          ? (json['Ingredients'] as List<dynamic>?)
-              ?.map<IngBridge>((bridge) => IngBridge.fromJson(bridge))
-              .toList()
+          ? (json['Ingredients'] as List<dynamic>?)?.map<IngBridge>((bridge) => IngBridge.fromJson(bridge)).toList()
           : [IngBridge.fromJson(json['Ingredients'])],
       steps: (json['Steps'] is List)
-          ? (json['Steps'] as List<dynamic>?)
-              ?.map<String>((step) =>
-                  (step as Map<String, dynamic>)['Details'].toString())
-              .toList()
+          ? (json['Steps'] as List<dynamic>?)?.map<String>((step) => (step as Map<String, dynamic>)['Details'].toString()).toList()
           : [json['Steps'].toString()],
-      time: (json['Time'] is int)
-          ? (json['Time'] as int).toDouble()
-          : (json['Time'] ?? 0.0) as double,
-      servings: (json['Portions'] is int)
-          ? (json['Portions'] as int).toDouble()
-          : (json['Portions'] ?? 0.0) as double,
-      type: (json['Type'] is int)
-          ? json['Type']
-          : (json['Type'] as double).toInt(),
+      time: (json['Time'] is int) ? (json['Time'] as int).toDouble() : (json['Time'] ?? 0.0) as double,
+      servings: (json['Portions'] is int) ? (json['Portions'] as int).toDouble() : (json['Portions'] ?? 0.0) as double,
+      type: (json['Type'] is int) ? json['Type'] : (json['Type'] as double).toInt(),
       //isAllowed: json['isAllowed'],
       isPublic: json['isPublic'] ?? false,
       author: json['Author'] ?? '',
@@ -165,32 +155,31 @@ class Recipe {
       // The image is received as an actual image file, not a string
       // To receive it, a id needs to be sent in the arguments
       // Example: $url/Recipes/RecipeImage?id=630fd198-beba-4f57-944d-8eb7907d8f65
-      var request =
-          http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
+      var request = http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
 
       try {
         var response = await request.send();
         if (response.statusCode == 200) {
-          //print(" ---> ${await response.stream.bytesToString()}");
+          ////developer.log(" ---> ${await response.stream.bytesToString()}");
 
           // if success field is true, save the user data
           var responseBody = await response.stream.bytesToString();
           if (responseBody.contains('"error":""')) {
-            print('Got image');
+            //developer.log('Got image');
 
             // Save the image to the application files
             file.writeAsBytesSync(responseBody.codeUnits);
           } else {
-            print('Failed to get image');
-            print('Response: $responseBody');
+            //developer.log('Failed to get image');
+            //developer.log('Response: $responseBody');
             return;
           }
         } else {
-          print(" ---> (0006) ${response.reasonPhrase}");
+          //developer.log(" ---> (0006) ${response.reasonPhrase}");
           return;
         }
       } catch (e) {
-        print('Error: $e');
+        //developer.log('Error: $e');
         return;
       }
 
@@ -220,8 +209,7 @@ class RecipeC {
   File? image;
   String title;
   String? description;
-  List<Map<String, String>>?
-      customIngM; // Custom ingredient measurement(s) id:amount;id:amount;
+  List<Map<String, String>>? customIngM; // Custom ingredient measurement(s) id:amount;id:amount;
   List<double>? ingramounts; // ing1Ammout;ing2Amount;ing3Amount;...
   List<String>? steps;
   double time = 0;
@@ -266,13 +254,12 @@ class RecipeC {
     try {
       await user.getInstance();
     } catch (e) {
-      print('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
 
     // The recipe creation follows a specific structure to ensure compatibility with the server
-    var request =
-        http.MultipartRequest('PUT', Uri.parse('$url/Recipes/NewRecipe'));
+    var request = http.MultipartRequest('PUT', Uri.parse('$url/Recipes/NewRecipe'));
     request.headers.addAll({'cookie': user.cookie});
 
     //* Create the strings for: customIngM, ingramounts, steps, ingredientIds
@@ -320,7 +307,7 @@ class RecipeC {
       String customIngM = '';
       for (var ing in this.customIngM ?? []) {
         customIngM += '${ing[0]}:${ing[1]};';
-        print('Ing: ${ing[0]}:${ing[1]}');
+        //developer.log('Ing: ${ing[0]}:${ing[1]}');
       }
       if (customIngM.isNotEmpty) {
         // Remove the last semicolon
@@ -336,14 +323,14 @@ class RecipeC {
             filename: 'image.png',
             contentType: MediaType('image', 'png'),
           ));
-          print("image file: ${image!.path}");
+          //developer.log("image file: ${image!.path}");
         } catch (e) {
-          print('Error Adding Foto before sending: $e');
+          //developer.log('Error Adding Foto before sending: $e');
         }
       }
 
       //? Debugging prints
-      print("Steps: $steps");
+      //developer.log("Steps: $steps");
 
       // Add the fields to the request | All the names of the atributes of the class match the body field names
       request.fields.addAll({
@@ -355,54 +342,53 @@ class RecipeC {
         'portions': portions.toString().replaceAll(',', '.'),
         'steps': steps,
         //!'type': type.toString(), //TODO: Make this ERROR PROOF
-        'isPublic': isPublic
-            .toString(), // If isPublic is true, it will send a value of 'true' telling the server that the recipe is public
+        'isPublic': isPublic.toString(), // If isPublic is true, it will send a value of 'true' telling the server that the recipe is public
         'ingredientIds': ingredientIds,
       });
-      print(request.fields);
+      //developer.log(request.fields as String);
     } catch (e) {
-      print('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
 
     // Send the request
     try {
-      print(request);
+      //developer.log(request as String);
       var response = await request.send();
       if (response.statusCode == 200) {
         // if success field is true, save the user data
         var responseBody = await response.stream.bytesToString();
         if (responseBody.contains('"error":""')) {
-          print('Recipe sent successfully');
+          //developer.log('Recipe sent successfully');
 
           // Parse the JSON response and return the recipe
-          var json = jsonDecode(responseBody);
+          //*var json = jsonDecode(responseBody);
 
-          print(json);
+          //developer.log(json);
 
           return true;
         } else {
-          print('Failed to send recipe');
-          print('Response: $responseBody');
+          //developer.log('Failed to send recipe');
+          //developer.log('Response: $responseBody');
           return false;
         }
       } else {
-        print(" ---> (0007) ${response.reasonPhrase}");
+        //developer.log(" ---> (0007) ${response.reasonPhrase}");
         return false;
       }
     } catch (e) {
-      print('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
   }
 
   // Function for sending a updated version of a recipe, this time, it needs the GUID of the recipe
-  Future<bool> update(String GUID) async {
+  Future<bool> update(String guid) async {
     User? user = User();
     try {
       await user.getInstance();
     } catch (e) {
-      print('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
 
@@ -410,8 +396,7 @@ class RecipeC {
     // That compatibility is very similar to the one used to send a brand new recipe, the only
     //difference is that this one includes a GUID to tell the server which recipe to update
 
-    var request =
-        http.MultipartRequest('PUT', Uri.parse('$url/Recipes/UpdateRecipe'));
+    var request = http.MultipartRequest('PUT', Uri.parse('$url/Recipes/UpdateRecipe'));
 
     // Set the cookie, this lets the server know which user is making the request
     request.headers.addAll({'cookie': user.cookie});
@@ -457,7 +442,7 @@ class RecipeC {
       String customIngM = '';
       for (var ing in this.customIngM ?? []) {
         customIngM += '${ing['IngGUID']}:${ing['CustomUnit']};';
-        print('Ing: ${ing['IngGUID']}:${ing['CustomUnit']}');
+        //developer.log('Ing: ${ing['IngGUID']}:${ing['CustomUnit']}');
       }
       if (customIngM.isNotEmpty) {
         // Remove the last semicolon
@@ -475,11 +460,11 @@ class RecipeC {
       }
 
       //? Debugging prints
-      print("Steps: $steps");
+      //developer.log("Steps: $steps");
 
       // Add the fields to the request | All the names of the atributes of the class match the body field names
       request.fields.addAll({
-        'GUID': GUID,
+        'GUID': guid,
         'title': title,
         'description': description ?? '',
         'customIngM': customIngM,
@@ -492,7 +477,7 @@ class RecipeC {
         'ingredientIds': ingredientIds,
       });
 
-      print(request.fields);
+      //developer.log(request.fields as String);
 
       // Send the request
       var response = await request.send();
@@ -500,36 +485,36 @@ class RecipeC {
         // if success field is true, save the user data
         var responseBody = await response.stream.bytesToString();
         if (responseBody.contains('"error":""')) {
-          print('Recipe updated successfully');
+          //developer.log('Recipe updated successfully');
 
           // Parse the JSON response and return the recipe
-          var json = jsonDecode(responseBody);
+          //*var json = jsonDecode(responseBody);
 
-          print(json);
+          //developer.log(json);
 
           return true;
         } else {
-          print('Failed to update recipe');
-          print('Response: $responseBody');
+          //developer.log('Failed to update recipe');
+          //developer.log('Response: $responseBody');
           return false;
         }
       } else {
-        print(" ---> (0008) ${response.reasonPhrase}");
+        //developer.log(" ---> (0008) ${response.reasonPhrase}");
         return false;
       }
     } catch (e) {
-      print('Error: $e');
+      //developer.log('Error: $e');
       return false;
     }
   }
 
   // Function for deleting a recipe from the server
-  Future<int> delete(String GUID) async {
+  Future<int> delete(String guid) async {
     User? user = User();
     try {
       await user.getInstance();
     } catch (e) {
-      print('Error: $e');
+      //developer.log('Error: $e');
       return 1;
     }
 
@@ -537,15 +522,14 @@ class RecipeC {
     // That compatibility is very similar to the one used to send a brand new recipe, the only
     //difference is that this one includes a GUID to tell the server which recipe to update
 
-    var request = http.MultipartRequest(
-        'DELETE', Uri.parse('$url/Recipes/DeleteRecipeById'));
+    var request = http.MultipartRequest('DELETE', Uri.parse('$url/Recipes/DeleteRecipeById'));
 
     // Set the cookie, this lets the server know which user is making the request
     request.headers.addAll({'cookie': user.cookie});
 
     // Add the fields to the request | All the names of the atributes of the class match the body field names
     request.fields.addAll({
-      'GUID': GUID,
+      'GUID': guid,
     });
 
     // Send the request
@@ -554,21 +538,21 @@ class RecipeC {
       // if success field is true, save the user data
       var responseBody = await response.stream.bytesToString();
       if (responseBody.contains('"error":""')) {
-        print('Recipe deleted successfully');
+        //developer.log('Recipe deleted successfully');
 
         // Parse the JSON response and return the recipe
-        var json = jsonDecode(responseBody);
+        //*var json = jsonDecode(responseBody);
 
-        print(json);
+        //developer.log(json);
 
         return 0;
       } else {
-        print('Failed to delete recipe');
-        print('Response: $responseBody');
+        //developer.log('Failed to delete recipe');
+        //developer.log('Response: $responseBody');
         return -1;
       }
     } else {
-      print(" ---> (0009) ${response.reasonPhrase}");
+      //developer.log(" ---> (0009) ${response.reasonPhrase}");
       return 2;
     }
   }

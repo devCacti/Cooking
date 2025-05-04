@@ -25,8 +25,7 @@ class Settings {
   //! If it returns null it means there was an error
   static Future<bool> getDarkMode() async {
     //? Get the path to the application documents directory
-    String filePath = await getApplicationDocumentsDirectory()
-        .then((value) => "${value.path}/settings.json");
+    String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
 
     bool darkMode = false; // Default value for dark mode
 
@@ -52,7 +51,7 @@ class Settings {
       }
     } catch (e) {
       // Handle any errors that occur during file operations
-      ////print("Error reading settings file: $e");
+      ////developer.log("Error reading settings file: $e");
       return false;
     }
   }
@@ -61,8 +60,7 @@ class Settings {
   //! If it returns null it means there was an error
   Future<bool?> setDarkMode(bool value) async {
     //? Get the path to the application documents directory
-    String filePath = await getApplicationDocumentsDirectory()
-        .then((value) => "${value.path}/settings.json");
+    String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
 
     //? Create a file object with the path
     File file = File(filePath);
@@ -83,7 +81,7 @@ class Settings {
       return value;
     } catch (e) {
       // Handle any errors that occur during file operations
-      ////print("Error writing settings file: $e");
+      ////developer.log("Error writing settings file: $e");
       return null;
     }
   }

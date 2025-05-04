@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+//import 'dart:developer' as developer;
+
 import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -53,12 +55,62 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   final TextEditingController _procController = TextEditingController();
   List<String> procedimentos = [];
 
-  final TextEditingController _tempoController =
-      TextEditingController(text: '0');
-  final TextEditingController _porcoesController =
-      TextEditingController(text: '0');
+  final TextEditingController _tempoController = TextEditingController(text: '0');
+  final TextEditingController _porcoesController = TextEditingController(text: '0');
 
   List<TextEditingController> procsControllers = [];
+
+  succeded() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        backgroundColor: themeNotifier.value == ThemeMode.dark ? Colors.black54 : Colors.white54,
+        behavior: SnackBarBehavior.floating,
+        content: const Text(
+          'Receita guardada com sucesso!',
+          style: TextStyle(
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.green,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+  }
+
+  failed() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        backgroundColor: themeNotifier.value == ThemeMode.dark ? Colors.black54 : Colors.white54,
+        behavior: SnackBarBehavior.floating,
+        content: const Text(
+          'Não foi possível guardar a receita!',
+          style: TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.red,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+  }
 
   Future<bool> showConfirmationDialog(BuildContext context) async {
     bool confirm = false;
@@ -96,8 +148,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
   }
 
   Future<void> _getImage() async {
-    final XFile? image =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
         _imageFile = File(image.path);
@@ -157,10 +208,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: _imageFile != null
-                                  ? Image.file(_imageFile!)
-                                  : const Icon(
-                                      Icons.image_not_supported_rounded),
+                              child: _imageFile != null ? Image.file(_imageFile!) : const Icon(Icons.image_not_supported_rounded),
                             ),
                             Positioned(
                               top: 10,
@@ -201,8 +249,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      right: 32, left: 32, top: 16, bottom: 12),
+                  padding: const EdgeInsets.only(right: 32, left: 32, top: 16, bottom: 12),
                   child: TextFormField(
                     key: _descKey,
                     maxLines: null,
@@ -280,8 +327,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             itemCount: ingredients.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Padding(
-                                padding: const EdgeInsets.only(
-                                    bottom: 8, left: 24, right: 24),
+                                padding: const EdgeInsets.only(bottom: 8, left: 24, right: 24),
                                 child: Material(
                                   elevation: 5,
                                   borderRadius: BorderRadius.circular(25),
@@ -307,8 +353,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                     trailing: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Semantics(
@@ -322,11 +367,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                               ),
                                               textAlign: TextAlign.center,
                                               onChanged: (value) {
-                                                final newValue =
-                                                    double.tryParse(value);
-                                                if (newValue != null &&
-                                                    newValue !=
-                                                        ingsQaunt[index]) {
+                                                final newValue = double.tryParse(value);
+                                                if (newValue != null && newValue != ingsQaunt[index]) {
                                                   setState(() {
                                                     ingsQaunt[index] = newValue;
                                                   });
@@ -334,8 +376,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                                   ingsQaunt[index] = 0;
                                                 }
                                               },
-                                              keyboardType:
-                                                  TextInputType.number,
+                                              keyboardType: TextInputType.number,
                                               decoration: const InputDecoration(
                                                 hintText: '0',
                                                 border: InputBorder.none,
@@ -396,8 +437,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             labelText: 'Novo Ingrediente',
                             hintText: 'Nome de um ingrediente',
                             border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16)),
+                              borderRadius: BorderRadius.all(Radius.circular(16)),
                             ),
                           ),
                           onChanged: (value) {
@@ -433,7 +473,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     ingsQaunt.add(0);
                                   }
                                 } catch (e) {
-                                  print('Erro: $e');
+                                  //developer.log('Erro: $e');
                                 }
                               });
                             },
@@ -511,8 +551,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       decoration: const InputDecoration(
                                         label: Text('Procedimento'),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(16)),
+                                          borderRadius: BorderRadius.all(Radius.circular(16)),
                                         ),
                                       ),
                                       maxLines: null,
@@ -529,8 +568,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       height: 10,
                                     ),
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         //* Move up button
                                         IconButton(
@@ -539,19 +577,13 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                               : () {
                                                   String temp;
                                                   setState(() {
-                                                    temp = procedimentos[
-                                                        index - 1];
+                                                    temp = procedimentos[index - 1];
 
-                                                    procedimentos[index - 1] =
-                                                        procedimentos[index];
+                                                    procedimentos[index - 1] = procedimentos[index];
                                                     procedimentos[index] = temp;
 
-                                                    procsControllers[index - 1]
-                                                            .text =
-                                                        procsControllers[index]
-                                                            .text;
-                                                    procsControllers[index]
-                                                        .text = temp;
+                                                    procsControllers[index - 1].text = procsControllers[index].text;
+                                                    procsControllers[index].text = temp;
                                                   });
                                                 },
                                           icon: const Icon(Icons.arrow_upward),
@@ -584,24 +616,18 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                                       onPressed: () {
                                                         Navigator.pop(context);
                                                       },
-                                                      child: const Text(
-                                                          'Cancelar'),
+                                                      child: const Text('Cancelar'),
                                                     ),
                                                     TextButton(
                                                       onPressed: () {
                                                         setState(() {
-                                                          procedimentos
-                                                              .removeAt(index);
-                                                          procsControllers
-                                                              .removeAt(index);
+                                                          procedimentos.removeAt(index);
+                                                          procsControllers.removeAt(index);
                                                         });
                                                         Navigator.pop(context);
                                                       },
                                                       style: ButtonStyle(
-                                                        foregroundColor:
-                                                            MaterialStateProperty
-                                                                .all<Color>(
-                                                                    Colors.red),
+                                                        foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
                                                       ),
                                                       child: const Text('Sim'),
                                                     ),
@@ -613,27 +639,19 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                         ),
                                         //* Move down button
                                         IconButton(
-                                          onPressed: index ==
-                                                  procedimentos.length - 1
+                                          onPressed: index == procedimentos.length - 1
                                               ? null
                                               : () {
                                                   String temp;
                                                   setState(() {
-                                                    temp = procedimentos[
-                                                        index + 1];
-                                                    procedimentos[index + 1] =
-                                                        procedimentos[index];
+                                                    temp = procedimentos[index + 1];
+                                                    procedimentos[index + 1] = procedimentos[index];
                                                     procedimentos[index] = temp;
-                                                    procsControllers[index + 1]
-                                                            .text =
-                                                        procsControllers[index]
-                                                            .text;
-                                                    procsControllers[index]
-                                                        .text = temp;
+                                                    procsControllers[index + 1].text = procsControllers[index].text;
+                                                    procsControllers[index].text = temp;
                                                   });
                                                 },
-                                          icon:
-                                              const Icon(Icons.arrow_downward),
+                                          icon: const Icon(Icons.arrow_downward),
                                           tooltip: 'Mover para cima',
                                         ),
                                       ],
@@ -670,8 +688,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             labelText: 'Preparação',
                             hintText: 'Descreva o procedimento',
                             border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16)),
+                              borderRadius: BorderRadius.all(Radius.circular(16)),
                             ),
                           ),
                           onChanged: (value) {
@@ -700,12 +717,11 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                   if (procR != '') {
                                     procedimentos.add(procR!);
                                     _procController.text = '';
-                                    procsControllers.add(
-                                        TextEditingController(text: procR));
+                                    procsControllers.add(TextEditingController(text: procR));
                                     procR = '';
                                   }
                                 } catch (e) {
-                                  print('Erro: $e');
+                                  //developer.log('Erro: $e');
                                 }
                               });
                             },
@@ -802,10 +818,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       child: TextField(
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
-                                          final newValue =
-                                              double.tryParse(value);
-                                          if (newValue != null &&
-                                              newValue != cookTime) {
+                                          final newValue = double.tryParse(value);
+                                          if (newValue != null && newValue != cookTime) {
                                             setState(() {
                                               cookTime = newValue;
                                             });
@@ -877,10 +891,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       child: TextField(
                                         textAlign: TextAlign.center,
                                         onChanged: (value) {
-                                          final newValue =
-                                              double.tryParse(value);
-                                          if (newValue != null &&
-                                              newValue != portions) {
+                                          final newValue = double.tryParse(value);
+                                          if (newValue != null && newValue != portions) {
                                             setState(() {
                                               portions = newValue;
                                             });
@@ -945,17 +957,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 value: _selectedValue,
                                 style: TextStyle(
                                   fontSize: 16.8,
-                                  color: themeNotifier.value == ThemeMode.dark
-                                      ? Colors.white
-                                      : Colors.black,
+                                  color: themeNotifier.value == ThemeMode.dark ? Colors.white : Colors.black,
                                 ),
-                                items: <String>[
-                                  'Geral',
-                                  'Bolos',
-                                  'Tartes',
-                                  'Sobremesas',
-                                  'Pratos'
-                                ].map<DropdownMenuItem<String>>((String value) {
+                                items: <String>['Geral', 'Bolos', 'Tartes', 'Sobremesas', 'Pratos'].map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -1052,8 +1056,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           _descKey.currentState!.validate();
 
                           //Verification
-                          validate = _nameKey.currentState!.validate() &&
-                              _descKey.currentState!.validate();
+                          validate = _nameKey.currentState!.validate() && _descKey.currentState!.validate();
                           if (validate == true) {
                             //! TODO: Finish Changing the Recipe Creation Process
                             //* What?
@@ -1099,52 +1102,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 ingredientIds: ingIds,
                               ).send().then((value) {
                                 if (value) {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text(
-                                        'A receita foi guardada com sucesso.',
-                                      ),
-                                      action: SnackBarAction(
-                                          label: 'OK',
-                                          onPressed: () {
-                                            ScaffoldMessenger.of(context)
-                                                .hideCurrentSnackBar();
-                                          }),
-                                    ),
-                                  );
-
-                                  Navigator.pop(context);
+                                  succeded();
                                 } else {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      //backgroundColor:
-                                      //themeNotifier.value == ThemeMode.dark
-                                      //    ? Colors.black54
-                                      //    : Colors.white54,
-                                      behavior: SnackBarBehavior.floating,
-                                      content: const Text(
-                                        'Não foi possível guardar a receita!',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      action: SnackBarAction(
-                                          label: 'OK',
-                                          textColor: Colors.red,
-                                          onPressed: () {
-                                            ScaffoldMessenger.of(context)
-                                                .hideCurrentSnackBar();
-                                          }),
-                                    ),
-                                  );
+                                  failed();
                                 }
                               });
                             });
@@ -1156,10 +1116,6 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50),
                                 ),
-                                //backgroundColor:
-                                //    themeNotifier.value == ThemeMode.dark
-                                //        ? Colors.black54
-                                //        : Colors.white54,
                                 behavior: SnackBarBehavior.floating,
                                 content: const Text(
                                   'Insira um nome e uma descrição.',
@@ -1172,8 +1128,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                     label: 'OK',
                                     textColor: Colors.red,
                                     onPressed: () {
-                                      ScaffoldMessenger.of(context)
-                                          .hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                     }),
                               ),
                             );
