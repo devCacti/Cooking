@@ -47,7 +47,8 @@ jobs:
       # Your project will need to have tests in test/ and a dependency on
       # package:test for this step to succeed. Note that Flutter projects will
       # want to change this to 'flutter test'.
+      # It's flutter test and not dart test because the flutter_test package is used.
       - name: Run tests
-        run: dart test
+        run: flutter test
         working-directory: ./cookapp
 
