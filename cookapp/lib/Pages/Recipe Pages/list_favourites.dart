@@ -6,15 +6,14 @@ import 'edit_recipe_page.dart';
 import '../../Classes/recipes.dart';
 
 class ListFavoutiresForm extends StatefulWidget {
-  const ListFavoutiresForm({Key? key}) : super(key: key);
+  const ListFavoutiresForm({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
   _ListFavouritesFormState createState() => _ListFavouritesFormState();
 }
 
-GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-    GlobalKey<RefreshIndicatorState>();
+GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
 class _ListFavouritesFormState extends State<ListFavoutiresForm> {
   List<Recipe> _recipes = [];
@@ -41,8 +40,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Editar ou Eliminar'),
-          content: const Text(
-              'Deseja editar esta receita ou eliminá-la permanentemente?'),
+          content: const Text('Deseja editar esta receita ou eliminá-la permanentemente?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -191,8 +189,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                         : ListView.builder(
                             itemCount: _recipes.length,
                             itemBuilder: (BuildContext context, int index) {
-                              if (_recipes[index].getType() != categoria &&
-                                  categoria != 'Geral') {
+                              if (_recipes[index].getType() != categoria && categoria != 'Geral') {
                                 // Return an empty Container if the recipe is not a favorite
                                 return Container();
                               }
@@ -239,9 +236,7 @@ class _ListFavouritesFormState extends State<ListFavoutiresForm> {
                                             width: 50,
                                             height: 50,
                                             child: ClipRRect(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(4)),
+                                              borderRadius: const BorderRadius.all(Radius.circular(4)),
                                               child: Image.file(
                                                 _recipes[index].image!,
                                               ),

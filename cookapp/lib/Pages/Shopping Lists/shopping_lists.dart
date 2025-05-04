@@ -35,6 +35,34 @@ class _ShoppingListsState extends State<ShoppingLists> {
     }));
   }
 
+  failed() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text(
+          // When there is an error with the database usually
+          //* when the id doesn't correspond to any list or the simple list is not empty but the main one is
+          'Não foi possivel carregar a lista (ERRO conhecido - Erro 1)'),
+      //dismiss button
+      action: SnackBarAction(
+        label: 'OK',
+        textColor: Colors.red,
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    ));
+  }
+
+  viewList(ListClass list) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ViewList(
+          list: list,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,9 +112,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                             subtitle: Text(
                               lists[index].data?.toString() ?? 'Erro na Data!',
                               style: TextStyle(
-                                color: lists[index].data == null
-                                    ? Colors.red
-                                    : Theme.of(context).colorScheme.onSurface,
+                                color: lists[index].data == null ? Colors.red : Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             shape: RoundedRectangleBorder(
@@ -94,35 +120,13 @@ class _ShoppingListsState extends State<ShoppingLists> {
                             ),
                             onTap: () async {
                               var listId = lists[index].id;
-                              //print("Attempting to load list with id: $listId");
+                              //developer.log("Attempting to load list with id: $listId");
                               await loadListById(listId).then((value) {
                                 if (value == null) {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: const Text(
-                                        // When there is an error with the database usually
-                                        //* when the id doesn't correspond to any list or the simple list is not empty but the main one is
-                                        'Não foi possivel carregar a lista (ERRO conhecido - Erro 1)'),
-                                    //dismiss button
-                                    action: SnackBarAction(
-                                      label: 'OK',
-                                      textColor: Colors.red,
-                                      onPressed: () {
-                                        ScaffoldMessenger.of(context)
-                                            .hideCurrentSnackBar();
-                                      },
-                                    ),
-                                  ));
+                                  failed();
                                   return;
                                 }
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ViewList(
-                                      list: value,
-                                    ),
-                                  ),
-                                );
+                                viewList(value);
                               });
                             },
                           ),
@@ -144,8 +148,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                               builder: (context) {
                                 return AlertDialog(
                                   title: const Text('Apagar Lista'),
-                                  content: const Text(
-                                      'Tem a certeza que deseja apagar esta lista?'),
+                                  content: const Text('Tem a certeza que deseja apagar esta lista?'),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -155,8 +158,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        deleteListById(lists[index].id)
-                                            .then((value) {
+                                        deleteListById(lists[index].id).then((value) {
                                           if (!context.mounted) return;
                                           initializeData();
                                         });

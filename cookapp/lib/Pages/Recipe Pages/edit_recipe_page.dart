@@ -1,4 +1,6 @@
 //import 'dart:io';
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 //import 'package:image_picker/image_picker.dart';
 import '../../Functions/server_requests.dart';
@@ -107,6 +109,36 @@ class _EditFormState extends State<EditForm> {
     toEditR!.steps!.length,
     (i) => TextEditingController(text: toEditR!.steps![i]),
   );
+
+  void failed(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        duration: const Duration(seconds: 2),
+        action: SnackBarAction(
+          label: 'OK',
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+  }
+
+  void succeded(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        duration: const Duration(seconds: 2),
+        action: SnackBarAction(
+          label: 'OK',
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -936,7 +968,7 @@ class _EditFormState extends State<EditForm> {
                               // When i is at 2 it's already asking for the 3rd element
                               if (ingredients.length - 1 < i) {
                                 // create a new ingredient if it doesn't exist
-                                print("Creating new ingredient");
+                                developer.log("Creating new ingredient");
                                 ingredients.add(
                                   Ingredient(
                                     id: "",
@@ -948,9 +980,9 @@ class _EditFormState extends State<EditForm> {
                                 );
                               }
                               // TODO: PROBLEM (ISSUE: #24)
-                              print("Ingredient : ${ingredients[i].id}");
-                              print("Amount     : ${ingsQ?[i]}");
-                              print("Custom Unit: ${ingsT?[i]}");
+                              developer.log("Ingredient : ${ingredients[i].id}");
+                              developer.log("Amount     : ${ingsQ?[i]}");
+                              developer.log("Custom Unit: ${ingsT?[i]}");
                               ingsB.add(
                                 IngBridge(
                                   id: "",
@@ -1026,24 +1058,9 @@ class _EditFormState extends State<EditForm> {
                               //isFavourite: fav,
                             ).update(id).then((value) {
                               if (value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Receita atualizada com sucesso!',
-                                    ),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
-                                Navigator.pop(context);
+                                succeded("Receita atualizada com sucesso!");
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Erro ao atualizar a receita.',
-                                    ),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
+                                failed("Erro ao atualizar receita!");
                               }
                             });
                           });

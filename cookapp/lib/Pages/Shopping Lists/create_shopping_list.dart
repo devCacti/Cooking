@@ -1,5 +1,6 @@
 import 'package:cookapp/Classes/lista_compra.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class CreateList extends StatefulWidget {
@@ -47,7 +48,7 @@ class _CreateListState extends State<CreateList> {
       for (var loja in lojasTemp) {
         if (loja.nome != 'Nova Loja' && loja.nome.isNotEmpty) {
           lojas.add(loja.nome);
-          print(loja.nome);
+          developer.log('Loja: ${loja.nome}');
         }
       }
 
@@ -59,6 +60,10 @@ class _CreateListState extends State<CreateList> {
 
   void changeColor(Color color) {
     setState(() => pickerColor = color);
+  }
+
+  void pop() {
+    Navigator.pop(context);
   }
 
   @override
@@ -112,8 +117,7 @@ class _CreateListState extends State<CreateList> {
 
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Colors.white.withOpacity(0.9)),
+                    backgroundColor: WidgetStateProperty.all(Colors.white70),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -124,8 +128,7 @@ class _CreateListState extends State<CreateList> {
                         color: pickerColor,
                       ),
                       const SizedBox(width: 20),
-                      const Text('Escolher Cor',
-                          style: TextStyle(fontSize: 20, color: Colors.black)),
+                      const Text('Escolher Cor', style: TextStyle(fontSize: 20, color: Colors.black)),
                     ],
                   ),
                   onPressed: () {
@@ -158,12 +161,11 @@ class _CreateListState extends State<CreateList> {
                 //Stores dropdown
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16))),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
                     labelText: 'Loja',
                   ),
                   items: lojas.map((String value) {
-                    //print("Stores: $value");
+                    //developer.log("Stores: $value");
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -178,6 +180,7 @@ class _CreateListState extends State<CreateList> {
                           String newStore = '';
                           void refresh() {
                             setState(() {});
+                            Navigator.pop(context);
                           }
 
                           return StatefulBuilder(
@@ -193,15 +196,13 @@ class _CreateListState extends State<CreateList> {
                                 ),
                                 actions: <Widget>[
                                   TextButton(
-                                    onPressed: lojas.contains(newStore) ||
-                                            newStore.isEmpty
+                                    onPressed: lojas.contains(newStore) || newStore.isEmpty
                                         ? null
                                         : () async {
                                             if (lojas.contains(newStore)) {
                                               return;
                                             }
-                                            Loja lojaInstance =
-                                                Loja(nome: newStore);
+                                            Loja lojaInstance = Loja(nome: newStore);
                                             await lojaInstance.save();
                                             setState(() {
                                               lojas.add(newStore);
@@ -209,7 +210,6 @@ class _CreateListState extends State<CreateList> {
                                             });
                                             // ignore: use_build_context_synchronously
                                             refresh();
-                                            Navigator.of(context).pop();
                                           },
                                     child: const Text('Adicionar'),
                                   ),
@@ -235,9 +235,7 @@ class _CreateListState extends State<CreateList> {
                       TextFormField(
                         controller: _nameController,
                         decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16))),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
                           labelText: 'Nome da Lista',
                         ),
                         onChanged: (value) {
@@ -260,9 +258,7 @@ class _CreateListState extends State<CreateList> {
                       TextFormField(
                         controller: _descriptionController,
                         decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16))),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
                           labelText: 'Descrição da Lista',
                         ),
                         onChanged: (value) {
@@ -283,8 +279,7 @@ class _CreateListState extends State<CreateList> {
                     SizedBox(
                       // Width of the screen divided by 3
                       width: MediaQuery.of(context).size.width / 4,
-                      child:
-                          const Text('Simples', style: TextStyle(fontSize: 20)),
+                      child: const Text('Simples', style: TextStyle(fontSize: 20)),
                     ),
                     SizedBox(
                       // Width of the screen divided by 3
@@ -300,8 +295,7 @@ class _CreateListState extends State<CreateList> {
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 4,
-                      child: const Text('Detalhada',
-                          style: TextStyle(fontSize: 20)),
+                      child: const Text('Detalhada', style: TextStyle(fontSize: 20)),
                     )
                   ],
                 ),
@@ -314,8 +308,8 @@ class _CreateListState extends State<CreateList> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         list.color = pickerColor;
-                        await saveList(list).then((value) {
-                          Navigator.pop(context);
+                        saveList(list).then((value) {
+                          pop();
                         });
                       }
                     },

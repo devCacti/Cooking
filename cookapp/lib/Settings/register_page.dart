@@ -2,7 +2,7 @@ import '../Classes/user.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -129,8 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 if (value == null || value.isEmpty) {
                   return "Por favor insira o seu email";
                 }
-                String pattern =
-                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
                 RegExp regex = RegExp(pattern); // ReGex: Regular Expression
                 if (!regex.hasMatch(value)) {
                   return 'Por favor insira um email válido';
@@ -153,8 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 suffixIcon: IconButton(
-                  icon: Icon(
-                      _isObscure ? Icons.visibility : Icons.visibility_off),
+                  icon: Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
                   onPressed: () {
                     setState(() {
                       _isObscure = !_isObscure;
@@ -167,8 +165,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   return "Por favor insira a sua password";
                 }
                 // At least 6 chars, 1 Capital letter, 1 Number and 1 Special character
-                String pattern =
-                    r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~.])[A-Za-z\d!@#\$&*~.]{6,}$';
+                String pattern = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~.])[A-Za-z\d!@#\$&*~.]{6,}$';
                 RegExp regex = RegExp(pattern);
                 if (!regex.hasMatch(value)) {
                   return '6 caracteres, 1 letra maiús., 1 num. e 1 car. especial';
@@ -190,8 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 suffixIcon: IconButton(
-                  icon: Icon(
-                      _isObscureConf ? Icons.visibility : Icons.visibility_off),
+                  icon: Icon(_isObscureConf ? Icons.visibility : Icons.visibility_off),
                   onPressed: () {
                     setState(() {
                       _isObscureConf = !_isObscureConf;
@@ -211,8 +207,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             const SizedBox(height: 48.0),
             //*Loading Indicator
-            if (_isRegistering)
-              const Center(child: CircularProgressIndicator()),
+            if (_isRegistering) const Center(child: CircularProgressIndicator()),
             const SizedBox(height: 24.0),
             //* Register Button
             Padding(

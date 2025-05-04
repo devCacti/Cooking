@@ -3,7 +3,7 @@ import '../Classes/user.dart';
 import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -49,16 +49,14 @@ class _LoginPageState extends State<LoginPage> {
                   labelText: "Email",
                   hintText: "exemplo@email.com",
                   border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(16.0), // Rounded borders
+                    borderRadius: BorderRadius.circular(16.0), // Rounded borders
                   ),
                 ),
                 validator: (String? value) {
                   if (value == null || value.isEmpty) {
                     return "Por favor insira o seu email";
                   }
-                  String pattern =
-                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+                  String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
                   RegExp regex = RegExp(pattern);
                   if (!regex.hasMatch(value)) {
                     return "Por favor insira um email válido";
@@ -78,8 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                   hintText: "@Password123",
                   // Adjust padding
                   border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(16.0), // Rounded borders
+                    borderRadius: BorderRadius.circular(16.0), // Rounded borders
                   ),
                 ),
                 validator: (String? value) {
@@ -122,10 +119,8 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.replace(
                             context,
                             oldRoute: ModalRoute.of(context)!,
-                            newRoute: PageRouteBuilder(pageBuilder:
-                                (BuildContext context,
-                                    Animation<double> animation,
-                                    Animation<double> secondaryAnimation) {
+                            newRoute: PageRouteBuilder(
+                                pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
                               return const RegisterPage();
                             }),
                           );
@@ -140,8 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                           if (_formKey.currentState!.validate()) {
                             final String email = _emailController.text;
                             final String password = _passwordController.text;
-                            final Login login =
-                                Login(email: email, password: password);
+                            final Login login = Login(email: email, password: password);
 
                             // Makes the login request
                             // And stores the token in a file
