@@ -67,8 +67,8 @@ flutter:
   uses-material-design: true
   
   assets:
-    - assets/images/placeholder.png
-    - assets/images/LittleMan.png
+    - Assets/Images/placeholder.png
+    - Assets/Images/LittleMan.png
 
 flutter_gen:
   git:
