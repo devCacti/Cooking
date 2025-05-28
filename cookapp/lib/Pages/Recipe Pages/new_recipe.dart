@@ -389,8 +389,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                         ),
                                         DropdownButton<String>(
                                           value: ingsOpts[index],
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 20,
+                                            color: themeNotifier.value == ThemeMode.dark ? Colors.white : Colors.black,
                                           ),
                                           items: <String>[
                                             'Kg',
