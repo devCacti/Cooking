@@ -48,8 +48,7 @@ class _UserSettingsState extends State<UserSettings> {
 
     final drawerHeader = UserAccountsDrawerHeader(
       accountName: Text(name == " " ? "Sem Nome" : name),
-      accountEmail: Text(
-          "@${user?.username}" == "@" ? "Sem Username" : "@${user?.username}"),
+      accountEmail: Text("@${user?.username}" == "@" ? "Sem Username" : "@${user?.username}"),
       currentAccountPicture: const CircleAvatar(
         child: Icon(Icons.person_rounded, size: 42.0),
       ),
@@ -63,8 +62,7 @@ class _UserSettingsState extends State<UserSettings> {
         color: Colors.blueGrey,
       ),
       accountName: Text("Utilizador Anónimo"),
-      accountEmail: Text("Faça logon para aceder aos serviços",
-          style: TextStyle(color: Colors.orange)),
+      accountEmail: Text("Faça logon para aceder aos serviços", style: TextStyle(color: Colors.orange)),
       currentAccountPicture: CircleAvatar(
         child: Icon(Icons.person, size: 42.0),
       ),
@@ -135,44 +133,39 @@ class _UserSettingsState extends State<UserSettings> {
                   Navigator.pop(context); // Close the page
                 },
               ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ListTile(
-                    title: const Text("Terminar sessão"),
-                    leading: const Icon(
-                      Icons.logout,
-                      color: Colors.red,
-                    ),
-                    onTap: () async {
-                      await showConfDialog(
-                        context,
-                        "Tem a certeza que quer terminar sessão?",
-                      ).then((value) {
-                        setState(() {
-                          //? This "Sets the state" although it doesn't update anything
-                          //* If the user confirms to log out
-                          if (value) {
-                            // Sets the user as not logged in
-                            isLogged = false;
-
-                            // 'Deletes' the user, only in the files
-                            user!.delete().then((value) {
-                              //? This triggers the setState method so that the ui updates
-                              user!.getInstance().then((value) {
-                                setState(() {
-                                  user = value;
-                                });
-                              });
-                            });
-                          }
-                        });
-                      }).then(
-                        (value) => setState,
-                      ); //? This triggers the setState method so that the ui updates
-                    },
-                  ),
+              ListTile(
+                title: const Text("Terminar sessão"),
+                leading: const Icon(
+                  Icons.logout,
+                  color: Colors.red,
                 ),
+                onTap: () async {
+                  await showConfDialog(
+                    context,
+                    "Tem a certeza que quer terminar sessão?",
+                  ).then((value) {
+                    setState(() {
+                      //? This "Sets the state" although it doesn't update anything
+                      //* If the user confirms to log out
+                      if (value) {
+                        // Sets the user as not logged in
+                        isLogged = false;
+
+                        // 'Deletes' the user, only in the files
+                        user!.delete().then((value) {
+                          //? This triggers the setState method so that the ui updates
+                          user!.getInstance().then((value) {
+                            setState(() {
+                              user = value;
+                            });
+                          });
+                        });
+                      }
+                    });
+                  }).then(
+                    (value) => setState,
+                  ); //? This triggers the setState method so that the ui updates
+                },
               ),
             ],
           )
@@ -292,8 +285,7 @@ class _UserSettingsState extends State<UserSettings> {
                         darkMode = value;
                         settings.setDarkMode(value);
                         setState(() {
-                          themeNotifier.value =
-                              darkMode ? ThemeMode.dark : ThemeMode.light;
+                          themeNotifier.value = darkMode ? ThemeMode.dark : ThemeMode.light;
                         });
                       },
                     ),
