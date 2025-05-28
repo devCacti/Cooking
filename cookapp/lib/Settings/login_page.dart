@@ -144,6 +144,14 @@ class _LoginPageState extends State<LoginPage> {
                             if (isLogged) {
                               // ignore: use_build_context_synchronously
                               Navigator.pop(context);
+                            } else {
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Email ou password inválidos."),
+                                  duration: Duration(seconds: 5),
+                                ),
+                              );
                             }
                           }
                         },

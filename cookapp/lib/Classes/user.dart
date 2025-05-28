@@ -1,4 +1,4 @@
-//import 'dart:developer' as developer;
+import 'dart:developer' as developer;
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -45,7 +45,7 @@ class Login {
 
         // Get the cookie from the response
         var cookie = response.headers['set-cookie'];
-        //developer.log('Cookie: $cookie');
+        developer.log('Cookie: $cookie');
 
         //developer.log('Response: $responseBody');
 
