@@ -1,0 +1,29 @@
+{
+  "@@locale": "pt",
+  "earlyAccess": "Acesso Antecipado",
+  "@earlyAccess": {
+    "description": "Label for early access features.",
+    "placeholders": {}
+  },
+  "language": "Idioma",
+  "@language": {
+    "description": "Label for language selection.",
+    "placeholders": {}
+  },
+  "settings": "Configurações",
+  "@settings": {
+    "description": "Label for settings.",
+    "placeholders": {}
+  },
+    "darkMode": "Modo Escuro",
+  "@darkMode": {
+    "description": "Label for dark mode toggle.",
+    "placeholders": {}
+  },
+  "account_settings": "Configurações da Conta",
+  "@account_settings": {
+    "description": "Label for account settings.",
+    "placeholders": {}
+  }
+
+}

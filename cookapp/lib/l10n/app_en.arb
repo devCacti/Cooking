@@ -1,0 +1,30 @@
+{
+  "@@locale": "en",
+  "earlyAccess": "Early Access",
+  "@earlyAccess": {
+    "description": "Label for early access features.",
+    "placeholders": {}
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Label for language selection.",
+    "placeholders": {}
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Label for settings.",
+    "placeholders": {}
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Label for dark mode toggle.",
+    "placeholders": {}
+  },
+  "account_settings": "Account Settings",
+  "@account_settings": {
+    "description": "Label for account settings.",
+    "placeholders": {}
+  }
+
+
+}

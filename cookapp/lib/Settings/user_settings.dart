@@ -1,12 +1,16 @@
 // ignore_for_file: unnecessary_const
 
+import 'package:cookapp/Classes/app_state.dart';
 import 'package:cookapp/Classes/server_info.dart';
+import 'package:cookapp/Pages/Elements/drawer_header.dart';
+import 'package:cookapp/Pages/Elements/logged_in_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../Classes/user.dart';
 import 'login_page.dart';
 import 'register_page.dart';
-import '../Functions/show_conf_dialog.dart';
 import 'settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserSettings extends StatefulWidget {
   const UserSettings({super.key});
@@ -40,135 +44,17 @@ class _UserSettingsState extends State<UserSettings> {
 
   bool darkMode = themeNotifier.value == ThemeMode.dark ? true : false;
 
-  //TODO: Add user checking logic, if the user is logged in, show the user information, else, show like if isLogged is false
-  //* TLDR
   @override
   Widget build(BuildContext context) {
-    String name = "${user?.name ?? ""} ${user?.surname ?? ""}";
-
-    final drawerHeader = UserAccountsDrawerHeader(
-      accountName: Text(name == " " ? "Sem Nome" : name),
-      accountEmail: Text("@${user?.username}" == "@" ? "Sem Username" : "@${user?.username}"),
-      currentAccountPicture: const CircleAvatar(
-        child: Icon(Icons.person_rounded, size: 42.0),
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.deepPurpleAccent,
-      ),
-    );
-
-    const anonymousDrawerHeader = UserAccountsDrawerHeader(
-      decoration: BoxDecoration(
-        color: Colors.blueGrey,
-      ),
-      accountName: Text("Utilizador Anónimo"),
-      accountEmail: Text("Faça logon para aceder aos serviços", style: TextStyle(color: Colors.orange)),
-      currentAccountPicture: CircleAvatar(
-        child: Icon(Icons.person, size: 42.0),
-      ),
-    );
+    final appState = context.watch<AppState>();
+    final loc = AppLocalizations.of(context)!;
 
     setState(() {
       isLogged = user!.guid != "";
     });
 
-    final drawerItems = isLogged
-        ? Column(
-            children: [
-              drawerHeader,
-              //* Privacy
-              const Text(
-                "Nenhuma definição disponível",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12.0,
-                ),
-              ),
-              const SizedBox(height: 10.0),
-              ListTile(
-                title: const Text("Privacidade"),
-                leading: const Icon(Icons.remove_red_eye),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-
-              //* Divider
-              const Divider(),
-              //* Account Details
-              ListTile(
-                title: const Text("Detalhes da Conta"),
-                leading: const Icon(Icons.account_circle),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              //* Settings
-              ListTile(
-                title: const Text("Definições"),
-                leading: const Icon(Icons.settings),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              //* Divider
-              const Divider(),
-              //* About
-              ListTile(
-                title: const Text("Sobre"),
-                leading: const Icon(Icons.info),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              //* Divider
-              const Divider(),
-              //* Go back button
-              ListTile(
-                title: const Text("Voltar"),
-                leading: const Icon(Icons.arrow_back),
-                onTap: () {
-                  //? Twice so that it closes the drawer and then the page
-                  Navigator.pop(context); // Close the drawer
-                  Navigator.pop(context); // Close the page
-                },
-              ),
-              ListTile(
-                title: const Text("Terminar sessão"),
-                leading: const Icon(
-                  Icons.logout,
-                  color: Colors.red,
-                ),
-                onTap: () async {
-                  await showConfDialog(
-                    context,
-                    "Tem a certeza que quer terminar sessão?",
-                  ).then((value) {
-                    setState(() {
-                      //? This "Sets the state" although it doesn't update anything
-                      //* If the user confirms to log out
-                      if (value) {
-                        // Sets the user as not logged in
-                        isLogged = false;
-
-                        // 'Deletes' the user, only in the files
-                        user!.delete().then((value) {
-                          //? This triggers the setState method so that the ui updates
-                          user!.getInstance().then((value) {
-                            setState(() {
-                              user = value;
-                            });
-                          });
-                        });
-                      }
-                    });
-                  }).then(
-                    (value) => setState,
-                  ); //? This triggers the setState method so that the ui updates
-                },
-              ),
-            ],
-          )
+    final drawerItems = isLogged && user != null
+        ? loggedInSettings(context, user!)
         : ListView(
             children: [
               anonymousDrawerHeader,
@@ -239,7 +125,6 @@ class _UserSettingsState extends State<UserSettings> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(50.0),
-            //TODO: Add user settings widgets, dark mode, notifications, reminders, etc. (Only if the user is logged in)
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -250,6 +135,7 @@ class _UserSettingsState extends State<UserSettings> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                // Version text
                 Text(
                   version,
                   style: const TextStyle(
@@ -259,9 +145,9 @@ class _UserSettingsState extends State<UserSettings> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 50),
-                const Text(
-                  "Configurações",
-                  style: TextStyle(
+                Text(
+                  loc.settings,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -271,9 +157,9 @@ class _UserSettingsState extends State<UserSettings> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      "Modo Escuro",
-                      style: TextStyle(
+                    Text(
+                      loc.darkMode,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -288,6 +174,29 @@ class _UserSettingsState extends State<UserSettings> {
                           themeNotifier.value = darkMode ? ThemeMode.dark : ThemeMode.light;
                         });
                       },
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    //Language selection
+                    Text(
+                      loc.language,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    DropdownButton<String>(
+                      value: appState.locale.languageCode,
+                      icon: const Icon(Icons.language),
+                      onChanged: (value) {
+                        if (value != null) {
+                          appState.setLocale(Locale(value));
+                        }
+                      },
+                      items: AppState.locales,
                     ),
                   ],
                 ),
