@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum LanguageType {
   en, // English
   pt, // Portuguese
@@ -35,5 +37,9 @@ class Language {
       default:
         return 'Unknown';
     }
+  }
+
+  static Locale getLocale(String code) {
+    return Locale(getLanguageCode(getLanguageType(code)));
   }
 }

@@ -33,6 +33,12 @@ class AppState extends ChangeNotifier {
     Settings.setLanguage(Language.getLanguageType(newLocale.languageCode));
   }
 
+  Future<void> getLocale() async {
+    String languageCode = await Settings.getLanguage();
+    _locale = Language.getLocale(languageCode);
+    notifyListeners();
+  }
+
   static List<Locale> locales = const [
     Locale('en'),
     Locale('pt'),
