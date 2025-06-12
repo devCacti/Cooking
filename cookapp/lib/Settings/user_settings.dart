@@ -72,7 +72,7 @@ class _UserSettingsState extends State<UserSettings> {
                 ),
                 // Version text
                 Text(
-                  version,
+                  ServerInfo.version,
                   style: const TextStyle(
                     fontSize: 20.0,
                     color: Colors.grey,
