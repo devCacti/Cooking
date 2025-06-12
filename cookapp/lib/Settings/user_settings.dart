@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_const
 
 import 'package:cookapp/Classes/app_state.dart';
+import 'package:cookapp/Classes/language.dart';
 import 'package:cookapp/Classes/server_info.dart';
 import 'package:cookapp/Pages/Elements/drawer_items.dart';
 import 'package:flutter/material.dart';
@@ -135,12 +136,12 @@ class _UserSettingsState extends State<UserSettings> {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
-                          value: appState.getLanguageName(appState.currentLocale),
+                          value: Language.getLanguageName(Language.getLanguageType(appState.locale.languageCode)),
                           borderRadius: BorderRadius.circular(15),
                           icon: const Icon(Icons.arrow_drop_down),
                           dropdownColor: Theme.of(context).cardColor,
                           items: AppState.locales.map((locale) {
-                            final languageName = appState.getLanguageName(locale);
+                            final languageName = Language.getLanguageName(Language.getLanguageType(locale.languageCode));
                             return DropdownMenuItem<String>(
                               value: languageName,
                               child: Container(
@@ -158,7 +159,7 @@ class _UserSettingsState extends State<UserSettings> {
                           onChanged: (String? newLanguage) {
                             if (newLanguage != null) {
                               final selectedLocale = AppState.locales.firstWhere(
-                                (locale) => appState.getLanguageName(locale) == newLanguage,
+                                (locale) => Language.getLanguageName(Language.getLanguageType(locale.languageCode)) == newLanguage,
                                 orElse: () => AppState.locales.first,
                               );
                               appState.setLocale(selectedLocale);

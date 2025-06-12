@@ -1,4 +1,6 @@
+import 'package:cookapp/Classes/language.dart';
 import 'package:cookapp/Classes/user.dart';
+import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
@@ -28,17 +30,7 @@ class AppState extends ChangeNotifier {
   void setLocale(Locale newLocale) {
     _locale = newLocale;
     notifyListeners();
-  }
-
-  String getLanguageName(Locale code) {
-    switch (code.languageCode) {
-      case 'en':
-        return 'English';
-      case 'pt':
-        return 'Português';
-      default:
-        return 'Unknown';
-    }
+    Settings.setLanguage(Language.getLanguageType(newLocale.languageCode));
   }
 
   static List<Locale> locales = const [

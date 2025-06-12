@@ -1,3 +1,4 @@
+import 'package:cookapp/Classes/language.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -79,6 +80,66 @@ class Settings {
       await file.writeAsString(jsonEncode(json));
 
       return value;
+    } catch (e) {
+      // Handle any errors that occur during file operations
+      ////developer.log("Error writing settings file: $e");
+      return null;
+    }
+  }
+
+  //* Get the language setting from a user settings file called settings.json
+  static Future<String> getLanguage() async {
+    //? Get the path to the application documents directory
+    String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
+
+    //? Create a file object with the path
+    File file = File(filePath);
+
+    try {
+      //? Check if the file exists
+      if (await file.exists()) {
+        String contents = await file.readAsString();
+
+        // Parse the JSON string to get the language value
+        Map<String, dynamic> json = jsonDecode(contents);
+
+        return json['language'] ?? 'en'; // Default to 'en' if not found
+      } else {
+        // If the file does not exist, create it with the default value
+        Map<String, dynamic> json = {'language': 'en'};
+        // Write the JSON string to the file
+        await file.writeAsString(jsonEncode(json));
+        return 'en';
+      }
+    } catch (e) {
+      // Handle any errors that occur during file operations
+      ////developer.log("Error reading settings file: $e");
+      return 'en'; // Default value in case of error
+    }
+  }
+
+  //* Set the language setting in the user settings file called settings.json
+  static Future<bool?> setLanguage(LanguageType language) async {
+    //? Get the path to the application documents directory
+    String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
+
+    //? Create a file object with the path
+    File file = File(filePath);
+
+    //? Tries to write to the file, if it can't do it, catch the exception
+    try {
+      String contents = await file.readAsString();
+
+      // Parse the JSON string to get the language value
+      Map<String, dynamic> json = jsonDecode(contents);
+
+      // Update the language value
+      json['language'] = Language.getLanguageCode(language);
+
+      // Write the updated JSON string to the file
+      await file.writeAsString(jsonEncode(json));
+
+      return true;
     } catch (e) {
       // Handle any errors that occur during file operations
       ////developer.log("Error writing settings file: $e");
