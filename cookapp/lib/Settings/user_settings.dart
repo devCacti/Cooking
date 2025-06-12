@@ -2,13 +2,10 @@
 
 import 'package:cookapp/Classes/app_state.dart';
 import 'package:cookapp/Classes/server_info.dart';
-import 'package:cookapp/Pages/Elements/drawer_header.dart';
-import 'package:cookapp/Pages/Elements/logged_in_settings.dart';
+import 'package:cookapp/Pages/Elements/drawer_items.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Classes/user.dart';
-import 'login_page.dart';
-import 'register_page.dart';
 import 'settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -53,72 +50,10 @@ class _UserSettingsState extends State<UserSettings> {
       isLogged = user!.guid != "";
     });
 
-    final drawerItems = isLogged && user != null
-        ? loggedInSettings(context, user!)
-        : ListView(
-            children: [
-              anonymousDrawerHeader,
-              //* Login and Register buttons
-              ListTile(
-                title: const Text("Entrar"),
-                leading: const Icon(Icons.login),
-                onTap: () {
-                  //LoginPage is the page that we want to open on click.
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                  ).then((value) {
-                    user!.getInstance().then((value) => setState(() {
-                          isLogged = user!.guid != "";
-                        }));
-                  });
-                },
-              ),
-              ListTile(
-                title: const Text("Registar"),
-                leading: const Icon(Icons.app_registration),
-                onTap: () {
-                  //RegisterPage is the page that we want to open on click.
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
-                    ),
-                  );
-                },
-              ),
-              //* Divider
-              const Divider(),
-              //* Go back button
-              ListTile(
-                title: const Text("Voltar"),
-                leading: const Icon(Icons.arrow_back),
-                onTap: () {
-                  //? Twice so that it closes the drawer and then the page
-                  Navigator.pop(context); // Close the drawer
-                  Navigator.pop(context); // Close the page
-                },
-              ),
-            ],
-          );
+    var drawerItems = getDrawerItems(context, user);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("A Minha Conta"),
-        // Button on the right side of the app bar to exit
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.home_rounded,
-              opticalSize: 50,
-            ),
-            iconSize: 30.0,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
+        title: Text(loc.account_settings),
       ),
       body: Semantics(
         container: true,
@@ -148,8 +83,8 @@ class _UserSettingsState extends State<UserSettings> {
                 Text(
                   loc.settings,
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w100,
                   ),
                 ),
                 //? Dark mode switch
@@ -177,9 +112,10 @@ class _UserSettingsState extends State<UserSettings> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10.0),
                 Row(
                   children: [
-                    //Language selection
+                    // Language selection
                     Text(
                       loc.language,
                       style: const TextStyle(
@@ -188,17 +124,67 @@ class _UserSettingsState extends State<UserSettings> {
                       ),
                     ),
                     const Spacer(),
-                    DropdownButton<String>(
-                      value: appState.locale.languageCode,
-                      icon: const Icon(Icons.language),
-                      onChanged: (value) {
-                        if (value != null) {
-                          appState.setLocale(Locale(value));
-                        }
-                      },
-                      items: AppState.locales,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: Theme.of(context).dividerColor,
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: appState.getLanguageName(appState.currentLocale),
+                          borderRadius: BorderRadius.circular(15),
+                          icon: const Icon(Icons.arrow_drop_down),
+                          dropdownColor: Theme.of(context).cardColor,
+                          items: AppState.locales.map((locale) {
+                            final languageName = appState.getLanguageName(locale);
+                            return DropdownMenuItem<String>(
+                              value: languageName,
+                              child: Container(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  languageName,
+                                  style: TextStyle(
+                                    color: themeNotifier.value == ThemeMode.dark ? Colors.white : Colors.black,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? newLanguage) {
+                            if (newLanguage != null) {
+                              final selectedLocale = AppState.locales.firstWhere(
+                                (locale) => appState.getLanguageName(locale) == newLanguage,
+                                orElse: () => AppState.locales.first,
+                              );
+                              appState.setLocale(selectedLocale);
+                            }
+                            drawerItems = getDrawerItems(context, user);
+                            setState(() {});
+                          },
+                        ),
+                      ),
                     ),
                   ],
+                ),
+
+                // Divider
+                const SizedBox(height: 20.0),
+                const Divider(),
+                // Go back button, leading to the previous page
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close the page
+                  },
+                  child: Text(
+                    loc.goBack,
+                    style: const TextStyle(fontSize: 20.0),
+                  ),
                 ),
               ],
             ),

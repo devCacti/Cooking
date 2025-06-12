@@ -1,30 +1,27 @@
 {
   "@@locale": "en",
-  "earlyAccess": "Early Access",
-  "@earlyAccess": {
-    "description": "Label for early access features.",
-    "placeholders": {}
-  },
-  "language": "Language",
-  "@language": {
-    "description": "Label for language selection.",
-    "placeholders": {}
-  },
-  "settings": "Settings",
-  "@settings": {
-    "description": "Label for settings.",
-    "placeholders": {}
-  },
-  "darkMode": "Dark Mode",
-  "@darkMode": {
-    "description": "Label for dark mode toggle.",
-    "placeholders": {}
-  },
-  "account_settings": "Account Settings",
-  "@account_settings": {
-    "description": "Label for account settings.",
-    "placeholders": {}
-  }
-
-
+  "earlyAccess":        "Early Access",
+  "@earlyAccess": {},
+  "language":           "Language",
+  "@language": {},
+  "settings":           "Settings",
+  "@settings": {},
+  "darkMode":           "Dark Mode",
+  "@darkMode": {},
+  "account_settings":   "Account Settings",
+  "@account_settings": {},
+  "goBack":             "Go Back",
+  "@goBack": {},
+  "login":              "Login",
+  "@login": {},
+  "logout":             "Logout",
+  "@logout": {},
+  "register":           "Register",
+  "@register": {},
+  "privacy":            "Privacy",
+  "@privacy": {},
+  "about":              "About",
+  "@about": {},
+  "account_details":    "Account Details",
+  "@account_details": {}
 }

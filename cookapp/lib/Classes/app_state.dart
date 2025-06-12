@@ -30,14 +30,19 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  static List<DropdownMenuItem<String>> locales = const [
-    DropdownMenuItem(
-      value: 'en',
-      child: Text("English"),
-    ),
-    DropdownMenuItem(
-      value: 'pt',
-      child: Text("Português"),
-    ),
+  String getLanguageName(Locale code) {
+    switch (code.languageCode) {
+      case 'en':
+        return 'English';
+      case 'pt':
+        return 'Português';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  static List<Locale> locales = const [
+    Locale('en'),
+    Locale('pt'),
   ];
 }
