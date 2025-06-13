@@ -1,4 +1,6 @@
+import 'package:cookapp/Classes/app_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../Classes/user.dart';
 import 'register_page.dart';
 
@@ -17,6 +19,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Iniciar Sessão"),
@@ -139,11 +142,20 @@ class _LoginPageState extends State<LoginPage> {
 
                             // Makes the login request
                             // And stores the token in a file
-                            final bool isLogged = await login.send();
+                            appState.login(login);
+                            User user = appState.user ?? User.defaultU();
 
-                            if (isLogged) {
-                              // ignore: use_build_context_synchronously
-                              Navigator.pop(context);
+                            if (user != User.defaultU()) {
+                              if (context.mounted) {
+                                // ignore: use_build_context_synchronously
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Login efetuado com sucesso!"),
+                                    duration: Duration(seconds: 5),
+                                  ),
+                                );
+                                Navigator.pop(context, user);
+                              }
                             } else {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(

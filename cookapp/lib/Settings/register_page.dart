@@ -1,3 +1,6 @@
+import 'package:cookapp/Classes/app_state.dart';
+import 'package:provider/provider.dart';
+
 import '../Classes/user.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Registo"),
@@ -229,22 +233,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             confirmPassword: _confPasswordController.text,
                           );
 
-                          int isRegistered = await newUser.register();
+                          appState.register(newUser, context);
 
                           setState(() {
                             _isRegistering = false;
                           });
-                          if (isRegistered == 0) {
-                            // ignore: use_build_context_synchronously
-                            Navigator.pop(context);
-                          } else {
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Erro no registo"),
-                              ),
-                            );
-                          }
                         }
                       },
                 child: const Text("Registar"),
