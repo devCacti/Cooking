@@ -41,7 +41,7 @@ Future<Image?> getRecipeImage(String id, [Map<String, Image>? imageCache]) async
     //developer.log('Error: $e');
     return Image.asset('assets/images/LittleMan.png');
   }
-  var request = http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
+  var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Recipes/RecipeImage?id=$id'));
   request.headers.addAll({'Cookie': user.cookie});
 
   // Prevents "null check operator used on a null value" error
@@ -79,7 +79,7 @@ Future<List<Recipe>> getMyRecipes() async {
     return [];
   }
   // Get the user's recipes from the server
-  var request = http.Request('GET', Uri.parse('$url/Recipes/GetMyRecipes'));
+  var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Recipes/GetMyRecipes'));
   request.headers.addAll({'cookie': user.cookie});
 
   try {
@@ -143,7 +143,7 @@ Future<List<Recipe>> getSearchRecipes(String search, int type) async {
     return [];
   }
   // Get the user's recipes from the server
-  var request = http.Request('GET', Uri.parse('$url/Recipes/Search'));
+  var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Recipes/Search'));
   request.headers.addAll({'cookie': user.cookie});
   request.bodyFields = {'search': search, 'type': type.toString()};
 
@@ -212,7 +212,7 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
     return [];
   }
   // Get the user's recipes from the server
-  var request = http.Request('GET', Uri.parse('$url/Recipes/GetPopular'));
+  var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Recipes/GetPopular'));
   request.headers.addAll({'cookie': user.cookie});
   request.bodyFields = {'page': page.toString()};
 
@@ -321,7 +321,7 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
     }
     // Fetch the recipe from the server
     ////~TODO: Server is refusing to allow the request, always returning 404 (Not Found)
-    var request = http.Request('GET', Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$id'));
+    var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Recipes/GetIngredientsByRecipe?Id=$id'));
     request.headers.addAll({'cookie': user.cookie});
 
     //developer.log("Cookie: ${user.cookie}");
@@ -388,7 +388,7 @@ Future<List<Ingredient>> recipeIngredients(String id) async {
   }
   // localhost:44322/Recipes/GetIngredientsByRecipe?Id=630fd198-beba-4f57-944d-8eb7907d8f65
   // This one is only online, doesn't check the local files
-  var request = http.Request('GET', Uri.parse('$url/Recipes/GetIngredientsByRecipe?Id=$id'));
+  var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Recipes/GetIngredientsByRecipe?Id=$id'));
   request.headers.addAll({'cookie': user.cookie});
 
   try {
@@ -451,7 +451,7 @@ Future<int> fetchPopularPages() async {
     return 0;
   }
   // Get the user's recipes from the server
-  var request = http.Request('GET', Uri.parse('$url/Recipes/GetPopularPages'));
+  var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Recipes/GetPopularPages'));
   request.headers.addAll({'cookie': user.cookie});
 
   try {
@@ -496,7 +496,7 @@ Future<List<String>> newIngredients(List<Ingredient> ings) async {
     if (ings.isEmpty) {
       return List<String>.empty();
     }
-    var request = http.MultipartRequest('PUT', Uri.parse('$url/Recipes/NewIngredients'));
+    var request = http.MultipartRequest('PUT', Uri.parse('${ServerInfo.url}/Recipes/NewIngredients'));
     request.headers.addAll({'cookie': user.cookie});
     // We need to put the ingredients in the body, each name is in the the form of "name": "value1;value2;value3"
     // The values are separated by a semicolon in the same field, meaning that if the user puts semicolons, the program deletes them

@@ -154,8 +154,8 @@ class Recipe {
       // request to /Recipes/RecipeImage
       // The image is received as an actual image file, not a string
       // To receive it, a id needs to be sent in the arguments
-      // Example: $url/Recipes/RecipeImage?id=630fd198-beba-4f57-944d-8eb7907d8f65
-      var request = http.Request('GET', Uri.parse('$url/Recipes/RecipeImage?id=$id'));
+      // Example: ${ServerInfo.url}/Recipes/RecipeImage?id=630fd198-beba-4f57-944d-8eb7907d8f65
+      var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Recipes/RecipeImage?id=$id'));
 
       try {
         var response = await request.send();
@@ -259,7 +259,7 @@ class RecipeC {
     }
 
     // The recipe creation follows a specific structure to ensure compatibility with the server
-    var request = http.MultipartRequest('PUT', Uri.parse('$url/Recipes/NewRecipe'));
+    var request = http.MultipartRequest('PUT', Uri.parse('${ServerInfo.url}/Recipes/NewRecipe'));
     request.headers.addAll({'cookie': user.cookie});
 
     //* Create the strings for: customIngM, ingramounts, steps, ingredientIds
@@ -396,7 +396,7 @@ class RecipeC {
     // That compatibility is very similar to the one used to send a brand new recipe, the only
     //difference is that this one includes a GUID to tell the server which recipe to update
 
-    var request = http.MultipartRequest('PUT', Uri.parse('$url/Recipes/UpdateRecipe'));
+    var request = http.MultipartRequest('PUT', Uri.parse('${ServerInfo.url}/Recipes/UpdateRecipe'));
 
     // Set the cookie, this lets the server know which user is making the request
     request.headers.addAll({'cookie': user.cookie});
@@ -522,7 +522,7 @@ class RecipeC {
     // That compatibility is very similar to the one used to send a brand new recipe, the only
     //difference is that this one includes a GUID to tell the server which recipe to update
 
-    var request = http.MultipartRequest('DELETE', Uri.parse('$url/Recipes/DeleteRecipeById'));
+    var request = http.MultipartRequest('DELETE', Uri.parse('${ServerInfo.url}/Recipes/DeleteRecipeById'));
 
     // Set the cookie, this lets the server know which user is making the request
     request.headers.addAll({'cookie': user.cookie});

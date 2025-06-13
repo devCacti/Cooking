@@ -29,7 +29,7 @@ class Login {
     //developer.log('Logging in with email: $email and password: $password');
 
     // Do an API call to the server to login
-    var request = http.MultipartRequest('POST', Uri.parse('$url/Account/AppLogin'));
+    var request = http.MultipartRequest('POST', Uri.parse('${ServerInfo.url}/Account/AppLogin'));
     request.fields.addAll({'email': email, 'password': password, 'remember me': 'true'});
 
     //request.headers.addAll(headers); // no headers needed, we only need to get the cookie from the response
@@ -113,7 +113,7 @@ class Register {
     //developer.log('Registering with email: $email, username: $username, name: $name');
 
     // Do an API call to the server to register
-    var request = http.MultipartRequest('POST', Uri.parse('$url/Account/AppRegister'));
+    var request = http.MultipartRequest('POST', Uri.parse('${ServerInfo.url}/Account/AppRegister'));
     request.fields.addAll({
       'Email': email,
       'UserName': username,
@@ -250,7 +250,7 @@ class User {
   // Validates the cookie by sending a request to the server asking if it is valid, the server returns a response with a success field
   Future<bool> validateCookie() async {
     // Do an API call to the server to validate the cookie, the cookie is set to a header on the request and no body is needed
-    var request = http.Request('GET', Uri.parse('$url/Account/AmILoggedIn'));
+    var request = http.Request('GET', Uri.parse('${ServerInfo.url}/Account/AmILoggedIn'));
     request.headers.addAll({'cookie': cookie});
 
     try {

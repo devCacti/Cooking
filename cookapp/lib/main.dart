@@ -1,12 +1,15 @@
 //? Imports
 //import 'package:cookapp/Classes/server_info.dart';
+import 'package:cookapp/Classes/app_state.dart';
 import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
 import 'Classes/user.dart';
 import 'Settings/settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //import 'Pages/new_recipe.dart';
 
 //? Unused Imports
@@ -19,7 +22,10 @@ import 'Settings/settings.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-    MyApp(),
+    ChangeNotifierProvider(
+      create: (_) => AppState(),
+      child: const MyApp(),
+    ),
   );
 }
 
@@ -31,13 +37,20 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (_, themeMode, __) {
-        return MaterialApp(
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-          themeMode: themeMode,
-          home: MyHomePage(
-            title: 'Cooking',
-          ),
+        return Consumer<AppState>(
+          builder: (context, appState, _) {
+            return MaterialApp(
+              locale: appState.locale,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: ThemeData.light(),
+              darkTheme: ThemeData.dark(),
+              themeMode: themeMode,
+              home: MyHomePage(
+                title: 'Cooking',
+              ),
+            );
+          },
         );
       },
     );
@@ -54,6 +67,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //? Multiple language support
+
   //User user = User.defaultU();
   List<Recipe> recommended = [];
   bool rLoaded = false;
@@ -84,11 +99,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    var appState = context.read<AppState>();
+    appState.getLocale(); // Load the locale from settings
     Settings.getDarkMode().then((value) {
       setState(() {
-        themeNotifier.value = value
-            ? ThemeMode.dark
-            : ThemeMode.light; // Set the theme mode based on the settings
+        themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light; // Set the theme mode based on the settings
       });
     });
     User user = User.defaultU();
@@ -113,6 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       body: Column(
         children: [
@@ -126,18 +142,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: const Color.fromARGB(19, 115, 115, 115),
               ),
               // Early Access Warning
-              child: const ListTile(
+              child: ListTile(
                 title: Text(
-                  'ACESSO ANTECIPADO',
-                  style: TextStyle(fontSize: 20),
+                  loc.earlyAccess,
+                  style: const TextStyle(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
-                leading: Icon(
+                leading: const Icon(
                   Icons.warning_amber_rounded,
                   color: Colors.red,
                   size: 30,
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.warning_amber_rounded,
                   color: Colors.red,
                   size: 30,
@@ -219,18 +235,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         rLoaded
                             ? recommended.isEmpty
-                                ? const Text(
-                                    'Não existem receitas recomendadas')
-                                : const Text(
-                                    'Aqui estão as receitas recomendadas')
+                                ? const Text('Não existem receitas recomendadas')
+                                : const Text('Aqui estão as receitas recomendadas')
                             : const CircularProgressIndicator(),
                       ],
                     ),
                   ),
                 )
               : ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxHeight: MediaQuery.sizeOf(context).height / 2.5),
+                  constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height / 2.5),
                   child: CarouselView.weighted(
                     controller: CarouselController(),
                     itemSnapping: true,
