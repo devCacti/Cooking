@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
 
                             // Makes the login request
                             // And stores the token in a file
-                            appState.login(login);
+                            await appState.login(login);
                             User user = appState.user ?? User.defaultU();
 
                             if (user != User.defaultU()) {

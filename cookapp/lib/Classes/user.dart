@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:cookapp/Classes/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -109,19 +110,32 @@ class Register {
   Future<User> send(BuildContext? context) async {
     if (password != confirmPassword) {
       //developer.log('Passwords do not match');
+      if (context != null) {
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          'Error: Passwords do not match',
+        );
+      }
       return User.defaultU();
     }
     //developer.log('Registering with email: $email, username: $username, name: $name');
 
+    developer.log(username);
+    developer.log(name);
+    developer.log(surname ?? '');
+    developer.log(password);
+    developer.log(confirmPassword);
+    developer.log(email);
     // Do an API call to the server to register
     var request = http.MultipartRequest('POST', Uri.parse('${ServerInfo.url}/Account/AppRegister'));
     request.fields.addAll({
-      'Email': email,
-      'UserName': username,
-      'Password': password,
-      'ConfirmPassword': confirmPassword,
-      'Name': name,
-      'Surname': surname ?? '',
+      'email': email.toString().toLowerCase(),
+      'username': username.toString(),
+      'password': password.toString(),
+      'confirmPassword': confirmPassword.toString(),
+      'name': name.toString(),
+      'surname': surname?.toString() ?? '',
       //'phone': phone ?? '',
     });
 
@@ -134,7 +148,12 @@ class Register {
 
       // Check if it contains the success field and if it has the value true
       if (responseBody.contains('success":true')) {
-        //developer.log('Register successful');
+        developer.log('Register successful');
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context!,
+          'User registered successfully',
+        );
 
         // Get the cookie from the response
         var cookie = response.headers['set-cookie'];
@@ -143,7 +162,10 @@ class Register {
         // Get the user data from the response
         var username = responseBody.split('username":"')[1].split('"')[0];
         var name = responseBody.split('name":"')[1].split('"')[0];
-        var surname = responseBody.split('surname":"')[1].split('"')[0];
+        var surname = "";
+        if (responseBody.contains('surname":"')) {
+          surname = responseBody.split('surname":"')[1].split('"')[0];
+        }
         var guid = responseBody.split('id":"')[1].split('"')[0];
 
         // Save the user data to user.json
@@ -161,22 +183,27 @@ class Register {
         return user;
       } else {
         if (context != null) {
-          SnackBar snackBar = SnackBar(
-            content: Text(
-              responseBody.split('"description":"')[1].split('"')[0],
-              style: const TextStyle(color: Colors.red),
-            ),
-            duration: const Duration(seconds: 5),
+          showSnackbar(
+            // ignore: use_build_context_synchronously
+            context,
+            'Error: ${responseBody.split('"description":"')[1].split('"')[0]}',
           );
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
         }
-        developer.log("User Registration: ${responseBody.split('"description":"')[1].split('"')[0]}");
+        developer.log("User Registration Error: ${responseBody.split('"description":"')[1].split('"')[0]}");
+        developer.log('Response: $responseBody');
+
+        //developer.log('Register failed');
         return User.defaultU();
       }
     } else {
       //developer.log(" ---> (0003) ${response.reasonPhrase}");
+      if (context != null) {
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          'Error: ${response.reasonPhrase}',
+        );
+      }
       return User.defaultU();
     }
   }

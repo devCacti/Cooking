@@ -11,7 +11,7 @@ class AppState extends ChangeNotifier {
   bool get isLoggedIn => user != null && user!.cookie.isNotEmpty;
 
   // User Related Methods
-  void login(Login l) async {
+  Future<void> login(Login l) async {
     Login login = Login(
       email: l.email,
       password: l.password,
@@ -24,7 +24,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void register(Register r, BuildContext context) async {
+  Future<void> register(Register r, BuildContext context) async {
     Register register = Register(
       email: r.email,
       password: r.password,

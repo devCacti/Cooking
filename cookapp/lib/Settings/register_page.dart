@@ -233,11 +233,17 @@ class _RegisterPageState extends State<RegisterPage> {
                             confirmPassword: _confPasswordController.text,
                           );
 
-                          appState.register(newUser, context);
+                          await appState.register(newUser, context);
 
                           setState(() {
                             _isRegistering = false;
                           });
+
+                          if (appState.isLoggedIn) {
+                            // If registration is successful, navigate to the home page
+                            // ignore: use_build_context_synchronously
+                            Navigator.maybePop(context);
+                          }
                         }
                       },
                 child: const Text("Registar"),

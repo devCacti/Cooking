@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'dart:developer' as developer;
 
 class UserSettings extends StatefulWidget {
   const UserSettings({super.key});
@@ -40,7 +39,7 @@ class _UserSettingsState extends State<UserSettings> {
 
     var drawerItems = getDrawerItems(context);
 
-    developer.log("User Settings: ${appState.user!.cookie}");
+    //developer.log("User Settings: ${appState.user!.cookie}");
 
     return Scaffold(
       appBar: AppBar(
