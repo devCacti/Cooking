@@ -7,7 +7,7 @@
 
 class ServerInfo {
   static const String url = 'https://devcacti.com';
-  static const String version = 'v1.6.0.1';
+  static const String version = 'v1.7.0.0';
   //!static const String apiUrl = '$url/api'; //TODO: use this in the app instead of the url
   static const String apiVersion = 'v1';
   //!static const String apiFullUrl = '$apiUrl/$apiVersion'; //TODO: use this in the app instead of the url
