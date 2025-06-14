@@ -8,16 +8,39 @@ class AppState extends ChangeNotifier {
   Locale _locale = const Locale('en');
 
   Locale get locale => _locale;
-  bool get isLoggedIn => user != null;
+  bool get isLoggedIn => user != null && user!.cookie.isNotEmpty;
 
   // User Related Methods
-  void login(User u) {
-    user = u;
+  Future<void> login(Login l) async {
+    Login login = Login(
+      email: l.email,
+      password: l.password,
+      username: l.username,
+      name: l.name,
+      surname: l.surname,
+    );
+
+    user = await login.send();
     notifyListeners();
   }
 
-  void logout() {
-    user = null;
+  Future<void> register(Register r, BuildContext context) async {
+    Register register = Register(
+      email: r.email,
+      password: r.password,
+      confirmPassword: r.password,
+      username: r.username,
+      name: r.name,
+      surname: r.surname,
+    );
+
+    user = await register.send(context);
+    notifyListeners();
+  }
+
+  void logout() async {
+    await user?.delete();
+    user = User.defaultU();
     notifyListeners();
   }
 

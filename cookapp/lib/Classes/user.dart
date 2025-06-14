@@ -1,5 +1,7 @@
 import 'dart:developer' as developer;
 
+import 'package:cookapp/Classes/snackbars.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'server_info.dart';
@@ -25,7 +27,7 @@ class Login {
     //this.phone,
   });
 
-  Future<bool> send() async {
+  Future<User> send() async {
     //developer.log('Logging in with email: $email and password: $password');
 
     // Do an API call to the server to login
@@ -73,15 +75,15 @@ class Login {
           surname: surname,
         );
         await user.save();
-        return true;
+        return user;
       } else {
         //developer.log('Login failed');
         //developer.log('Response: $responseBody');
-        return false;
+        return User.defaultU();
       }
     } else {
       //developer.log(" ---> (0002) ${response.reasonPhrase}");
-      return false;
+      return User.defaultU();
     }
   }
 }
@@ -105,22 +107,35 @@ class Register {
     //this.phone,
   });
 
-  Future<int> register() async {
+  Future<User> send(BuildContext? context) async {
     if (password != confirmPassword) {
       //developer.log('Passwords do not match');
-      return 1;
+      if (context != null) {
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          'Error: Passwords do not match',
+        );
+      }
+      return User.defaultU();
     }
     //developer.log('Registering with email: $email, username: $username, name: $name');
 
+    developer.log(username);
+    developer.log(name);
+    developer.log(surname ?? '');
+    developer.log(password);
+    developer.log(confirmPassword);
+    developer.log(email);
     // Do an API call to the server to register
     var request = http.MultipartRequest('POST', Uri.parse('${ServerInfo.url}/Account/AppRegister'));
     request.fields.addAll({
-      'Email': email,
-      'UserName': username,
-      'Password': password,
-      'ConfirmPassword': confirmPassword,
-      'Name': name,
-      'Surname': surname ?? '',
+      'email': email.toString().toLowerCase(),
+      'username': username.toString(),
+      'password': password.toString(),
+      'confirmPassword': confirmPassword.toString(),
+      'name': name.toString(),
+      'surname': surname?.toString() ?? '',
       //'phone': phone ?? '',
     });
 
@@ -133,7 +148,12 @@ class Register {
 
       // Check if it contains the success field and if it has the value true
       if (responseBody.contains('success":true')) {
-        //developer.log('Register successful');
+        developer.log('Register successful');
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context!,
+          'User registered successfully',
+        );
 
         // Get the cookie from the response
         var cookie = response.headers['set-cookie'];
@@ -142,7 +162,10 @@ class Register {
         // Get the user data from the response
         var username = responseBody.split('username":"')[1].split('"')[0];
         var name = responseBody.split('name":"')[1].split('"')[0];
-        var surname = responseBody.split('surname":"')[1].split('"')[0];
+        var surname = "";
+        if (responseBody.contains('surname":"')) {
+          surname = responseBody.split('surname":"')[1].split('"')[0];
+        }
         var guid = responseBody.split('id":"')[1].split('"')[0];
 
         // Save the user data to user.json
@@ -157,17 +180,31 @@ class Register {
         );
         await user.save();
 
-        return 0;
+        return user;
       } else {
+        if (context != null) {
+          showSnackbar(
+            // ignore: use_build_context_synchronously
+            context,
+            'Error: ${responseBody.split('"description":"')[1].split('"')[0]}',
+          );
+        }
+        developer.log("User Registration Error: ${responseBody.split('"description":"')[1].split('"')[0]}");
+        developer.log('Response: $responseBody');
+
         //developer.log('Register failed');
-        //developer.log('Response: $responseBody');
-        // Get the error -> code from the json response
-        //"error":{"code":"5","description":"Model not valid"}
-        return int.parse(responseBody.split('"code":"')[1].split('"')[0]); // 2, 3, 4, 5
+        return User.defaultU();
       }
     } else {
       //developer.log(" ---> (0003) ${response.reasonPhrase}");
-      return -1;
+      if (context != null) {
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          'Error: ${response.reasonPhrase}',
+        );
+      }
+      return User.defaultU();
     }
   }
 }
@@ -195,7 +232,7 @@ class User {
   });
 
   factory User.defaultU() {
-    return User(cookie: '', guid: '', email: '', username: '', name: '');
+    return User(cookie: '', guid: '', email: '', username: '', name: '', surname: null);
   }
 
   Future<User> getInstance() async {
@@ -287,8 +324,9 @@ class User {
       await storage.delete(key: 'username');
       await storage.delete(key: 'name');
       await storage.delete(key: 'surname');
+      developer.log('User data deleted from secure storage');
     } catch (e) {
-      //developer.log('Error deleting user data: $e');
+      developer.log('Error deleting user data: $e');
       return false;
     }
 

@@ -1,15 +1,16 @@
 import 'package:cookapp/Classes/app_state.dart';
-import 'package:cookapp/Classes/user.dart';
 import 'package:cookapp/Pages/Elements/drawer_header.dart';
 import 'package:flutter/material.dart';
 import 'package:cookapp/Functions/show_conf_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
-Widget loggedInSettings(BuildContext context, User user) {
+Widget loggedInSettings(BuildContext context) {
+  final appState = context.watch<AppState>();
   final loc = AppLocalizations.of(context)!;
   return Column(
     children: [
-      drawerHeader(user),
+      drawerHeader(appState.user!),
       //* Privacy
       const Text(
         "Nenhuma definição disponível",
@@ -59,13 +60,14 @@ Widget loggedInSettings(BuildContext context, User user) {
           await showConfDialog(
             context,
             "Tem a certeza que quer terminar sessão?",
-          ).then((value) {
+          ).then((value) async {
             if (value) {
-              AppState().logout();
+              appState.logout();
 
               if (navigator.canPop()) {
-                navigator.pop(); // Close the drawer
+                navigator.pop();
               }
+              // Close the drawer if open, then the page if possible
             }
           });
         },

@@ -6,7 +6,6 @@ import 'package:cookapp/Classes/server_info.dart';
 import 'package:cookapp/Pages/Elements/drawer_items.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Classes/user.dart';
 import 'settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -19,14 +18,9 @@ class UserSettings extends StatefulWidget {
 }
 
 class _UserSettingsState extends State<UserSettings> {
-  User? user = User.defaultU();
   @override
   void initState() {
     super.initState();
-    user!.getInstance().then(
-          (value) => setState(() {}),
-        );
-
     Settings.getDarkMode().then(
       (value) => setState(() {
         darkMode = value;
@@ -36,10 +30,6 @@ class _UserSettingsState extends State<UserSettings> {
 
   Settings settings = Settings.defaultS();
 
-  String page = "details";
-
-  bool isLogged = false;
-
   bool darkMode = themeNotifier.value == ThemeMode.dark ? true : false;
 
   @override
@@ -47,11 +37,10 @@ class _UserSettingsState extends State<UserSettings> {
     final appState = context.watch<AppState>();
     final loc = AppLocalizations.of(context)!;
 
-    setState(() {
-      isLogged = user!.guid != "";
-    });
+    var drawerItems = getDrawerItems(context);
 
-    var drawerItems = getDrawerItems(context, user);
+    //developer.log("User Settings: ${appState.user!.cookie}");
+
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.account_settings),
@@ -164,7 +153,8 @@ class _UserSettingsState extends State<UserSettings> {
                               );
                               appState.setLocale(selectedLocale);
                             }
-                            drawerItems = getDrawerItems(context, user);
+                            drawerItems = getDrawerItems(context);
+                            // Update the drawer items after changing the language
                             setState(() {});
                           },
                         ),

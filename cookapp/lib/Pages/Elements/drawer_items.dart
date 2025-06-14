@@ -1,16 +1,19 @@
-import 'package:cookapp/Classes/user.dart';
+import 'package:cookapp/Classes/app_state.dart';
 import 'package:cookapp/Pages/Elements/drawer_header.dart';
 import 'package:cookapp/Pages/Elements/logged_in_settings.dart';
 import 'package:cookapp/Settings/login_page.dart';
 import 'package:cookapp/Settings/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+//import 'dart:developer' as developer;
 
-Widget getDrawerItems(BuildContext context, User? user) {
+Widget getDrawerItems(BuildContext context) {
   final loc = AppLocalizations.of(context)!;
+  final appState = context.watch<AppState>();
 
-  return user != null
-      ? loggedInSettings(context, user)
+  return appState.isLoggedIn
+      ? loggedInSettings(context)
       : ListView(
           children: [
             anonymousDrawerHeader,
