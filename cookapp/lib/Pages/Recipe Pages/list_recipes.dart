@@ -1,3 +1,5 @@
+import 'package:cookapp/Classes/tuple.dart';
+import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
 import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:cookapp/Functions/server_requests.dart';
@@ -17,7 +19,6 @@ class ListRecipesForm extends StatefulWidget {
 
 class _ListRecipesFormState extends State<ListRecipesForm> {
   List<Recipe> _recipes = [];
-  String categoria = 'Geral';
   bool rLoaded = false;
   Map<String, Image> imageCache = {};
 
@@ -53,6 +54,16 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
       });
     });
   }
+
+  // Simple Tuple class for holding two values
+
+  List<Tuple<String, bool>> options = [
+    Tuple('Geral', true),
+    Tuple('Bolos', false),
+    Tuple('Tartes', false),
+    Tuple('Sobremesas', false),
+    Tuple('Pratos', false),
+  ];
 
   GlobalKey<RefreshIndicatorState> refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
@@ -143,44 +154,67 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Receitas'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: DropdownButton<String>(
-              value: categoria,
-              style: TextStyle(
-                fontSize: 16,
-                color: themeNotifier.value == ThemeMode.dark ? Colors.white : Colors.black,
-              ),
-              items: <String>[
-                'Geral',
-                'Bolos',
-                'Tartes',
-                'Sobremesas',
-                'Pratos',
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? novaCategoria) {
-                setState(() {
-                  categoria = novaCategoria!;
-                });
-              },
-            ),
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 20),
+              Text(
+                'As Minhas Receitas',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: 60),
+                child: CarouselView.weighted(
+                  controller: CarouselController(),
+                  itemSnapping: true,
+                  flexWeights: const <int>[1, 2, 1],
+                  onTap: (index) {
+                    setState(() {
+                      options[index].item2 = !options[index].item2;
+                    });
+                  },
+                  children:
+                      // Options / Filters for the recipes
+                      options.map((option) {
+                    return Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Material(
+                        elevation: 5,
+                        borderRadius: BorderRadius.circular(25),
+                        child: InkWell(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: option.item2 ? Colors.blue : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Text(
+                                  option.item1,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: option.item2 ? Colors.white : Colors.black,
+                                    overflow: TextOverflow.fade,
+                                  ),
+                                  softWrap: false,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
               //! CASO ESTEJA ALGO A CORRER MAL PODEM SER ESTES ELEMENTOS O PROBLEMA!
               Padding(
                 padding: const EdgeInsets.all(8),
@@ -203,8 +237,10 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                         : ListView.builder(
                             itemCount: _recipes.length,
                             itemBuilder: (BuildContext context, int index) {
-                              if (_recipes[index].getType() != categoria && categoria != 'Geral') {
-                                return Container();
+                              for (Tuple<String, bool> option in options) {
+                                if (option.item1 == _recipes[index].getType() && !option.item2) {
+                                  return Container();
+                                }
                               }
                               return Padding(
                                 padding: const EdgeInsets.only(
@@ -281,6 +317,9 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
           ),
         ),
       ),
+      bottomNavigationBar: bottomAppBar(context, PageType.recipes),
+      floatingActionButton: actionButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

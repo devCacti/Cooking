@@ -57,18 +57,6 @@ Widget getDrawerItems(BuildContext context) {
                 );
               },
             ),
-            //* Divider
-            const Divider(),
-            //* Go back button
-            ListTile(
-              title: Text(loc.goBack),
-              leading: const Icon(Icons.arrow_back),
-              onTap: () {
-                //? Twice so that it closes the drawer and then the page
-                Navigator.pop(context); // Close the drawer
-                Navigator.pop(context); // Close the page
-              },
-            ),
           ],
         );
 }

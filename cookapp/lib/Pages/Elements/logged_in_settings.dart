@@ -39,16 +39,6 @@ Widget loggedInSettings(BuildContext context) {
       ),
       //* Divider
       const Divider(),
-      //* Go back button
-      ListTile(
-        title: Text(loc.goBack),
-        leading: const Icon(Icons.arrow_back),
-        onTap: () {
-          // Close the drawer if open, then the page if possible
-          Navigator.of(context).maybePop();
-          Navigator.of(context).maybePop();
-        },
-      ),
       ListTile(
         title: Text(loc.logout),
         leading: const Icon(

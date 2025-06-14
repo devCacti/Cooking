@@ -1,6 +1,7 @@
 //? Imports
 //import 'package:cookapp/Classes/server_info.dart';
 import 'package:cookapp/Classes/app_state.dart';
+import 'package:cookapp/Pages/Elements/app_title.dart';
 import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
 import 'package:cookapp/Pages/Elements/early_access.dart';
 import 'package:flutter/material.dart';
@@ -136,35 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(height: 10),
           //*Early Access
           earlyAccess(context),
-          const Padding(
-            padding: EdgeInsets.only(top: 10, bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.fastfood_rounded,
-                  size: 40,
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  'Cooking',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 40,
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Icon(
-                  Icons.local_dining_sharp,
-                  size: 40,
-                ),
-              ],
-            ),
-          ),
+          appTitle,
 
           //* Recommended Recipes
           Padding(
@@ -296,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(height: 32),
         ],
       ),
-      bottomNavigationBar: bottomAppBar(context),
+      bottomNavigationBar: bottomAppBar(context, PageType.home),
       floatingActionButton: actionButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
