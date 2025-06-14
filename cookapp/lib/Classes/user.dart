@@ -32,7 +32,11 @@ class Login {
 
     // Do an API call to the server to login
     var request = http.MultipartRequest('POST', Uri.parse('${ServerInfo.url}/Account/AppLogin'));
-    request.fields.addAll({'email': email, 'password': password, 'remember me': 'true'});
+    request.fields.addAll({
+      'email': email,
+      'password': password,
+      'remember me': 'true',
+    });
 
     //request.headers.addAll(headers); // no headers needed, we only need to get the cookie from the response
 
@@ -47,7 +51,6 @@ class Login {
 
         // Get the cookie from the response
         var cookie = response.headers['set-cookie'];
-        developer.log('Cookie: $cookie');
 
         //developer.log('Response: $responseBody');
 

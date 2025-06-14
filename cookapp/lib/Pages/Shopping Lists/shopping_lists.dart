@@ -1,3 +1,4 @@
+import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cookapp/Classes/lista_compra.dart';
@@ -66,12 +67,17 @@ class _ShoppingListsState extends State<ShoppingLists> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Listas de Compras'),
-        centerTitle: true,
-      ),
       body: Column(
         children: [
+          const SizedBox(height: 20),
+          Text(
+            'Listas de Compras',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
               itemCount: lists.length,
@@ -111,9 +117,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                             title: Text(lists[index].nome),
                             subtitle: Text(
                               lists[index].data?.toString() ?? 'Erro na Data!',
-                              style: TextStyle(
-                                color: lists[index].data == null ? Colors.red : Theme.of(context).colorScheme.onSurface,
-                              ),
+                              style: lists[index].data == null ? const TextStyle(color: Colors.red) : const TextStyle(),
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -181,6 +185,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
           ),
         ],
       ),
+      bottomNavigationBar: bottomAppBar(context, PageType.shoppingList),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'Nova Lista',
         onPressed: () {

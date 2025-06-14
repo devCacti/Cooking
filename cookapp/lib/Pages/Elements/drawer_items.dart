@@ -1,4 +1,5 @@
 import 'package:cookapp/Classes/app_state.dart';
+import 'package:cookapp/Classes/snackbars.dart';
 import 'package:cookapp/Pages/Elements/drawer_header.dart';
 import 'package:cookapp/Pages/Elements/logged_in_settings.dart';
 import 'package:cookapp/Settings/login_page.dart';
@@ -6,11 +7,18 @@ import 'package:cookapp/Settings/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-//import 'dart:developer' as developer;
 
 Widget getDrawerItems(BuildContext context) {
   final loc = AppLocalizations.of(context)!;
   final appState = context.watch<AppState>();
+
+  showSuccessfullyLoggedInSnackbar() {
+    showSnackbar(context, 'Login successful!', type: SnackBarType.success, isBold: true);
+    //Check if its possible to close the drawer
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context); // Close the drawer
+    }
+  }
 
   return appState.isLoggedIn
       ? loggedInSettings(context)
@@ -28,7 +36,12 @@ Widget getDrawerItems(BuildContext context) {
                   MaterialPageRoute(
                     builder: (context) => const LoginPage(),
                   ),
-                ).then((value) {});
+                ).then((value) {
+                  if (appState.isLoggedIn) {
+                    // If the user is logged in, we can show the logged in settings
+                    showSuccessfullyLoggedInSnackbar();
+                  }
+                });
               },
             ),
             ListTile(
@@ -42,18 +55,6 @@ Widget getDrawerItems(BuildContext context) {
                     builder: (context) => const RegisterPage(),
                   ),
                 );
-              },
-            ),
-            //* Divider
-            const Divider(),
-            //* Go back button
-            ListTile(
-              title: Text(loc.goBack),
-              leading: const Icon(Icons.arrow_back),
-              onTap: () {
-                //? Twice so that it closes the drawer and then the page
-                Navigator.pop(context); // Close the drawer
-                Navigator.pop(context); // Close the page
               },
             ),
           ],

@@ -1,26 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-Widget earlyAccess = Padding(
-  padding: const EdgeInsets.only(left: 16, top: 30, right: 16),
-  child: Material(
-    shadowColor: Colors.black45,
-    elevation: 5,
-    color: const Color.fromARGB(45, 234, 234, 234),
-    borderRadius: BorderRadius.circular(50),
-    // Early Access Warning
-    child: const ListTile(
-      title: Text(
-        'ACESSO ANTECIPADO',
-        style: TextStyle(fontSize: 14),
-        textAlign: TextAlign.center,
+Widget earlyAccess(BuildContext context) {
+  final loc = AppLocalizations.of(context)!;
+
+  return Padding(
+    padding: const EdgeInsets.only(left: 16, top: 30, right: 16),
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        color: const Color.fromARGB(19, 115, 115, 115),
       ),
-      subtitle: Text(
-        'Pode perder tudo o que tiver durante esta fase!',
-        style: TextStyle(fontSize: 12),
-        textAlign: TextAlign.center,
+      // Early Access Warning
+      child: ListTile(
+        title: Text(
+          loc.earlyAccess,
+          style: const TextStyle(fontSize: 20),
+          textAlign: TextAlign.center,
+        ),
+        leading: const Icon(
+          Icons.warning_amber_rounded,
+          color: Colors.red,
+          size: 30,
+        ),
+        trailing: const Icon(
+          Icons.warning_amber_rounded,
+          color: Colors.red,
+          size: 30,
+        ),
       ),
-      leading: Icon(Icons.warning_amber_rounded, color: Colors.red, size: 30),
-      trailing: Icon(Icons.warning_amber_rounded, color: Colors.red, size: 30),
     ),
-  ),
-);
+  );
+}

@@ -3,6 +3,7 @@
 import 'package:cookapp/Classes/app_state.dart';
 import 'package:cookapp/Classes/language.dart';
 import 'package:cookapp/Classes/server_info.dart';
+import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
 import 'package:cookapp/Pages/Elements/drawer_items.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -162,21 +163,6 @@ class _UserSettingsState extends State<UserSettings> {
                     ),
                   ],
                 ),
-
-                // Divider
-                const SizedBox(height: 20.0),
-                const Divider(),
-                // Go back button, leading to the previous page
-                const SizedBox(height: 20.0),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close the page
-                  },
-                  child: Text(
-                    loc.goBack,
-                    style: const TextStyle(fontSize: 20.0),
-                  ),
-                ),
               ],
             ),
           ),
@@ -186,6 +172,9 @@ class _UserSettingsState extends State<UserSettings> {
         semanticLabel: "Menu de Navegação",
         child: drawerItems,
       ),
+      bottomNavigationBar: bottomAppBar(context, PageType.profile),
+      floatingActionButton: actionButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
