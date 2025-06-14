@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
   User? user;
-  Locale _locale = const Locale('en');
+  Locale _locale = const Locale('pt');
 
   Locale get locale => _locale;
   bool get isLoggedIn => user != null && user!.cookie.isNotEmpty;

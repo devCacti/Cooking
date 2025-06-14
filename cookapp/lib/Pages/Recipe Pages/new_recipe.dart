@@ -75,15 +75,16 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        action: SnackBarAction(
-          label: 'OK',
-          textColor: Colors.green,
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
-        ),
+        //action: SnackBarAction(
+        //  label: 'OK',
+        //  textColor: Colors.green,
+        //  onPressed: () {
+        //    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        //  },
+        //),
       ),
     );
+    Navigator.pop(context, true);
   }
 
   failed() {
@@ -444,6 +445,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                           onChanged: (value) {
                             ingsR = value;
                           },
+                          validator: (value) {
+                            if (value != null && value.isNotEmpty) {
+                              return "Por favor certifique-se que adicionou o ingrediente";
+                            }
+                            return null;
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -696,6 +703,12 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             setState(() {
                               procR = value;
                             });
+                          },
+                          validator: (value) {
+                            if (value != null && value.isNotEmpty) {
+                              return "Por favor certifique-se que adicionou o passo";
+                            }
+                            return null;
                           },
                         ),
                       ),
@@ -1055,12 +1068,15 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                         try {
                           _nameKey.currentState!.validate();
                           _descKey.currentState!.validate();
+                          _ingsKey.currentState!.validate();
+                          _procKey.currentState!.validate();
 
                           //Verification
-                          validate = _nameKey.currentState!.validate() && _descKey.currentState!.validate();
+                          validate = _nameKey.currentState!.validate() &&
+                              _descKey.currentState!.validate() &&
+                              _ingsKey.currentState!.validate() &&
+                              _procKey.currentState!.validate();
                           if (validate == true) {
-                            //! TODO: Finish Changing the Recipe Creation Process
-                            //* What?
                             //? Process of creating the Recipe
                             final List<IngBridge> bridges = [];
                             final List<Ingredient> ings = [];
@@ -1119,7 +1135,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 ),
                                 behavior: SnackBarBehavior.floating,
                                 content: const Text(
-                                  'Insira um nome e uma descrição.',
+                                  'Corrija o formulário conforme as ',
                                   style: TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
