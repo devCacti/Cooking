@@ -2,6 +2,7 @@
 //import 'package:cookapp/Classes/server_info.dart';
 import 'package:cookapp/Classes/app_state.dart';
 import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
+import 'package:cookapp/Pages/Elements/early_access.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Functions/server_requests.dart';
@@ -128,39 +129,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
+    //final loc = AppLocalizations.of(context)!;
     return Scaffold(
       body: Column(
         children: [
           const SizedBox(height: 10),
           //*Early Access
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 30, right: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: const Color.fromARGB(19, 115, 115, 115),
-              ),
-              // Early Access Warning
-              child: ListTile(
-                title: Text(
-                  loc.earlyAccess,
-                  style: const TextStyle(fontSize: 20),
-                  textAlign: TextAlign.center,
-                ),
-                leading: const Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.red,
-                  size: 30,
-                ),
-                trailing: const Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.red,
-                  size: 30,
-                ),
-              ),
-            ),
-          ),
+          earlyAccess(context),
           const Padding(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             child: Row(

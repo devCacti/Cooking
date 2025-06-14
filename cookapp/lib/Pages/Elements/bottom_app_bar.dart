@@ -1,4 +1,8 @@
+import 'package:cookapp/Classes/app_state.dart';
+import 'package:cookapp/Classes/snackbars.dart';
+import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../Shopping%20Lists/shopping_lists.dart';
 import '../Recipe Pages/list_recipes.dart';
 //*import '../list_favourites.dart';
@@ -76,22 +80,36 @@ Widget bottomAppBar(BuildContext context) => BottomAppBar(
       ),
     );
 
-Widget actionButton(BuildContext context) => FloatingActionButton(
-      heroTag: 'newRecipe',
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => NewRecipeForm(context: context),
-          ),
-        );
-      },
-      tooltip: 'Nova Receita',
-      shape: const CircleBorder(),
-      //backgroundColor: Colors.lime[200],
-      child: const Icon(
-        Icons.add,
-        size: 40,
-        color: Colors.black,
-      ),
-    );
+Widget actionButton(BuildContext context) {
+  final appState = context.watch<AppState>();
+  return FloatingActionButton(
+    heroTag: 'newRecipe',
+    onPressed: !appState.isLoggedIn
+        ? () {
+            showSnackbar(
+              context,
+              'Por favor, faça login.',
+              type: SnackBarType.info,
+              isBold: true,
+            );
+          }
+        : () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NewRecipeForm(context: context),
+              ),
+            );
+          },
+    tooltip: 'Nova Receita',
+    shape: const CircleBorder(),
+    backgroundColor:
+        appState.isLoggedIn ? Theme.of(context).appBarTheme.backgroundColor : Theme.of(context).disabledColor.withAlpha((0.1 * 255).toInt()),
+    //backgroundColor: Colors.lime[200],
+    child: Icon(
+      Icons.add,
+      size: 40,
+      color: Colors.black,
+    ),
+  );
+}

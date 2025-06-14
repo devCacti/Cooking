@@ -1,4 +1,5 @@
 import 'package:cookapp/Classes/app_state.dart';
+import 'package:cookapp/Classes/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Classes/user.dart';
@@ -142,35 +143,31 @@ class _LoginPageState extends State<LoginPage> {
 
                             // Makes the login request
                             // And stores the token in a file
-                            await appState.login(login);
-                            User user = appState.user ?? User.defaultU();
-
-                            if (user != User.defaultU()) {
-                              if (context.mounted) {
-                                // ignore: use_build_context_synchronously
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Login efetuado com sucesso!"),
-                                    duration: Duration(seconds: 5),
-                                  ),
-                                );
-                                Navigator.pop(context, user);
+                            await appState.login(login, context).then((value) {
+                              if (appState.isLoggedIn) {
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
                               }
-                            } else {
-                              // ignore: use_build_context_synchronously
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Email ou password inválidos."),
-                                  duration: Duration(seconds: 5),
-                                ),
-                              );
-                            }
+                            });
                           }
                         },
                       ),
-                    )
+                    ),
                   ],
                 ),
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  // Simulate an error for demonstration purposes
+                  showSnackbar(context, 'This is a simulated error message.', type: SnackBarType.error, isBold: true);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, // Button color
+                  foregroundColor: Colors.white, // Text color
+                ),
+                child: const Text("Trigger Error"),
               ),
             ],
           ),

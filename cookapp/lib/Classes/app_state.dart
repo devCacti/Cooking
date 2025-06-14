@@ -1,4 +1,5 @@
 import 'package:cookapp/Classes/language.dart';
+import 'package:cookapp/Classes/snackbars.dart';
 import 'package:cookapp/Classes/user.dart';
 import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class AppState extends ChangeNotifier {
   bool get isLoggedIn => user != null && user!.cookie.isNotEmpty;
 
   // User Related Methods
-  Future<void> login(Login l) async {
+  Future<void> login(Login l, BuildContext context) async {
     Login login = Login(
       email: l.email,
       password: l.password,
@@ -21,6 +22,12 @@ class AppState extends ChangeNotifier {
     );
 
     user = await login.send();
+
+    if (user == null || user!.cookie.isEmpty) {
+      // If login fails, show an error message
+      // ignore: use_build_context_synchronously
+      showSnackbar(context, 'Invalid email or password.', type: SnackBarType.error, isBold: true);
+    }
     notifyListeners();
   }
 
