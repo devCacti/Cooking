@@ -124,12 +124,6 @@ class Register {
     }
     //developer.log('Registering with email: $email, username: $username, name: $name');
 
-    developer.log(username);
-    developer.log(name);
-    developer.log(surname ?? '');
-    developer.log(password);
-    developer.log(confirmPassword);
-    developer.log(email);
     // Do an API call to the server to register
     var request = http.MultipartRequest('POST', Uri.parse('${ServerInfo.url}/Account/AppRegister'));
     request.fields.addAll({
@@ -152,11 +146,6 @@ class Register {
       // Check if it contains the success field and if it has the value true
       if (responseBody.contains('success":true')) {
         developer.log('Register successful');
-        showSnackbar(
-          // ignore: use_build_context_synchronously
-          context!,
-          'User registered successfully',
-        );
 
         // Get the cookie from the response
         var cookie = response.headers['set-cookie'];
@@ -190,6 +179,8 @@ class Register {
             // ignore: use_build_context_synchronously
             context,
             'Error: ${responseBody.split('"description":"')[1].split('"')[0]}',
+            type: SnackBarType.error,
+            isBold: true,
           );
         }
         developer.log("User Registration Error: ${responseBody.split('"description":"')[1].split('"')[0]}");
@@ -205,6 +196,8 @@ class Register {
           // ignore: use_build_context_synchronously
           context,
           'Error: ${response.reasonPhrase}',
+          type: SnackBarType.error,
+          isBold: true,
         );
       }
       return User.defaultU();
