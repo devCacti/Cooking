@@ -1,8 +1,8 @@
 import 'package:cookapp/Classes/app_state.dart';
 import 'package:provider/provider.dart';
-
 import '../Classes/user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -27,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final appState = context.watch<AppState>();
     return Scaffold(
       appBar: AppBar(
@@ -177,6 +178,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 return null;
               },
             ),
+            // Password conditions
+
             const SizedBox(height: 16.0),
             //* Confirm Password
             TextFormField(
@@ -186,7 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
               autocorrect: false,
               decoration: InputDecoration(
                 hintText: "@Password123",
-                labelText: "Confirmar Password *",
+                labelText: "${loc.confirm_password} *",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
@@ -201,18 +204,40 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
-                  return "Por favor confirme a sua password";
+                  return loc.please_confirm_password;
                 }
                 if (value != _passwordController.text) {
-                  return "As passwords não coincidem";
+                  return loc.password_mismatch;
                 }
                 return null;
               },
             ),
-            const SizedBox(height: 48.0),
+            const SizedBox(height: 8.0),
+            Text(
+              "- ${loc.password_conditions_chars}",
+              style: const TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey,
+              ),
+            ),
+            Text(
+              "- ${loc.password_conditions_numbers}",
+              style: const TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey,
+              ),
+            ),
+            Text(
+              "- ${loc.password_conditions_special}",
+              style: const TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 12.0),
             //*Loading Indicator
             if (_isRegistering) const Center(child: CircularProgressIndicator()),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 12.0),
             //* Register Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 64.0),
@@ -242,11 +267,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           if (appState.isLoggedIn) {
                             // If registration is successful, navigate to the home page
                             // ignore: use_build_context_synchronously
-                            Navigator.maybePop(context);
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
                           }
                         }
                       },
-                child: const Text("Registar"),
+                child: Text(loc.register),
               ),
             ),
             const SizedBox(height: 24.0),
@@ -257,7 +284,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text("Voltar"),
+                child: Text(loc.goBack),
               ),
             ),
           ],

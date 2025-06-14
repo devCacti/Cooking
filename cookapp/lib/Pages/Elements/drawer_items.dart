@@ -13,7 +13,15 @@ Widget getDrawerItems(BuildContext context) {
   final appState = context.watch<AppState>();
 
   showSuccessfullyLoggedInSnackbar() {
-    showSnackbar(context, 'Login successful!', type: SnackBarType.success, isBold: true);
+    showSnackbar(context, loc.login_successful, type: SnackBarType.success, isBold: true);
+    //Check if its possible to close the drawer
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context); // Close the drawer
+    }
+  }
+
+  showSuccessfullyRegisteredSnackbar() {
+    showSnackbar(context, loc.register_successful, type: SnackBarType.success, isBold: true);
     //Check if its possible to close the drawer
     if (Navigator.canPop(context)) {
       Navigator.pop(context); // Close the drawer
@@ -54,7 +62,12 @@ Widget getDrawerItems(BuildContext context) {
                   MaterialPageRoute(
                     builder: (context) => const RegisterPage(),
                   ),
-                );
+                ).then((value) {
+                  if (appState.isLoggedIn) {
+                    // If the user is logged in, we can show the logged in settings
+                    showSuccessfullyRegisteredSnackbar();
+                  }
+                });
               },
             ),
           ],

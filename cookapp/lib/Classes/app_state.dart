@@ -42,6 +42,12 @@ class AppState extends ChangeNotifier {
     );
 
     user = await register.send(context);
+
+    if (user == null || user!.cookie.isEmpty) {
+      // If registration fails, show an error message
+      // ignore: use_build_context_synchronously
+      showSnackbar(context, 'Registration failed. Please try again.', type: SnackBarType.error, isBold: true);
+    }
     notifyListeners();
   }
 
