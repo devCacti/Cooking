@@ -6,7 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'server_info.dart';
 
-const storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage(
+  // ignore: deprecated_member_use
+  aOptions: AndroidOptions(encryptedSharedPreferences: true),
+);
 
 // This file contains the classes for the user, login and register
 

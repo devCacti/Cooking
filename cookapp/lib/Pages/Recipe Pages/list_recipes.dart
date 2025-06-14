@@ -1,6 +1,5 @@
 import 'package:cookapp/Classes/tuple.dart';
 import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
-import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:cookapp/Functions/server_requests.dart';
 import 'package:cookapp/Pages/Recipe%20Pages/recipe_detail.dart';

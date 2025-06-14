@@ -101,9 +101,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    super.initState();
+
     var appState = context.read<AppState>();
-    appState.getLocale(); // Load the locale from settings
-    Settings.getDarkMode().then((value) {
+    appState.getLocale(context); // Load the locale from settings
+    Settings.getDarkMode(context).then((value) {
       setState(() {
         themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light; // Set the theme mode based on the settings
       });
@@ -114,7 +116,6 @@ class _MyHomePageState extends State<MyHomePage> {
         user = value;
       });
     });
-    super.initState();
 
     // Refresh the recipes
     fullRefreshRecipes();

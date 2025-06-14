@@ -22,7 +22,7 @@ class _UserSettingsState extends State<UserSettings> {
   @override
   void initState() {
     super.initState();
-    Settings.getDarkMode().then(
+    Settings.getDarkMode(context).then(
       (value) => setState(() {
         darkMode = value;
       }),

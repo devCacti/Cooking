@@ -1,11 +1,12 @@
 import 'package:cookapp/Classes/language.dart';
+import 'package:cookapp/Classes/snackbars.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 
 //? Global Variables
-final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
+ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
 class Settings {
   //? Variables
@@ -24,7 +25,7 @@ class Settings {
 
   //* Get the dark mode setting from a user settings file called settings.json
   //! If it returns null it means there was an error
-  static Future<bool> getDarkMode() async {
+  static Future<bool> getDarkMode(BuildContext context) async {
     //? Get the path to the application documents directory
     String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
 
@@ -53,6 +54,13 @@ class Settings {
     } catch (e) {
       // Handle any errors that occur during file operations
       ////developer.log("Error reading settings file: $e");
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        "Error getting dark mode setting: $e",
+        type: SnackBarType.error,
+        isBold: true,
+      );
       return false;
     }
   }
@@ -88,7 +96,7 @@ class Settings {
   }
 
   //* Get the language setting from a user settings file called settings.json
-  static Future<String> getLanguage() async {
+  static Future<String> getLanguage(BuildContext context) async {
     //? Get the path to the application documents directory
     String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
 
@@ -114,6 +122,13 @@ class Settings {
     } catch (e) {
       // Handle any errors that occur during file operations
       ////developer.log("Error reading settings file: $e");
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        "Error getting language setting: $e",
+        type: SnackBarType.error,
+        isBold: true,
+      );
       return 'en'; // Default value in case of error
     }
   }

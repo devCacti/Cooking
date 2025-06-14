@@ -22,7 +22,10 @@ import '../Classes/server_info.dart';
 import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-const storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage(
+  // ignore: deprecated_member_use
+  aOptions: AndroidOptions(encryptedSharedPreferences: true),
+);
 
 // Request the image of a recipe
 Future<Image?> getRecipeImage(String id, [Map<String, Image>? imageCache]) async {
