@@ -1,5 +1,6 @@
 import 'package:cookapp/Classes/language.dart';
 import 'package:cookapp/Classes/snackbars.dart';
+import 'package:cookapp/Functions/server_requests.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:convert';
 import 'dart:io';
@@ -326,8 +327,8 @@ class Settings {
       showSnackbar(
         // ignore: use_build_context_synchronously
         context,
-        "Use secure storage set to $value",
-        type: SnackBarType.success,
+        value ? "Now using secure storage." : "No longer using secure storage (not recommended).",
+        type: value ? SnackBarType.success : SnackBarType.error,
         isBold: true,
       );
 
@@ -341,6 +342,64 @@ class Settings {
         isBold: true,
       );
       return null;
+    }
+  }
+
+  static Future<bool> canUseSecureStorage(BuildContext context) async {
+    //? Get the path to the application documents directory
+    File file = await _localSettingsFile;
+
+    try {
+      //? Check if the file exists
+      if (await file.exists()) {
+        String contents = await file.readAsString();
+
+        // Parse the JSON string to get the useSecureStorage value
+        Map<String, dynamic> json = jsonDecode(contents);
+
+        bool useSecureStorage = json['useSecureStorage'] ?? false; // Default to false if not found
+
+        json['useSecureStorage'] = useSecureStorage; // Update the value in the JSON
+        // Update the JSON object with the new value
+
+        // write the value to the file
+        file.writeAsStringSync(jsonEncode(json));
+        return useSecureStorage;
+      } else {
+        try {
+          storage.write(
+            key: 'test_secure_storage',
+            value: 'test_value',
+          );
+          File file = await _localSettingsFile;
+          Map<String, dynamic> json = {'useSecureStorage': true};
+          await file.writeAsString(jsonEncode(json));
+          return true; // Default value if secure storage is available
+        } catch (e) {
+          // If secure storage is not available, show an error message and save the value as false
+          File file = await _localSettingsFile;
+          Map<String, dynamic> json = {'useSecureStorage': false};
+          await file.writeAsString(jsonEncode(json));
+
+          showSnackbar(
+            // ignore: use_build_context_synchronously
+            context,
+            "Secure storage is not available: $e",
+            type: SnackBarType.error,
+            isBold: true,
+          );
+          return false; // Default value if secure storage is not available
+        }
+      }
+    } catch (e) {
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        "Error checking secure storage capability: $e",
+        type: SnackBarType.error,
+        isBold: true,
+      );
+      return false; // Default value in case of error
     }
   }
 }

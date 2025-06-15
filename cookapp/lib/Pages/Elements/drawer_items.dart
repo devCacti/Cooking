@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 Widget getDrawerItems(BuildContext context) {
   final loc = AppLocalizations.of(context)!;
-  final appState = context.watch<AppState>();
+  final appState = Provider.of<AppState>(context, listen: false);
 
   showSuccessfullyLoggedInSnackbar() {
     showSnackbar(context, loc.login_successful, type: SnackBarType.success, isBold: true);

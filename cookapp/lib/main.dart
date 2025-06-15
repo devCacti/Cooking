@@ -119,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
         themeNotifier.value = (value ? ThemeMode.dark : ThemeMode.light); // Set the theme mode based on the settings
       });
     });
+    appState.getUseSecureStorage(context);
 
     // Refresh the recipes
     fullRefreshRecipes();

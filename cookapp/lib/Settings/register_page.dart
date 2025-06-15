@@ -28,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final appState = context.watch<AppState>();
+    final appState = Provider.of<AppState>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Registo"),

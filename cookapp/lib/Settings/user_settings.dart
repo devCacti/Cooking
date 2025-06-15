@@ -33,7 +33,7 @@ class _UserSettingsState extends State<UserSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    final appState = Provider.of<AppState>(context, listen: false);
     final loc = AppLocalizations.of(context)!;
 
     var drawerItems = getDrawerItems(context);
@@ -116,12 +116,15 @@ class _UserSettingsState extends State<UserSettings> {
                     const Spacer(),
                     Switch(
                       value: appState.useSecureStorage,
-                      onChanged: (value) {
-                        appState.setUseSecureStorage(value, context);
-                        drawerItems = getDrawerItems(context);
-                        // Update the drawer items after changing the secure storage setting
-                        setState(() {});
-                      },
+                      onChanged: appState.canUseSecureStorage
+                          ? null // Disable the switch if secure storage is not available
+                          : (value) async {
+                              await appState.setUseSecureStorage(value, context);
+                              // ignore: use_build_context_synchronously
+                              drawerItems = getDrawerItems(context);
+                              // Update the drawer items after changing the secure storage setting
+                              setState(() {});
+                            },
                     ),
                   ],
                 ),

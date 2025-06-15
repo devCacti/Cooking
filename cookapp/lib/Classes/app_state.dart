@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:cookapp/Classes/language.dart';
 import 'package:cookapp/Classes/snackbars.dart';
 import 'package:cookapp/Classes/user.dart';
@@ -8,21 +10,37 @@ class AppState extends ChangeNotifier {
   User? user;
   Locale _locale = const Locale('pt');
   bool _useSecureStorage = true;
+  bool _canUseSecureStorage = false;
 
   Locale get locale => _locale;
   bool get isLoggedIn => user != null && user!.cookie.isNotEmpty;
   bool get useSecureStorage => _useSecureStorage;
+  bool get canUseSecureStorage => _canUseSecureStorage;
 
   Future<bool> getUseSecureStorage(BuildContext context) async {
     _useSecureStorage = await Settings.getUseSecureStorage(context);
+    developer.log("Use Secure Storage: $_useSecureStorage");
+
     notifyListeners();
     return _useSecureStorage;
   }
 
   Future<void> setUseSecureStorage(bool value, BuildContext context) async {
+    if (_useSecureStorage == value) return; // No change, no need to notify
+    user?.delete(context); // Delete user if changing secure storage setting
+    user = null; // Reset user when changing secure storage setting
     _useSecureStorage = value;
+    developer.log("Use Secure Storage: $_useSecureStorage");
+
+    await Settings.setUseSecureStorage(value, context);
     notifyListeners();
-    Settings.setUseSecureStorage(value, context);
+  }
+
+  Future<bool> getCanUseSecureStorage(BuildContext context) async {
+    _canUseSecureStorage = await Settings.canUseSecureStorage(context);
+    _useSecureStorage = _canUseSecureStorage; // Update useSecureStorage based on canUseSecureStorage
+    developer.log("Can Use Secure Storage: $_canUseSecureStorage");
+    return _canUseSecureStorage;
   }
 
   // User Related Methods

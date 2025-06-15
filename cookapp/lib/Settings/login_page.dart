@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    final appState = Provider.of<AppState>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Iniciar Sessão"),
