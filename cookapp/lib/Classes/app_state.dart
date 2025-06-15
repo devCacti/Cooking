@@ -99,8 +99,8 @@ class AppState extends ChangeNotifier {
 
   void setLocale(Locale newLocale, BuildContext context) {
     _locale = newLocale;
-    notifyListeners();
     Settings.setLanguage(Language.getLanguageType(newLocale.languageCode), context);
+    notifyListeners();
   }
 
   Future<void> getLocale(BuildContext context) async {
