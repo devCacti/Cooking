@@ -7,9 +7,23 @@ import 'package:flutter/material.dart';
 class AppState extends ChangeNotifier {
   User? user;
   Locale _locale = const Locale('pt');
+  bool _useSecureStorage = true;
 
   Locale get locale => _locale;
   bool get isLoggedIn => user != null && user!.cookie.isNotEmpty;
+  bool get useSecureStorage => _useSecureStorage;
+
+  Future<bool> getUseSecureStorage(BuildContext context) async {
+    _useSecureStorage = await Settings.getUseSecureStorage(context);
+    notifyListeners();
+    return _useSecureStorage;
+  }
+
+  Future<void> setUseSecureStorage(bool value, BuildContext context) async {
+    _useSecureStorage = value;
+    notifyListeners();
+    Settings.setUseSecureStorage(value, context);
+  }
 
   // User Related Methods
   Future<void> login(Login l, BuildContext context) async {
@@ -21,7 +35,7 @@ class AppState extends ChangeNotifier {
       surname: l.surname,
     );
 
-    user = await login.send();
+    user = await login.send(context);
 
     if (user == null || user!.cookie.isEmpty) {
       // If login fails, show an error message
@@ -51,8 +65,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void logout() async {
-    await user?.delete();
+  void logout(BuildContext context) async {
+    await user?.delete(context);
     user = User.defaultU();
     notifyListeners();
   }

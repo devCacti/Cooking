@@ -1,8 +1,11 @@
 import 'dart:convert';
 //import 'dart:developer' as developer;
 import 'dart:io';
+import 'package:cookapp/Classes/app_state.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:provider/provider.dart';
 import 'ingredients.dart';
 import 'server_info.dart';
 import 'user.dart';
@@ -249,10 +252,10 @@ class RecipeC {
   }
 
   // Function for sending the recipe to the server at /Recipes/NewRecipe
-  Future<bool> send() async {
+  Future<bool> send(BuildContext context) async {
     User? user = User();
     try {
-      await user.getInstance();
+      await user.getInstance(context);
     } catch (e) {
       //developer.log('Error: $e');
       return false;
@@ -383,10 +386,10 @@ class RecipeC {
   }
 
   // Function for sending a updated version of a recipe, this time, it needs the GUID of the recipe
-  Future<bool> update(String guid) async {
+  Future<bool> update(String guid, BuildContext context) async {
     User? user = User();
     try {
-      await user.getInstance();
+      await user.getInstance(context);
     } catch (e) {
       //developer.log('Error: $e');
       return false;
@@ -509,10 +512,10 @@ class RecipeC {
   }
 
   // Function for deleting a recipe from the server
-  Future<int> delete(String guid) async {
+  Future<int> delete(String guid, BuildContext context) async {
     User? user = User();
     try {
-      await user.getInstance();
+      await user.getInstance(context);
     } catch (e) {
       //developer.log('Error: $e');
       return 1;

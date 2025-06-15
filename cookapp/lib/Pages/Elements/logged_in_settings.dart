@@ -52,7 +52,8 @@ Widget loggedInSettings(BuildContext context) {
             "Tem a certeza que quer terminar sessão?",
           ).then((value) async {
             if (value) {
-              appState.logout();
+              // ignore: use_build_context_synchronously
+              appState.logout(context);
 
               if (navigator.canPop()) {
                 navigator.pop();

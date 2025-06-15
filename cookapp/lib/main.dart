@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, Image> imageCache = {};
 
   Future<void> getRecipeimage(String id) async {
-    getRecipeImage(id, imageCache).then((value) {
+    getRecipeImage(id, context, imageCache).then((value) {
       setState(() {
         imageCache[id] = value ?? Image.asset('assets/images/LittleMan.png');
       });
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       rLoaded = false;
     });
-    await getPopularRecipes().then((value) {
+    await getPopularRecipes(context).then((value) {
       setState(() {
         for (Recipe recipe in value) {
           getRecipeimage(recipe.id);

@@ -158,17 +158,17 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Simulate an error for demonstration purposes
-                  showSnackbar(context, 'This is a simulated error message.', type: SnackBarType.error, isBold: true);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Button color
-                  foregroundColor: Colors.white, // Text color
-                ),
-                child: const Text("Trigger Error"),
-              ),
+              //ElevatedButton(
+              //  onPressed: () {
+              //    // Simulate an error for demonstration purposes
+              //    showSnackbar(context, 'This is a simulated error message.', type: SnackBarType.error, isBold: true);
+              //  },
+              //  style: ElevatedButton.styleFrom(
+              //    backgroundColor: Colors.red, // Button color
+              //    foregroundColor: Colors.white, // Text color
+              //  ),
+              //  child: const Text("Trigger Error"),
+              //),
             ],
           ),
         ),

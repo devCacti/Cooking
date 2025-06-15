@@ -33,7 +33,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
     // Gets a list of the user's recipes
     // (2025-02-12) - This function returns all of the user's recipes
     Future<void> getRecipeimage(String id) async {
-      getRecipeImage(id, imageCache).then((value) {
+      getRecipeImage(id, context, imageCache).then((value) {
         setState(() {
           imageCache[id] = value ?? Image.asset('assets/images/LittleMan.png');
         });
@@ -43,7 +43,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
     setState(() {
       rLoaded = false;
     });
-    getMyRecipes().then((returnedValue) {
+    getMyRecipes(context).then((returnedValue) {
       setState(() {
         _recipes = returnedValue;
         rLoaded = true;
@@ -129,8 +129,8 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                 // Deletes the recipe from the database
                 RecipeC instance = RecipeC.defaultR();
                 confirm = true;
-                instance.delete(id).then((_) {
-                  getMyRecipes().then((recipes) {
+                instance.delete(id, context).then((_) {
+                  getMyRecipes(context).then((recipes) {
                     setState(() {
                       _recipes = recipes;
                     });
@@ -225,7 +225,7 @@ class _ListRecipesFormState extends State<ListRecipesForm> {
                   child: RefreshIndicator(
                     key: refreshIndicatorKey,
                     onRefresh: () async {
-                      getMyRecipes().then((recipes) {
+                      getMyRecipes(context).then((recipes) {
                         setState(() {
                           _recipes = recipes;
                         });

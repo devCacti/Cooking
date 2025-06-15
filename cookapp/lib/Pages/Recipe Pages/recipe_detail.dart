@@ -29,7 +29,7 @@ class _RecipeDetailState extends State<RecipeDetail> {
 
     recipe = widget.recipe;
 
-    recipeIngredients(recipe.id).then((value) => setState(() {
+    recipeIngredients(recipe.id, context).then((value) => setState(() {
           ////developer.log(value);
           ////developer.log(recipe.bridges.toString());
           ingredients = value;

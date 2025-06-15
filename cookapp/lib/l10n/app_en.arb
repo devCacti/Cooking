@@ -41,5 +41,7 @@
   "password_conditions_numbers": "At least one number (0-9)",
   "@password_conditions_numbers": {},
   "password_conditions_special": "At least one special character (! @ # $ % &)",
-  "@password_conditions_special": {}
+  "@password_conditions_special": {},
+  "useSecureStorage": "Use \"Secure Storage\"",
+  "@useSecureStorage": {}
 }

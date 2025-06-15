@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:io';
 
+import 'package:cookapp/Classes/app_state.dart';
 import 'package:cookapp/Classes/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:provider/provider.dart';
 import 'server_info.dart';
 
 const storage = FlutterSecureStorage(
@@ -30,7 +35,8 @@ class Login {
     //this.phone,
   });
 
-  Future<User> send() async {
+  Future<User> send(BuildContext context) async {
+    final appState = context.read<AppState>();
     //developer.log('Logging in with email: $email and password: $password');
 
     // Do an API call to the server to login
@@ -80,7 +86,9 @@ class Login {
           name: name,
           surname: surname,
         );
-        await user.save();
+
+        await user.save(appState.useSecureStorage);
+
         return user;
       } else {
         //developer.log('Login failed');
@@ -113,16 +121,18 @@ class Register {
     //this.phone,
   });
 
-  Future<User> send(BuildContext? context) async {
+  Future<User> send(BuildContext context) async {
+    final appState = context.read<AppState>();
+
     if (password != confirmPassword) {
       //developer.log('Passwords do not match');
-      if (context != null) {
-        showSnackbar(
-          // ignore: use_build_context_synchronously
-          context,
-          'Error: Passwords do not match',
-        );
-      }
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        'Error: Passwords do not match',
+        type: SnackBarType.error,
+        isBold: true,
+      );
       return User.defaultU();
     }
     //developer.log('Registering with email: $email, username: $username, name: $name');
@@ -173,19 +183,17 @@ class Register {
           name: name,
           surname: surname,
         );
-        await user.save();
+        await user.save(appState.useSecureStorage);
 
         return user;
       } else {
-        if (context != null) {
-          showSnackbar(
-            // ignore: use_build_context_synchronously
-            context,
-            'Error: ${responseBody.split('"description":"')[1].split('"')[0]}',
-            type: SnackBarType.error,
-            isBold: true,
-          );
-        }
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          'Error: ${responseBody.split('"description":"')[1].split('"')[0]}',
+          type: SnackBarType.error,
+          isBold: true,
+        );
         developer.log("User Registration Error: ${responseBody.split('"description":"')[1].split('"')[0]}");
         developer.log('Response: $responseBody');
 
@@ -194,15 +202,13 @@ class Register {
       }
     } else {
       //developer.log(" ---> (0003) ${response.reasonPhrase}");
-      if (context != null) {
-        showSnackbar(
-          // ignore: use_build_context_synchronously
-          context,
-          'Error: ${response.reasonPhrase}',
-          type: SnackBarType.error,
-          isBold: true,
-        );
-      }
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        'Error: ${response.reasonPhrase}',
+        type: SnackBarType.error,
+        isBold: true,
+      );
       return User.defaultU();
     }
   }
@@ -234,15 +240,36 @@ class User {
     return User(cookie: '', guid: '', email: '', username: '', name: '', surname: null);
   }
 
-  Future<User> getInstance() async {
+  Future<User> getInstance(BuildContext context) async {
     // Returns the information about the user that is saved in the user.json file
-    cookie = await storage.read(key: 'cookie') ?? '';
-    guid = await storage.read(key: 'guid') ?? '';
-    email = await storage.read(key: 'email') ?? '';
-    username = await storage.read(key: 'username') ?? '';
-    name = await storage.read(key: 'name') ?? '';
-    surname = await storage.read(key: 'surname') ?? '';
-
+    var appState = context.read<AppState>();
+    if (appState.useSecureStorage) {
+      //developer.log('Using secure storage');
+      // Read the user data from the secure storage
+      cookie = await storage.read(key: 'cookie') ?? '';
+      guid = await storage.read(key: 'guid') ?? '';
+      email = await storage.read(key: 'email') ?? '';
+      username = await storage.read(key: 'username') ?? '';
+      name = await storage.read(key: 'name') ?? '';
+      surname = await storage.read(key: 'surname') ?? '';
+    } else {
+      //developer.log('Using local storage');
+      // Read the user data from the local file
+      File file = await _localUserFile;
+      if (await file.exists()) {
+        String contents = await file.readAsString();
+        Map<String, dynamic> json = jsonDecode(contents);
+        cookie = json['cookie'] ?? '';
+        guid = json['guid'] ?? '';
+        email = json['email'] ?? '';
+        username = json['username'] ?? '';
+        name = json['name'] ?? '';
+        surname = json['surname'] ?? '';
+      } else {
+        // If the file does not exist, return a default user
+        return User.defaultU();
+      }
+    }
     //////developer.log('Cookie: $cookie');
     //////developer.log('Guid: $guid');
     //////developer.log('Email: $email');
@@ -269,6 +296,12 @@ class User {
       name: json['name'],
       surname: json['surname'],
     );
+  }
+
+  Future<File> get _localUserFile async {
+    // Get the local user file path
+    var dir = await path_provider.getApplicationDocumentsDirectory();
+    return File('${dir.path}/user.json');
   }
 
   // Convert the user data to a json object
@@ -314,15 +347,20 @@ class User {
     }
   }
 
-  Future<bool> delete() async {
+  Future<bool> delete(BuildContext context) async {
     // Remove data from the secure storage
     try {
-      await storage.delete(key: 'cookie');
-      await storage.delete(key: 'guid');
-      await storage.delete(key: 'email');
-      await storage.delete(key: 'username');
-      await storage.delete(key: 'name');
-      await storage.delete(key: 'surname');
+      var appState = context.read<AppState>();
+      if (appState.useSecureStorage) {
+        //developer.log('Deleting user data from secure storage');
+        storage.deleteAll(); // Delete all data from secure storage
+      } else {
+        // If not using secure storage, delete the local file
+        File file = await _localUserFile;
+        if (await file.exists()) {
+          await file.delete();
+        }
+      }
       developer.log('User data deleted from secure storage');
     } catch (e) {
       developer.log('Error deleting user data: $e');
@@ -333,7 +371,7 @@ class User {
   }
 
   // Save to local storage (user.json)
-  Future<void> save() async {
+  Future<void> save(bool useSecureStorage) async {
     //////developer.log('Saving user data to the secure storage');
     //////developer.log('Cookie: $cookie');
     //////developer.log('Guid: $guid');
@@ -343,12 +381,18 @@ class User {
     //////developer.log('Surname: $surname');
     // Save the user data to the secure storage
     try {
-      await storage.write(key: 'cookie', value: cookie);
-      await storage.write(key: 'guid', value: guid);
-      await storage.write(key: 'email', value: email);
-      await storage.write(key: 'username', value: username);
-      await storage.write(key: 'name', value: name);
-      await storage.write(key: 'surname', value: surname ?? '');
+      if (useSecureStorage) {
+        await storage.write(key: 'cookie', value: cookie);
+        await storage.write(key: 'guid', value: guid);
+        await storage.write(key: 'email', value: email);
+        await storage.write(key: 'username', value: username);
+        await storage.write(key: 'name', value: name);
+        await storage.write(key: 'surname', value: surname ?? '');
+      } else {
+        // If not using secure storage, save to a file
+        File file = await _localUserFile;
+        await file.writeAsString(jsonEncode(toJson()));
+      }
     } catch (e) {
       //developer.log('writting Error: $e');
     }

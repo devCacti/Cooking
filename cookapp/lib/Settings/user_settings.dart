@@ -102,6 +102,30 @@ class _UserSettingsState extends State<UserSettings> {
                   ],
                 ),
                 const SizedBox(height: 10.0),
+                // Use Secure Storage switch
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      loc.useSecureStorage,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    Switch(
+                      value: appState.useSecureStorage,
+                      onChanged: (value) {
+                        appState.setUseSecureStorage(value, context);
+                        drawerItems = getDrawerItems(context);
+                        // Update the drawer items after changing the secure storage setting
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10.0),
                 Row(
                   children: [
                     // Language selection
@@ -162,7 +186,7 @@ class _UserSettingsState extends State<UserSettings> {
                   ],
                 ),
 
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 64.0),
                 //Wipe data button
                 ElevatedButton(
                   onPressed: () async {
@@ -173,7 +197,7 @@ class _UserSettingsState extends State<UserSettings> {
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
                   child: Text(
-                    "Wipe Data",
+                    "Wipe Settings",
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
