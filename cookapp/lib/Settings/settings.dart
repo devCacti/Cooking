@@ -69,7 +69,7 @@ class Settings {
   //* Get the dark mode setting from a user settings file called settings.json
   //! If it returns null it means there was an error
   static Future<bool> getDarkMode(BuildContext context) async {
-    bool darkMode = false; // Default value for dark mode
+    bool darkMode = true; // Default value for dark mode
 
     //? Create a file object with the path
     File file = await _localSettingsFile;
@@ -82,7 +82,7 @@ class Settings {
         // Parse the JSON string to get the dark mode value
         Map<String, dynamic> json = jsonDecode(contents);
 
-        darkMode = json['darkMode'] ?? false; // Default to true if not found
+        darkMode = json['darkMode'] ?? true; // Default to true if not found
 
         //showSnackbar(
         //  // ignore: use_build_context_synchronously
@@ -179,19 +179,19 @@ class Settings {
         //  isBold: true,
         //);
 
-        return json['language'] ?? 'en'; // Default to 'en' if not found
+        return json['language'] ?? 'pt'; // Default to 'pt' if not found
       } else {
         // ignore: use_build_context_synchronously
-        await setLanguage(LanguageType.en, context);
+        await setLanguage(LanguageType.pt, context);
 
         //showSnackbar(
         //  // ignore: use_build_context_synchronously
         //  context,
-        //  "Language setting file created with default value 'en'",
+        //  "Language setting file created with default value 'pt'",
         //  type: SnackBarType.info,
         //  isBold: true,
         //);
-        return 'en'; // Default value if the file does not exist
+        return 'pt'; // Default value if the file does not exist
       }
     } catch (e) {
       // Handle any errors that occur during file operations
@@ -241,7 +241,7 @@ class Settings {
       showSnackbar(
         // ignore: use_build_context_synchronously
         context,
-        "Language set to ${Language.getLanguageName(language)}",
+        language == LanguageType.pt ? "Idioma definido: Português" : "Language set: ${Language.getLanguageName(language)}",
         type: SnackBarType.success,
         isBold: true,
       );
@@ -272,8 +272,8 @@ class Settings {
 
         // Parse the JSON string to get the useSecureStorage value
         Map<String, dynamic> json = jsonDecode(contents);
-
-        bool useSecureStorage = json['useSecureStorage'] ?? false; // Default to false if not found
+        // ignore: use_build_context_synchronously
+        bool useSecureStorage = json['useSecureStorage'] ?? await canUseSecureStorage(context); // Default to false if not found
 
         //showSnackbar(
         //  // ignore: use_build_context_synchronously
@@ -285,9 +285,11 @@ class Settings {
         return useSecureStorage;
       } else {
         file.createSync(); // Create the file if it doesn't exist
-        Map<String, dynamic> json = {'useSecureStorage': false}; // Default value
+        // ignore: use_build_context_synchronously
+        Map<String, dynamic> json = {'useSecureStorage': await canUseSecureStorage(context)}; // Default value
         file.writeAsStringSync(jsonEncode(json));
-        return false; // Default value if the file does not exist
+        // ignore: use_build_context_synchronously
+        return await canUseSecureStorage(context); // Default value if the file does not exist
       }
     } catch (e) {
       showSnackbar(
@@ -347,50 +349,10 @@ class Settings {
 
   static Future<bool> canUseSecureStorage(BuildContext context) async {
     //? Get the path to the application documents directory
-    File file = await _localSettingsFile;
 
     try {
-      //? Check if the file exists
-      if (await file.exists()) {
-        String contents = await file.readAsString();
-
-        // Parse the JSON string to get the useSecureStorage value
-        Map<String, dynamic> json = jsonDecode(contents);
-
-        bool useSecureStorage = json['useSecureStorage'] ?? false; // Default to false if not found
-
-        json['useSecureStorage'] = useSecureStorage; // Update the value in the JSON
-        // Update the JSON object with the new value
-
-        // write the value to the file
-        file.writeAsStringSync(jsonEncode(json));
-        return useSecureStorage;
-      } else {
-        try {
-          storage.write(
-            key: 'test_secure_storage',
-            value: 'test_value',
-          );
-          File file = await _localSettingsFile;
-          Map<String, dynamic> json = {'useSecureStorage': true};
-          await file.writeAsString(jsonEncode(json));
-          return true; // Default value if secure storage is available
-        } catch (e) {
-          // If secure storage is not available, show an error message and save the value as false
-          File file = await _localSettingsFile;
-          Map<String, dynamic> json = {'useSecureStorage': false};
-          await file.writeAsString(jsonEncode(json));
-
-          showSnackbar(
-            // ignore: use_build_context_synchronously
-            context,
-            "Secure storage is not available: $e",
-            type: SnackBarType.error,
-            isBold: true,
-          );
-          return false; // Default value if secure storage is not available
-        }
-      }
+      await storage.write(key: 'test_secure_storage', value: 'test_value');
+      return true;
     } catch (e) {
       showSnackbar(
         // ignore: use_build_context_synchronously

@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
           valueListenable: themeNotifier,
           builder: (_, themeMode, __) {
             return MaterialApp(
-              locale: Locale('pt'),
+              locale: appState.locale,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               theme: ThemeData.light(),
