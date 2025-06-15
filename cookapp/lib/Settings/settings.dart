@@ -1,6 +1,6 @@
 import 'package:cookapp/Classes/language.dart';
 import 'package:cookapp/Classes/snackbars.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -11,6 +11,12 @@ ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 class Settings {
   //? Variables
   bool darkMode = true;
+
+  static Future<File> get _localSettingsFile async {
+    final directory = await path_provider.getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/settings.json');
+    return file;
+  }
   ////bool notifications = true; //? Not used yet
 
   //* Default values
@@ -23,16 +29,49 @@ class Settings {
     return Settings();
   }
 
+  static Future<void> wipeData(BuildContext context) async {
+    //? Get the path to the application documents directory
+    //? Tries to delete the file, if it can't do it, catch the exception
+    File file = await _localSettingsFile;
+    try {
+      if (await file.exists()) {
+        await file.delete();
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          "Settings file deleted successfully.",
+          type: SnackBarType.success,
+          isBold: true,
+        );
+        return;
+      }
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        "Settings file does not exist.",
+        type: SnackBarType.info,
+        isBold: true,
+      );
+    } catch (e) {
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        "Error deleting settings file: $e",
+        type: SnackBarType.error,
+        isBold: true,
+      );
+      // Handle any errors that occur during file operations
+      ////developer.log("Error deleting settings file: $e");
+    }
+  }
+
   //* Get the dark mode setting from a user settings file called settings.json
   //! If it returns null it means there was an error
   static Future<bool> getDarkMode(BuildContext context) async {
-    //? Get the path to the application documents directory
-    String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
-
     bool darkMode = false; // Default value for dark mode
 
     //? Create a file object with the path
-    File file = File(filePath);
+    File file = await _localSettingsFile;
 
     try {
       //? Check if the file exists
@@ -43,12 +82,28 @@ class Settings {
         Map<String, dynamic> json = jsonDecode(contents);
 
         darkMode = json['darkMode'] ?? false; // Default to true if not found
+
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          "Dark mode setting retrieved: $darkMode",
+          type: SnackBarType.success,
+          isBold: true,
+        );
         return darkMode;
       } else {
+        file.createSync(); // Create the file if it doesn't exist
         // If the file does not exist, create it with the default value
         Map<String, dynamic> json = {'darkMode': darkMode};
         // Write the JSON string to the file
         file.writeAsStringSync(jsonEncode(json));
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          "Dark mode setting file created with default value $darkMode",
+          type: SnackBarType.info,
+          isBold: true,
+        );
         return darkMode;
       }
     } catch (e) {
@@ -67,15 +122,19 @@ class Settings {
 
   //* Set the dark mode setting in the user settings file called settings.json
   //! If it returns null it means there was an error
-  Future<bool?> setDarkMode(bool value) async {
+  static Future<bool?> setDarkMode(bool value) async {
     //? Get the path to the application documents directory
-    String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
-
-    //? Create a file object with the path
-    File file = File(filePath);
+    File file = await _localSettingsFile;
 
     //? Tries to write to the file, if it can't do it, catch the exception
     try {
+      if (!await file.exists()) {
+        // If the file does not exist, create it with the default value
+        Map<String, dynamic> json = {'darkMode': value};
+        await file.writeAsString(jsonEncode(json));
+        return value; // Return the value if the file was created successfully
+      }
+
       String contents = await file.readAsString();
 
       // Parse the JSON string to get the dark mode value
@@ -98,7 +157,7 @@ class Settings {
   //* Get the language setting from a user settings file called settings.json
   static Future<String> getLanguage(BuildContext context) async {
     //? Get the path to the application documents directory
-    String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
+    String filePath = await _localSettingsFile.then((file) => file.path);
 
     //? Create a file object with the path
     File file = File(filePath);
@@ -111,13 +170,27 @@ class Settings {
         // Parse the JSON string to get the language value
         Map<String, dynamic> json = jsonDecode(contents);
 
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          "Language setting retrieved: ${json['language'] ?? 'en'}",
+          type: SnackBarType.success,
+          isBold: true,
+        );
+
         return json['language'] ?? 'en'; // Default to 'en' if not found
       } else {
-        // If the file does not exist, create it with the default value
-        Map<String, dynamic> json = {'language': 'en'};
-        // Write the JSON string to the file
-        await file.writeAsString(jsonEncode(json));
-        return 'en';
+        // ignore: use_build_context_synchronously
+        await setLanguage(LanguageType.en, context);
+
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          "Language setting file created with default value 'en'",
+          type: SnackBarType.info,
+          isBold: true,
+        );
+        return 'en'; // Default value if the file does not exist
       }
     } catch (e) {
       // Handle any errors that occur during file operations
@@ -134,15 +207,25 @@ class Settings {
   }
 
   //* Set the language setting in the user settings file called settings.json
-  static Future<bool?> setLanguage(LanguageType language) async {
+  static Future<bool?> setLanguage(LanguageType language, BuildContext context) async {
     //? Get the path to the application documents directory
-    String filePath = await getApplicationDocumentsDirectory().then((value) => "${value.path}/settings.json");
-
-    //? Create a file object with the path
-    File file = File(filePath);
+    File file = await _localSettingsFile;
 
     //? Tries to write to the file, if it can't do it, catch the exception
     try {
+      if (!await file.exists()) {
+        // If the file does not exist, create it with the default value
+        Map<String, dynamic> json = {'language': Language.getLanguageCode(language)};
+        await file.writeAsString(jsonEncode(json));
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          "Language setting file created with default value ${Language.getLanguageName(language)}",
+          type: SnackBarType.info,
+          isBold: true,
+        );
+        return true; // Return true if the file was created successfully
+      }
       String contents = await file.readAsString();
 
       // Parse the JSON string to get the language value
@@ -154,10 +237,25 @@ class Settings {
       // Write the updated JSON string to the file
       await file.writeAsString(jsonEncode(json));
 
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        "Language set to ${Language.getLanguageName(language)}",
+        type: SnackBarType.success,
+        isBold: true,
+      );
+
       return true;
     } catch (e) {
       // Handle any errors that occur during file operations
       ////developer.log("Error writing settings file: $e");
+      showSnackbar(
+        // ignore: use_build_context_synchronously
+        context,
+        "Error setting language: $e",
+        type: SnackBarType.error,
+        isBold: true,
+      );
       return null;
     }
   }

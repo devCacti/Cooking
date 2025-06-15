@@ -29,8 +29,6 @@ class _UserSettingsState extends State<UserSettings> {
     );
   }
 
-  Settings settings = Settings.defaultS();
-
   bool darkMode = themeNotifier.value == ThemeMode.dark ? true : false;
 
   @override
@@ -95,7 +93,7 @@ class _UserSettingsState extends State<UserSettings> {
                       value: darkMode,
                       onChanged: (value) {
                         darkMode = value;
-                        settings.setDarkMode(value);
+                        Settings.setDarkMode(value);
                         setState(() {
                           themeNotifier.value = darkMode ? ThemeMode.dark : ThemeMode.light;
                         });
@@ -152,7 +150,7 @@ class _UserSettingsState extends State<UserSettings> {
                                 (locale) => Language.getLanguageName(Language.getLanguageType(locale.languageCode)) == newLanguage,
                                 orElse: () => AppState.locales.first,
                               );
-                              appState.setLocale(selectedLocale);
+                              appState.setLocale(selectedLocale, context);
                             }
                             drawerItems = getDrawerItems(context);
                             // Update the drawer items after changing the language
@@ -162,6 +160,22 @@ class _UserSettingsState extends State<UserSettings> {
                       ),
                     ),
                   ],
+                ),
+
+                const SizedBox(height: 20.0),
+                //Wipe data button
+                ElevatedButton(
+                  onPressed: () async {
+                    await Settings.wipeData(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
+                  child: Text(
+                    "Wipe Data",
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
               ],
             ),

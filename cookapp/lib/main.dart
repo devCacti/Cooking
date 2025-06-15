@@ -1,6 +1,7 @@
 //? Imports
 //import 'package:cookapp/Classes/server_info.dart';
 import 'package:cookapp/Classes/app_state.dart';
+import 'package:cookapp/Classes/snackbars.dart';
 import 'package:cookapp/Pages/Elements/app_title.dart';
 import 'package:cookapp/Pages/Elements/bottom_app_bar.dart';
 import 'package:cookapp/Pages/Elements/early_access.dart';
@@ -9,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'Functions/server_requests.dart';
 import 'Classes/recipes.dart';
 import 'Pages/Recipe Pages/recipe_detail.dart';
-import 'Classes/user.dart';
 import 'Settings/settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //import 'Pages/new_recipe.dart';
@@ -104,16 +104,19 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     var appState = context.read<AppState>();
-    appState.getLocale(context); // Load the locale from settings
+    try {
+      appState.getLocale(context); // Load the locale from settings
+    } catch (e) {
+      showSnackbar(
+        context,
+        "Exception with locale on main activity: $e",
+        type: SnackBarType.error,
+        isBold: true,
+      );
+    }
     Settings.getDarkMode(context).then((value) {
       setState(() {
-        themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light; // Set the theme mode based on the settings
-      });
-    });
-    User user = User.defaultU();
-    user.getInstance().then((value) {
-      setState(() {
-        user = value;
+        themeNotifier.value = (value ? ThemeMode.dark : ThemeMode.light); // Set the theme mode based on the settings
       });
     });
 
