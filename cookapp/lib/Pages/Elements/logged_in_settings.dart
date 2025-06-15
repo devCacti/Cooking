@@ -6,7 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 Widget loggedInSettings(BuildContext context) {
-  final appState = context.watch<AppState>();
+  final appState = Provider.of<AppState>(context, listen: false);
   final loc = AppLocalizations.of(context)!;
   return Column(
     children: [
@@ -52,7 +52,8 @@ Widget loggedInSettings(BuildContext context) {
             "Tem a certeza que quer terminar sessão?",
           ).then((value) async {
             if (value) {
-              appState.logout();
+              // ignore: use_build_context_synchronously
+              appState.logout(context);
 
               if (navigator.canPop()) {
                 navigator.pop();

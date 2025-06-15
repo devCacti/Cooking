@@ -22,20 +22,18 @@ class _UserSettingsState extends State<UserSettings> {
   @override
   void initState() {
     super.initState();
-    Settings.getDarkMode().then(
+    Settings.getDarkMode(context).then(
       (value) => setState(() {
         darkMode = value;
       }),
     );
   }
 
-  Settings settings = Settings.defaultS();
-
   bool darkMode = themeNotifier.value == ThemeMode.dark ? true : false;
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    final appState = Provider.of<AppState>(context, listen: true);
     final loc = AppLocalizations.of(context)!;
 
     var drawerItems = getDrawerItems(context);
@@ -95,11 +93,38 @@ class _UserSettingsState extends State<UserSettings> {
                       value: darkMode,
                       onChanged: (value) {
                         darkMode = value;
-                        settings.setDarkMode(value);
+                        Settings.setDarkMode(value);
                         setState(() {
                           themeNotifier.value = darkMode ? ThemeMode.dark : ThemeMode.light;
                         });
                       },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10.0),
+                // Use Secure Storage switch
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      loc.useSecureStorage,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    Switch(
+                      value: appState.useSecureStorage,
+                      onChanged: appState.canUseSecureStorage
+                          ? null // Disable the switch if secure storage is not available
+                          : (value) async {
+                              await appState.setUseSecureStorage(value, context);
+                              // ignore: use_build_context_synchronously
+                              drawerItems = getDrawerItems(context);
+                              // Update the drawer items after changing the secure storage setting
+                              setState(() {});
+                            },
                     ),
                   ],
                 ),
@@ -152,7 +177,7 @@ class _UserSettingsState extends State<UserSettings> {
                                 (locale) => Language.getLanguageName(Language.getLanguageType(locale.languageCode)) == newLanguage,
                                 orElse: () => AppState.locales.first,
                               );
-                              appState.setLocale(selectedLocale);
+                              appState.setLocale(selectedLocale, context);
                             }
                             drawerItems = getDrawerItems(context);
                             // Update the drawer items after changing the language
@@ -162,6 +187,23 @@ class _UserSettingsState extends State<UserSettings> {
                       ),
                     ),
                   ],
+                ),
+
+                const SizedBox(height: 64.0),
+                //Wipe data button
+                ElevatedButton(
+                  onPressed: () async {
+                    await Settings.wipeData(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
+                  child: Text(
+                    loc.wipeData,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
               ],
             ),

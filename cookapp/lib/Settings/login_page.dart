@@ -1,5 +1,4 @@
 import 'package:cookapp/Classes/app_state.dart';
-import 'package:cookapp/Classes/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Classes/user.dart';
@@ -20,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
+    final appState = Provider.of<AppState>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Iniciar Sessão"),
@@ -158,17 +157,17 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  // Simulate an error for demonstration purposes
-                  showSnackbar(context, 'This is a simulated error message.', type: SnackBarType.error, isBold: true);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Button color
-                  foregroundColor: Colors.white, // Text color
-                ),
-                child: const Text("Trigger Error"),
-              ),
+              //ElevatedButton(
+              //  onPressed: () {
+              //    // Simulate an error for demonstration purposes
+              //    showSnackbar(context, 'This is a simulated error message.', type: SnackBarType.error, isBold: true);
+              //  },
+              //  style: ElevatedButton.styleFrom(
+              //    backgroundColor: Colors.red, // Button color
+              //    foregroundColor: Colors.white, // Text color
+              //  ),
+              //  child: const Text("Trigger Error"),
+              //),
             ],
           ),
         ),

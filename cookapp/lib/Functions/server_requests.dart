@@ -22,10 +22,13 @@ import '../Classes/server_info.dart';
 import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-const storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage(
+  // ignore: deprecated_member_use
+  aOptions: AndroidOptions(encryptedSharedPreferences: true),
+);
 
 // Request the image of a recipe
-Future<Image?> getRecipeImage(String id, [Map<String, Image>? imageCache]) async {
+Future<Image?> getRecipeImage(String id, BuildContext context, [Map<String, Image>? imageCache]) async {
   imageCache ??= {};
 
   // If the imageCache already has an image associated with the id, return that image
@@ -36,7 +39,7 @@ Future<Image?> getRecipeImage(String id, [Map<String, Image>? imageCache]) async
   User user = User();
   try {
     //try to get the instance of the user
-    await user.getInstance();
+    await user.getInstance(context);
   } catch (e) {
     //developer.log('Error: $e');
     return Image.asset('assets/images/LittleMan.png');
@@ -70,10 +73,10 @@ Future<Image?> getRecipeImage(String id, [Map<String, Image>? imageCache]) async
 }
 
 // Get all the user's recipes
-Future<List<Recipe>> getMyRecipes() async {
+Future<List<Recipe>> getMyRecipes(BuildContext context) async {
   User? user = User();
   try {
-    await user.getInstance();
+    await user.getInstance(context);
   } catch (e) {
     //developer.log('Error: $e');
     return [];
@@ -134,10 +137,10 @@ Future<List<Recipe>> getMyRecipes() async {
 }
 
 // Get all the recipes that are within the searched parameters
-Future<List<Recipe>> getSearchRecipes(String search, int type) async {
+Future<List<Recipe>> getSearchRecipes(String search, int type, BuildContext context) async {
   User? user = User();
   try {
-    await user.getInstance();
+    await user.getInstance(context);
   } catch (e) {
     //developer.log('Error: $e');
     return [];
@@ -203,10 +206,10 @@ Future<List<Recipe>> getSearchRecipes(String search, int type) async {
 //? Every page has 10 recipes and starts at 10 * page
 //? In programming, 0 is generally the first page
 //? However, in terms of user interface, 1 is the first page and the page would start at 10 * page + 1
-Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
+Future<List<Recipe>> getPopularRecipes(BuildContext context, [int page = 0]) async {
   User? user = User();
   try {
-    await user.getInstance();
+    await user.getInstance(context);
   } catch (e) {
     //developer.log('Error: $e');
     return [];
@@ -260,7 +263,7 @@ Future<List<Recipe>> getPopularRecipes([int page = 0]) async {
 
 // Other functions
 // Gets the ingredients of a recipe from within the app's files and, if it fails, from the server as well
-Future<List<Ingredient>> fetchIngredients(String id) async {
+Future<List<Ingredient>> fetchIngredients(String id, BuildContext context) async {
   // Check if there is a file with the recipe id
   var file = File('recipes/$id.json');
 
@@ -314,7 +317,7 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
   } else {
     User? user = User();
     try {
-      await user.getInstance();
+      await user.getInstance(context);
     } catch (e) {
       //developer.log('Error: $e');
       return [];
@@ -378,10 +381,10 @@ Future<List<Ingredient>> fetchIngredients(String id) async {
 }
 
 // Fetches the ingredients of a specific recipe with the id of the recipe, only from the server
-Future<List<Ingredient>> recipeIngredients(String id) async {
+Future<List<Ingredient>> recipeIngredients(String id, BuildContext context) async {
   User? user = User();
   try {
-    await user.getInstance();
+    await user.getInstance(context);
   } catch (e) {
     //developer.log('Error: $e');
     return [];
@@ -442,10 +445,10 @@ Future<List<Ingredient>> recipeIngredients(String id) async {
 }
 
 // Fetch number of pages of the popular recipes
-Future<int> fetchPopularPages() async {
+Future<int> fetchPopularPages(BuildContext context) async {
   User? user = User();
   try {
-    await user.getInstance();
+    await user.getInstance(context);
   } catch (e) {
     //developer.log('Error: $e');
     return 0;
@@ -483,10 +486,10 @@ Future<int> fetchPopularPages() async {
 }
 
 // Sends a list of ingredients to put in the server's database
-Future<List<String>> newIngredients(List<Ingredient> ings) async {
+Future<List<String>> newIngredients(List<Ingredient> ings, BuildContext context) async {
   User? user = User();
   try {
-    await user.getInstance();
+    await user.getInstance(context);
   } catch (e) {
     //developer.log('Error: $e');
     return [];

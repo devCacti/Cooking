@@ -51,7 +51,7 @@ class _EditFormState extends State<EditForm> {
     super.initState();
     toEditR = widget.toEditR;
     // Get the image
-    getRecipeImage(id).then(
+    getRecipeImage(id, context).then(
       (value) => setState(() {
         foto = value;
       }),
@@ -61,7 +61,7 @@ class _EditFormState extends State<EditForm> {
     desc = widget.toEditR.description;
     ////ings = widget.toEditR.ingredients?.map((ing) => ing.name).toList() ?? [];
     ////ingsT = widget.toEditR.ingredients?.map((ing) => ing.unit).toList() ?? [];
-    recipeIngredients(widget.toEditR.id).then((value) {
+    recipeIngredients(widget.toEditR.id, context).then((value) {
       setState(() {
         ingredients = value;
         ings = ingredients.map((ing) => ing.name).toList();
@@ -1020,7 +1020,7 @@ class _EditFormState extends State<EditForm> {
                               .toList();
 
                           // Send the ingredients to the server
-                          newIngredients(noIdIngs).then((value) {
+                          newIngredients(noIdIngs, context).then((value) {
                             for (String id in value) {
                               if (ingIds.contains(id)) {
                                 // If it already has the id, skip it
@@ -1056,7 +1056,8 @@ class _EditFormState extends State<EditForm> {
                               isPublic: isPublic,
                               ingredientIds: ingIds,
                               //isFavourite: fav,
-                            ).update(id).then((value) {
+                              // ignore: use_build_context_synchronously
+                            ).update(id, context).then((value) {
                               if (value) {
                                 succeded("Receita atualizada com sucesso!");
                               } else {

@@ -1093,7 +1093,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                             }
 
                             // Sending ingredients to the server for creation
-                            newIngredients(ings).then((ingIds) {
+                            newIngredients(ings, context).then((ingIds) {
                               // Insert into the bridges list
                               for (int i = 0; i < ingredients.length; i++) {
                                 bridges.add(
@@ -1117,7 +1117,8 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                 ////type: _selectedValue,
                                 isPublic: isPublic ?? false,
                                 ingredientIds: ingIds,
-                              ).send().then((value) {
+                                // ignore: use_build_context_synchronously
+                              ).send(context).then((value) {
                                 if (value) {
                                   succeded();
                                 } else {

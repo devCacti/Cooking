@@ -1,15 +1,48 @@
+import 'dart:developer' as developer;
+
 import 'package:cookapp/Classes/language.dart';
 import 'package:cookapp/Classes/snackbars.dart';
 import 'package:cookapp/Classes/user.dart';
 import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AppState extends ChangeNotifier {
   User? user;
   Locale _locale = const Locale('pt');
+  bool _useSecureStorage = true;
+  bool _canUseSecureStorage = false;
 
   Locale get locale => _locale;
   bool get isLoggedIn => user != null && user!.cookie.isNotEmpty;
+  bool get useSecureStorage => _useSecureStorage;
+  bool get canUseSecureStorage => _canUseSecureStorage;
+
+  Future<bool> getUseSecureStorage(BuildContext context) async {
+    _useSecureStorage = await Settings.getUseSecureStorage(context);
+    developer.log("Use Secure Storage: $_useSecureStorage");
+
+    notifyListeners();
+    return _useSecureStorage;
+  }
+
+  Future<void> setUseSecureStorage(bool value, BuildContext context) async {
+    if (_useSecureStorage == value) return; // No change, no need to notify
+    user?.delete(context); // Delete user if changing secure storage setting
+    user = null; // Reset user when changing secure storage setting
+    _useSecureStorage = value;
+    developer.log("Use Secure Storage: $_useSecureStorage");
+
+    await Settings.setUseSecureStorage(value, context);
+    notifyListeners();
+  }
+
+  Future<bool> getCanUseSecureStorage(BuildContext context) async {
+    _canUseSecureStorage = await Settings.canUseSecureStorage(context);
+    _useSecureStorage = _canUseSecureStorage; // Update useSecureStorage based on canUseSecureStorage
+    developer.log("Can Use Secure Storage: $_canUseSecureStorage");
+    return _canUseSecureStorage;
+  }
 
   // User Related Methods
   Future<void> login(Login l, BuildContext context) async {
@@ -21,17 +54,18 @@ class AppState extends ChangeNotifier {
       surname: l.surname,
     );
 
-    user = await login.send();
+    user = await login.send(context);
 
     if (user == null || user!.cookie.isEmpty) {
       // If login fails, show an error message
       // ignore: use_build_context_synchronously
-      showSnackbar(context, 'Invalid email or password.', type: SnackBarType.error, isBold: true);
+      showSnackbar(context, 'Email ou password errados.', type: SnackBarType.error, isBold: true);
     }
     notifyListeners();
   }
 
   Future<void> register(Register r, BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
     Register register = Register(
       email: r.email,
       password: r.password,
@@ -46,13 +80,13 @@ class AppState extends ChangeNotifier {
     if (user == null || user!.cookie.isEmpty) {
       // If registration fails, show an error message
       // ignore: use_build_context_synchronously
-      showSnackbar(context, 'Registration failed. Please try again.', type: SnackBarType.error, isBold: true);
+      showSnackbar(context, loc.register_failed, type: SnackBarType.error, isBold: true);
     }
     notifyListeners();
   }
 
-  void logout() async {
-    await user?.delete();
+  void logout(BuildContext context) async {
+    await user?.delete(context);
     user = User.defaultU();
     notifyListeners();
   }
@@ -63,14 +97,14 @@ class AppState extends ChangeNotifier {
   // Method extension for Locale to get the language code
   String get languageCode => _locale.languageCode;
 
-  void setLocale(Locale newLocale) {
+  void setLocale(Locale newLocale, BuildContext context) {
     _locale = newLocale;
     notifyListeners();
-    Settings.setLanguage(Language.getLanguageType(newLocale.languageCode));
+    Settings.setLanguage(Language.getLanguageType(newLocale.languageCode), context);
   }
 
-  Future<void> getLocale() async {
-    String languageCode = await Settings.getLanguage();
+  Future<void> getLocale(BuildContext context) async {
+    String languageCode = await Settings.getLanguage(context);
     _locale = Language.getLocale(languageCode);
     notifyListeners();
   }

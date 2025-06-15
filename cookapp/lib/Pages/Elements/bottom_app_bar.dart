@@ -91,7 +91,7 @@ Widget bottomAppBar(BuildContext context, PageType currentPage) => BottomAppBar(
     );
 
 Widget actionButton(BuildContext context) {
-  final appState = context.watch<AppState>();
+  final appState = Provider.of<AppState>(context, listen: false);
   return FloatingActionButton(
     heroTag: 'newRecipe',
     onPressed: !appState.isLoggedIn
