@@ -1,5 +1,4 @@
 import 'package:cookapp/Classes/app_state.dart';
-import 'package:cookapp/Classes/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Classes/user.dart';

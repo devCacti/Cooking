@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
     final appState = Provider.of<AppState>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Registo"),
+        title: Text(loc.register),
         centerTitle: true,
       ),
       body: Form(
@@ -51,8 +51,8 @@ class _RegisterPageState extends State<RegisterPage> {
               ],
             ),
             const SizedBox(height: 32.0),
-            const Text(
-              "Identificação",
+            Text(
+              loc.identification,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20.0,
@@ -65,14 +65,14 @@ class _RegisterPageState extends State<RegisterPage> {
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
                 hintText: "António",
-                labelText: "Nome *",
+                labelText: "${loc.name} *",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
-                  return "Por favor insira o seu nome";
+                  return loc.please_enter_your_name;
                 }
                 return null;
               },
@@ -83,15 +83,15 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: _surnamesController,
               decoration: InputDecoration(
                 hintText: "da Silva Lopes",
-                labelText: "Apelidos",
+                labelText: loc.surnames,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
             ),
             const SizedBox(height: 32.0),
-            const Text(
-              "Credenciais",
+            Text(
+              loc.credentials,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20.0,
@@ -103,15 +103,15 @@ class _RegisterPageState extends State<RegisterPage> {
               controller: _userNameController,
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
-                hintText: "o_seu_nome",
-                labelText: "Username *",
+                hintText: loc.username_hint, // e.g., "antonio123"
+                labelText: "${loc.username} *",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
-                  return "Por favor insira o seu nome de utilizador";
+                  return loc.please_enter_your_username;
                 }
                 return null;
               },
@@ -124,20 +124,20 @@ class _RegisterPageState extends State<RegisterPage> {
               keyboardType: TextInputType.emailAddress,
               controller: _emailController,
               decoration: InputDecoration(
-                hintText: "exemplo@email.com",
-                labelText: "eMail *",
+                hintText: loc.email_hint,
+                labelText: "${loc.email} *",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
               ),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
-                  return "Por favor insira o seu email";
+                  return loc.please_enter_your_email;
                 }
                 String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
                 RegExp regex = RegExp(pattern); // ReGex: Regular Expression
                 if (!regex.hasMatch(value)) {
-                  return 'Por favor insira um email válido';
+                  return loc.please_enter_a_valid_email;
                 }
                 return null;
               },
@@ -167,13 +167,13 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
-                  return "Por favor insira a sua password";
+                  return loc.please_enter_your_password;
                 }
                 // At least 6 chars, 1 Capital letter, 1 Number and 1 Special character
                 String pattern = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~.])[A-Za-z\d!@#\$&*~.]{6,}$';
                 RegExp regex = RegExp(pattern);
                 if (!regex.hasMatch(value)) {
-                  return '6 caracteres, 1 letra maiús., 1 num. e 1 car. especial';
+                  return loc.password_conditions_error;
                 }
                 return null;
               },

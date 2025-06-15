@@ -1,11 +1,9 @@
 import 'dart:convert';
 //import 'dart:developer' as developer;
 import 'dart:io';
-import 'package:cookapp/Classes/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'package:provider/provider.dart';
 import 'ingredients.dart';
 import 'server_info.dart';
 import 'user.dart';

@@ -33,7 +33,7 @@ class _UserSettingsState extends State<UserSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context, listen: false);
+    final appState = Provider.of<AppState>(context, listen: true);
     final loc = AppLocalizations.of(context)!;
 
     var drawerItems = getDrawerItems(context);
@@ -200,7 +200,8 @@ class _UserSettingsState extends State<UserSettings> {
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
                   child: Text(
-                    "Wipe Settings",
+                    loc.wipeData,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),

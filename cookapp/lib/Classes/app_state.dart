@@ -5,6 +5,7 @@ import 'package:cookapp/Classes/snackbars.dart';
 import 'package:cookapp/Classes/user.dart';
 import 'package:cookapp/Settings/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AppState extends ChangeNotifier {
   User? user;
@@ -58,12 +59,13 @@ class AppState extends ChangeNotifier {
     if (user == null || user!.cookie.isEmpty) {
       // If login fails, show an error message
       // ignore: use_build_context_synchronously
-      showSnackbar(context, 'Invalid email or password.', type: SnackBarType.error, isBold: true);
+      showSnackbar(context, 'Email ou password errados.', type: SnackBarType.error, isBold: true);
     }
     notifyListeners();
   }
 
   Future<void> register(Register r, BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
     Register register = Register(
       email: r.email,
       password: r.password,
@@ -78,7 +80,7 @@ class AppState extends ChangeNotifier {
     if (user == null || user!.cookie.isEmpty) {
       // If registration fails, show an error message
       // ignore: use_build_context_synchronously
-      showSnackbar(context, 'Registration failed. Please try again.', type: SnackBarType.error, isBold: true);
+      showSnackbar(context, loc.register_failed, type: SnackBarType.error, isBold: true);
     }
     notifyListeners();
   }
