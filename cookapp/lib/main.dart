@@ -36,13 +36,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (_, themeMode, __) {
-        return Consumer<AppState>(
-          builder: (context, appState, _) {
+    return Consumer<AppState>(
+      builder: (context, appState, _) {
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: themeNotifier,
+          builder: (_, themeMode, __) {
             return MaterialApp(
-              locale: appState.locale,
+              locale: Locale('pt'),
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               theme: ThemeData.light(),
