@@ -18,6 +18,16 @@ class AppState extends ChangeNotifier {
   bool get useSecureStorage => _useSecureStorage;
   bool get canUseSecureStorage => _canUseSecureStorage;
 
+  // Locale Related Methods
+  Locale get currentLocale => _locale;
+  String get languageCode => _locale.languageCode;
+
+  Future<void> getUser(BuildContext context) async {
+    user = await User.getUser(context);
+    developer.log("User: ${user?.cookie}");
+    notifyListeners();
+  }
+
   Future<bool> getUseSecureStorage(BuildContext context) async {
     _useSecureStorage = await Settings.getUseSecureStorage(context);
     developer.log("Use Secure Storage: $_useSecureStorage");
@@ -38,7 +48,7 @@ class AppState extends ChangeNotifier {
   }
 
   Future<bool> getCanUseSecureStorage(BuildContext context) async {
-    _canUseSecureStorage = await Settings.canUseSecureStorage(context);
+    _canUseSecureStorage = await Settings.getCanUseSecureStorage(context);
     _useSecureStorage = _canUseSecureStorage; // Update useSecureStorage based on canUseSecureStorage
     developer.log("Can Use Secure Storage: $_canUseSecureStorage");
     return _canUseSecureStorage;
@@ -90,12 +100,6 @@ class AppState extends ChangeNotifier {
     user = User.defaultU();
     notifyListeners();
   }
-
-  // Locale Related Methods
-  Locale get currentLocale => _locale;
-
-  // Method extension for Locale to get the language code
-  String get languageCode => _locale.languageCode;
 
   void setLocale(Locale newLocale, BuildContext context) {
     _locale = newLocale;

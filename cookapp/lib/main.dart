@@ -120,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
     appState.getUseSecureStorage(context);
+    appState.getUser(context);
 
     // Refresh the recipes
     fullRefreshRecipes();

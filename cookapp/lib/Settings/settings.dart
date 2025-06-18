@@ -266,30 +266,32 @@ class Settings {
     File file = await _localSettingsFile;
 
     try {
+      // ignore: use_build_context_synchronously
+      bool canUseSecureStorage = await getCanUseSecureStorage(context);
       //? Check if the file exists
       if (await file.exists()) {
         String contents = await file.readAsString();
 
         // Parse the JSON string to get the useSecureStorage value
         Map<String, dynamic> json = jsonDecode(contents);
-        // ignore: use_build_context_synchronously
-        bool useSecureStorage = json['useSecureStorage'] ?? await canUseSecureStorage(context); // Default to false if not found
 
-        //showSnackbar(
-        //  // ignore: use_build_context_synchronously
-        //  context,
-        //  "Use secure storage setting retrieved: $useSecureStorage",
-        //  type: SnackBarType.success,
-        //  isBold: true,
-        //);
+        bool useSecureStorage = json['useSecureStorage'] ?? canUseSecureStorage;
+
+        showSnackbar(
+          // ignore: use_build_context_synchronously
+          context,
+          useSecureStorage ? "Using secure storage." : "Not using secure storage (not recommended).",
+          type: useSecureStorage ? SnackBarType.success : SnackBarType.error,
+          isBold: true,
+        );
         return useSecureStorage;
       } else {
         file.createSync(); // Create the file if it doesn't exist
         // ignore: use_build_context_synchronously
-        Map<String, dynamic> json = {'useSecureStorage': await canUseSecureStorage(context)}; // Default value
+        Map<String, dynamic> json = {'useSecureStorage': canUseSecureStorage}; // Default value
         file.writeAsStringSync(jsonEncode(json));
         // ignore: use_build_context_synchronously
-        return await canUseSecureStorage(context); // Default value if the file does not exist
+        return canUseSecureStorage;
       }
     } catch (e) {
       showSnackbar(
@@ -347,12 +349,19 @@ class Settings {
     }
   }
 
-  static Future<bool> canUseSecureStorage(BuildContext context) async {
+  static Future<bool> getCanUseSecureStorage(BuildContext context) async {
     //? Get the path to the application documents directory
 
     try {
       await storage.write(key: 'test_secure_storage', value: 'test_value');
-      return true;
+      var value = await storage.read(key: 'test_secure_storage');
+      if (value == 'test_value') {
+        await storage.delete(key: 'test_secure_storage'); // Clean up after test
+
+        return true; // Secure storage is available
+      } else {
+        return false; // Secure storage is not available
+      }
     } catch (e) {
       showSnackbar(
         // ignore: use_build_context_synchronously

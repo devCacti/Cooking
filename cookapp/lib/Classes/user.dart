@@ -286,6 +286,38 @@ class User {
     return this;
   }
 
+  static Future<User> getUser(BuildContext context) async {
+    // Get the user data from the secure storage or local file
+    var appState = context.read<AppState>();
+    User user = User();
+    if (appState.useSecureStorage) {
+      //developer.log('Using secure storage');
+      user.cookie = await storage.read(key: 'cookie') ?? '';
+      user.guid = await storage.read(key: 'guid') ?? '';
+      user.email = await storage.read(key: 'email') ?? '';
+      user.username = await storage.read(key: 'username') ?? '';
+      user.name = await storage.read(key: 'name') ?? '';
+      user.surname = await storage.read(key: 'surname') ?? '';
+    } else {
+      //developer.log('Using local storage');
+      File file = await user._localUserFile;
+      if (await file.exists()) {
+        String contents = await file.readAsString();
+        Map<String, dynamic> json = jsonDecode(contents);
+        user.cookie = json['cookie'] ?? '';
+        user.guid = json['guid'] ?? '';
+        user.email = json['email'] ?? '';
+        user.username = json['username'] ?? '';
+        user.name = json['name'] ?? '';
+        user.surname = json['surname'] ?? '';
+      } else {
+        // If the file does not exist, return a default user
+        return User.defaultU();
+      }
+    }
+    return user;
+  }
+
   // Get the user data from a json object
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
