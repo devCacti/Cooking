@@ -119,8 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
         themeNotifier.value = (value ? ThemeMode.dark : ThemeMode.light); // Set the theme mode based on the settings
       });
     });
-    appState.getUseSecureStorage(context);
-    appState.getUser(context);
+    appState.getUseSecureStorage(context).then((value) {
+      // ignore: use_build_context_synchronously
+      appState.getUser(context).then((value) {
+        // Update the state of the app after getting the user, allowing the UI to reflect the logged-in state
+        setState(() {});
+      });
+    });
 
     // Refresh the recipes
     fullRefreshRecipes();
