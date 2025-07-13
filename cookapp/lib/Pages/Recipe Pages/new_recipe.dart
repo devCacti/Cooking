@@ -113,7 +113,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
     );
   }
 
-  Future<bool> showConfirmationDialog(BuildContext context) async {
+  Future<bool> showConfirmationDialog(BuildContext context, [int type = 0]) async {
     bool confirm = false;
     await showDialog<bool>(
       context: context,
@@ -123,8 +123,9 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
             'Sair?',
             style: TextStyle(color: Colors.red),
           ),
-          content: const Text(
-            'Esta ação é irrevertível. Tudo o que tenha feito será perdido!',
+          content: Text(
+            type == 1 ? 'Tem a certeza que deseja eliminar este ingrediente?' : 'Tem a certeza que deseja sair sem guardar?',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
           ),
           actions: <Widget>[
             TextButton(
@@ -337,7 +338,7 @@ class _NewRecipeFormState extends State<NewRecipeForm> {
                                       borderRadius: BorderRadius.circular(25),
                                     ),
                                     onLongPress: () {
-                                      showConfirmationDialog(context).then(
+                                      showConfirmationDialog(context, 1).then(
                                         (value) {
                                           if (value) {
                                             setState(() {

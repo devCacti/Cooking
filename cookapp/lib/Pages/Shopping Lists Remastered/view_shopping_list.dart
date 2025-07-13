@@ -1,8 +1,9 @@
-import 'package:cookapp/Classes/lista_compra.dart';
+import 'package:cookapp/Classes/Shopping/list_item.dart';
+import 'package:cookapp/Classes/Shopping/shopping_list.dart';
 import 'package:flutter/material.dart';
 
 class ViewList extends StatefulWidget {
-  final ListClass list;
+  final ShoppingList list;
 
   const ViewList({super.key, required this.list});
 
@@ -12,22 +13,15 @@ class ViewList extends StatefulWidget {
 }
 
 class _ViewListState extends State<ViewList> {
-  TextEditingController nomeController = TextEditingController(text: '');
-  TextEditingController quantidadeController = TextEditingController(text: '');
-  TextEditingController precoController = TextEditingController(text: '');
+  TextEditingController nameController = TextEditingController(text: '');
+  TextEditingController quantityController = TextEditingController(text: '');
 
-  double get totalValor {
-    double total = 0;
-    for (var item in widget.list.items!) {
-      total += item.preco * item.quantidade;
-    }
-    return total;
-  }
+  ShoppingList get list => widget.list;
 
   double get totalQuantidade {
     double total = 0;
-    for (var item in widget.list.items!) {
-      total += item.quantidade;
+    for (var item in list.ListItems) {
+      total += item.Quantity ?? 1;
     }
     return total;
   }
@@ -39,17 +33,17 @@ class _ViewListState extends State<ViewList> {
   }
 
   bool get allItemsChecked {
-    for (var item in widget.list.items!) {
-      if (!item.checked) {
+    for (var item in list.ListItems) {
+      if (!item.Checked!) {
         return false;
       }
     }
-    return widget.list.items!.isNotEmpty;
+    return list.ListItems.isNotEmpty;
   }
 
   set allItemsChecked(bool value) {
-    for (var item in widget.list.items!) {
-      item.checked = value;
+    for (var item in list.ListItems) {
+      item.Checked = value;
     }
   }
 
@@ -66,7 +60,7 @@ class _ViewListState extends State<ViewList> {
           content: Wrap(
             children: [
               TextFormField(
-                controller: nomeController,
+                controller: nameController,
                 decoration: const InputDecoration(
                   hintText: 'Nome do Item',
                   // All around border
@@ -78,7 +72,7 @@ class _ViewListState extends State<ViewList> {
               ),
               const SizedBox(height: 55),
               TextField(
-                controller: quantidadeController,
+                controller: quantityController,
                 decoration: const InputDecoration(
                   hintText: 'Quantidade',
                   // All around border
@@ -98,9 +92,8 @@ class _ViewListState extends State<ViewList> {
                 TextButton(
                   child: const Text('Cancelar'),
                   onPressed: () {
-                    nomeController.clear();
-                    quantidadeController.clear();
-                    precoController.clear();
+                    nameController.clear();
+                    quantityController.clear();
 
                     Navigator.of(context).pop();
                   },
@@ -109,25 +102,16 @@ class _ViewListState extends State<ViewList> {
                   child: const Text('Adicionar'),
                   onPressed: () {
                     try {
-                      if (nomeController.text != '' &&
-                          nomeController.text.isNotEmpty) {
-                        if (quantidadeController.text.isNotEmpty) {
+                      if (nameController.text != '' && nameController.text.isNotEmpty) {
+                        if (quantityController.text.isNotEmpty) {
                           //replace , with . if it exists
-                          quantidadeController.text =
-                              quantidadeController.text.replaceAll(',', '.');
+                          quantityController.text = quantityController.text.replaceAll(',', '.');
                         }
                         widget.list.addItem(
                           ListItem(
-                            nome: nomeController.text,
-                            quantidade: quantidadeController.text == '' ||
-                                    quantidadeController.text == '1'
-                                ? 1
-                                : double.parse(quantidadeController.text),
-                            preco: precoController.text == ''
-                                ? 0
-                                : double.parse(
-                                    precoController.text,
-                                  ),
+                            Name: nameController.text,
+                            Quantity: double.tryParse(quantityController.text) ?? 1,
+                            Checked: false,
                           ),
                         );
                       }
@@ -145,17 +129,15 @@ class _ViewListState extends State<ViewList> {
                           showCloseIcon: true,
                           content: Text(
                             'Erro ao adicionar o item',
-                            style: TextStyle(
-                                color: Colors.red, fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                           ),
                         ),
                       );
                     }
-                    updateListById(widget.list);
+                    ShoppingList.updateList(list.Id, list);
                     // Clear the text fields
-                    nomeController.clear();
-                    quantidadeController.clear();
-                    precoController.clear();
+                    nameController.clear();
+                    quantityController.clear();
                     // Close the dialog
                     Navigator.of(context).pop();
                   },
@@ -170,9 +152,9 @@ class _ViewListState extends State<ViewList> {
 
   //? Reorder Items based on checked status
   void reorderItems() {
-    widget.list.items!.sort((a, b) {
-      if (a.checked && !b.checked) return 1; // Checked goes to bottom
-      if (!a.checked && b.checked) return -1; // Unchecked goes to top
+    list.ListItems.sort((a, b) {
+      if (a.Checked ?? false) return 1; // Checked goes to bottom
+      if (!(a.Checked ?? false) && (b.Checked ?? false)) return -1; // Unchecked goes to top
       return 0; // Otherwise, maintain order
     });
   }
@@ -194,7 +176,7 @@ class _ViewListState extends State<ViewList> {
           children: [
             const SizedBox(height: 20),
             Text(
-              widget.list.nome,
+              list.Name,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 30,
@@ -202,12 +184,12 @@ class _ViewListState extends State<ViewList> {
               ),
             ),
             const SizedBox(height: 20),
-            widget.list.descricao == null
+            list.Description == null
                 ? const SizedBox()
                 : Column(
                     children: [
                       Text(
-                        widget.list.descricao!,
+                        list.Description!,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 20,
@@ -217,7 +199,7 @@ class _ViewListState extends State<ViewList> {
                     ],
                   ),
             Text(
-              widget.list.data == null ? 'Sem Data' : widget.list.data!,
+              list.CreatedAt == null ? 'Sem Data' : list.CreatedAt!.toString(),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
@@ -239,7 +221,7 @@ class _ViewListState extends State<ViewList> {
                   tristate: true,
                   value: allItemsChecked
                       ? true
-                      : widget.list.items!.any((item) => item.checked)
+                      : list.ListItems.any((item) => item.Checked ?? false)
                           ? null
                           : false,
                   onChanged: (value) {
@@ -247,27 +229,28 @@ class _ViewListState extends State<ViewList> {
                       if (value == null) {
                         // Handle the indeterminate state if needed, for example, by checking all items
                         allItemsChecked = true;
-                        for (var item in widget.list.items!) {
-                          item.checked = true;
+                        for (var item in list.ListItems) {
+                          item.Checked = true;
                         }
                       }
 
                       if (allItemsChecked) {
                         allItemsChecked = false;
-                        for (var item in widget.list.items!) {
-                          item.checked = false;
+                        for (var item in list.ListItems) {
+                          item.Checked = false;
                         }
                       } else if (value!) {
                         allItemsChecked = true;
-                        for (var item in widget.list.items!) {
-                          item.checked = true;
+                        for (var item in list.ListItems) {
+                          item.Checked = true;
                         }
                       } else {
-                        for (var item in widget.list.items!) {
-                          item.checked = true;
+                        for (var item in list.ListItems) {
+                          item.Checked = true;
                         }
                       }
-                      updateListById(widget.list);
+                      ShoppingList.updateList(list.Id, list);
+                      reorderItems(); // Reorder the list
                     });
                   },
                 ),
@@ -303,7 +286,7 @@ class _ViewListState extends State<ViewList> {
             const SizedBox(height: 5),
 
             //Builder
-            widget.list.items!.isEmpty
+            list.ListItems.isEmpty
                 //? If there are no items
                 ? const Center(
                     child: Text(
@@ -319,14 +302,11 @@ class _ViewListState extends State<ViewList> {
                     itemBuilder: (context, index) {
                       return AnimatedOpacity(
                         duration: const Duration(milliseconds: 500),
-                        opacity: widget.list.items![index].checked
-                            ? 0.45
-                            : 1.0, // Fade effect for checked items
+                        opacity: list.ListItems[index].Checked ?? false ? 0.45 : 1.0, // Fade effect for checked items
                         child: Column(
                           children: [
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Material(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(25),
@@ -361,15 +341,12 @@ class _ViewListState extends State<ViewList> {
                                               child: const Text('Apagar'),
                                               onPressed: () {
                                                 try {
-                                                  widget.list.items!
-                                                      .removeAt(index);
-                                                  //widget.list.removeItem(widget
-                                                  //    .list.items![index].id!);
+                                                  list.ListItems.removeAt(index);
+                                                  //list.removeItem(list.ListItems[index].id!);
                                                 } catch (e) {
                                                   // Handle the error
                                                   // Show a snackbar or toast
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
+                                                  ScaffoldMessenger.of(context).showSnackBar(
                                                     const SnackBar(
                                                       content: Text(
                                                         'Erro ao apagar o item',
@@ -377,7 +354,8 @@ class _ViewListState extends State<ViewList> {
                                                     ),
                                                   );
                                                 }
-                                                updateListById(widget.list);
+                                                ShoppingList.updateList(list.Id, list);
+                                                reorderItems(); // Reorder the list
                                                 Navigator.of(context).pop();
                                                 setState(() {});
                                               },
@@ -388,19 +366,17 @@ class _ViewListState extends State<ViewList> {
                                     );
                                   },
                                   leading: Checkbox(
-                                    value: widget.list.items![index].checked,
+                                    value: list.ListItems[index].Checked ?? false,
                                     onChanged: (value) {
                                       setState(() {
-                                        widget.list.items![index].checked =
-                                            value!;
-                                        updateListById(
-                                            widget.list); // Your update logic
+                                        list.ListItems[index].Checked = value!;
+                                        ShoppingList.updateList(list.Id, list);
                                         reorderItems(); // Reorder the list
                                       });
                                     },
                                   ),
                                   title: Text(
-                                    widget.list.items![index].nome,
+                                    list.ListItems[index].Name,
                                     textAlign: TextAlign.center,
                                     overflow: TextOverflow.fade,
                                     style: const TextStyle(
@@ -408,22 +384,13 @@ class _ViewListState extends State<ViewList> {
                                     ),
                                   ),
                                   trailing: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 5,
+                                    width: MediaQuery.of(context).size.width / 5,
                                     child: Text(
-                                      widget.list.items![index].quantidade
-                                          .toStringAsFixed(widget.list
-                                                      .items![index].quantidade
-                                                      .truncateToDouble() ==
-                                                  widget.list.items![index]
-                                                      .quantidade
-                                              ? 0
-                                              : widget
-                                                  .list.items![index].quantidade
-                                                  .toString()
-                                                  .split('.')
-                                                  .last
-                                                  .length)
+                                      (list.ListItems[index].Quantity ?? 1)
+                                          .toStringAsFixed(
+                                              (list.ListItems[index].Quantity ?? 1).truncateToDouble() == (list.ListItems[index].Quantity ?? 1)
+                                                  ? 0
+                                                  : (list.ListItems[index].Quantity ?? 1).toString().split('.').last.length)
                                           .replaceAll('.', ','),
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
@@ -439,7 +406,7 @@ class _ViewListState extends State<ViewList> {
                         ),
                       );
                     },
-                    itemCount: widget.list.items!.length,
+                    itemCount: list.ListItems.length,
                     shrinkWrap: true,
                     // Don't allow for scrolling
                     physics: const NeverScrollableScrollPhysics(),
@@ -460,7 +427,7 @@ class _ViewListState extends State<ViewList> {
                   tristate: true,
                   value: allItemsChecked
                       ? true
-                      : widget.list.items!.any((item) => item.checked)
+                      : list.ListItems.any((item) => item.Checked ?? false)
                           ? null
                           : false,
                   onChanged: (value) {
@@ -468,27 +435,28 @@ class _ViewListState extends State<ViewList> {
                       if (value == null) {
                         // Handle the indeterminate state if needed, for example, by checking all items
                         allItemsChecked = true;
-                        for (var item in widget.list.items!) {
-                          item.checked = true;
+                        for (var item in list.ListItems) {
+                          item.Checked = true;
                         }
                       }
 
                       if (allItemsChecked) {
                         allItemsChecked = false;
-                        for (var item in widget.list.items!) {
-                          item.checked = false;
+                        for (var item in list.ListItems) {
+                          item.Checked = false;
                         }
                       } else if (value!) {
                         allItemsChecked = true;
-                        for (var item in widget.list.items!) {
-                          item.checked = true;
+                        for (var item in list.ListItems) {
+                          item.Checked = true;
                         }
                       } else {
-                        for (var item in widget.list.items!) {
-                          item.checked = true;
+                        for (var item in list.ListItems) {
+                          item.Checked = true;
                         }
                       }
-                      updateListById(widget.list);
+                      ShoppingList.updateList(list.Id, list);
+                      reorderItems(); // Reorder the list
                     });
                   },
                 ),
@@ -508,10 +476,8 @@ class _ViewListState extends State<ViewList> {
                   width: MediaQuery.of(context).size.width / 5,
                   child: Text(
                     totalQuantidade
-                        .toStringAsFixed(totalQuantidade.truncateToDouble() ==
-                                totalQuantidade
-                            ? 0
-                            : totalQuantidade.toString().split('.').last.length)
+                        .toStringAsFixed(
+                            totalQuantidade.truncateToDouble() == totalQuantidade ? 0 : totalQuantidade.toString().split('.').last.length)
                         .replaceAll('.', ','),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
