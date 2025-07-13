@@ -3,7 +3,7 @@ import 'package:cookapp/Classes/snackbars.dart';
 import 'package:cookapp/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Shopping%20Lists/shopping_lists.dart';
+import '../Shopping Lists Remastered/shopping_lists.dart';
 import '../Recipe Pages/list_recipes.dart';
 //*import '../list_favourites.dart';
 import '../../Settings/user_settings.dart';

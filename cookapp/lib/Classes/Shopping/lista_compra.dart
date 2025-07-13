@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 //! Lista de Compras - PARTE COMPLEXA DO LADO DO UTILIZADOR
 //!
 
-class ListItem {
+class List_Item {
   int? id;
   String nome;
   double preco = 0;
   double quantidade = 1;
   bool checked = false;
 
-  ListItem({
+  List_Item({
     this.id,
     required this.nome,
     this.preco = 0,
@@ -23,8 +23,8 @@ class ListItem {
     this.checked = false,
   });
 
-  factory ListItem.fromJson(Map<String, dynamic> json) {
-    return ListItem(
+  factory List_Item.fromJson(Map<String, dynamic> json) {
+    return List_Item(
       id: json['id'],
       nome: json['nome'],
       preco: json['preco'],
@@ -167,7 +167,7 @@ class ListClass {
   String nome;
   String? descricao;
   String? data;
-  List<ListItem>? items = [];
+  List<List_Item>? items = [];
   Loja? loja;
   Color? color;
   bool? detalhada = false; // False = Lista Simples, True = Lista Detalhada
@@ -184,7 +184,7 @@ class ListClass {
     this.items = const [],
   });
 
-  void addItem(ListItem item) {
+  void addItem(List_Item item) {
     if (items!.isEmpty) {
       item.id = 1;
     } else {
@@ -212,7 +212,7 @@ class ListClass {
       loja: json['loja'],
       color: json['color'] != null ? Color(int.parse(json['color'], radix: 16)) : const Color.fromARGB(255, 53, 140, 255),
       detalhada: json['detalhada'],
-      items: (json['items'] as List<dynamic>).map((item) => ListItem.fromJson(item)).toList(),
+      items: (json['items'] as List<dynamic>).map((item) => List_Item.fromJson(item)).toList(),
     );
   }
 
