@@ -1,13 +1,14 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-import 'dart:io';
+
+import 'package:cookapp/Classes/file.dart';
 
 class ListStore {
   String Name;
   bool isExpanded = true;
 
-  static File file = File("ListStores.json");
+  static String fileName = "ListStores.json";
 
   ListStore({
     required this.Name,
@@ -25,6 +26,7 @@ class ListStore {
   }
 
   static Future<List<ListStore>> load() async {
+    final file = await AppDocuments.getFile(fileName);
     if (!await file.exists()) {
       return [];
     }
@@ -34,11 +36,11 @@ class ListStore {
   }
 
   static Future<void> save(List<ListStore> stores) async {
+    final file = await AppDocuments.getFile(fileName);
     List<Map<String, dynamic>> jsonList = stores.map((store) => store.toJson()).toList();
     String jsonString = json.encode(jsonList);
-    if (!await file.exists()) {
-      await file.create(recursive: true);
-    }
+
+    //? "By default [writeAsString] creates the file for writing and truncates the file if it already exists."
     await file.writeAsString(jsonString);
   }
 
