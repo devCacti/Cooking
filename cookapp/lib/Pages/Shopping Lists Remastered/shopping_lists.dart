@@ -86,6 +86,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
               itemBuilder: (context, index) {
                 final store = stores[index];
                 return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -95,7 +96,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                     children: [
                       ListTile(
                         title: Text(
-                          store.Name,
+                          '${store.Name} (${shoppingLists.where((list) => list.Store?.Name == store.Name).length})',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -122,6 +123,14 @@ class _ShoppingListsState extends State<ShoppingLists> {
                                             color: list.ListColor ?? Colors.grey,
                                             size: 40,
                                           ),
+                                          trailing: IconButton(
+                                              onPressed: () {
+                                                ShoppingList.removeList(list.Id);
+                                                setState(() {
+                                                  shoppingLists.removeWhere((l) => l.Id == list.Id);
+                                                });
+                                              },
+                                              icon: Icon(Icons.delete)),
                                           title: Text(list.Name),
                                           subtitle: Text('Criada em: ${timeAsText(list.CreatedAt!)}'),
                                           onTap: () => viewList(list),
@@ -141,7 +150,8 @@ class _ShoppingListsState extends State<ShoppingLists> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Card(
-                elevation: 10,
+                margin: const EdgeInsets.all(16.0),
+                elevation: 2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -150,7 +160,7 @@ class _ShoppingListsState extends State<ShoppingLists> {
                   children: [
                     ListTile(
                       title: Text(
-                        unCatagorizedStore.Name,
+                        '${unCatagorizedStore.Name} (${shoppingLists.where((list) => list.Store == null).length})',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
