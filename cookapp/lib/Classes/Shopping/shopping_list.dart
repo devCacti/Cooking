@@ -3,9 +3,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cookapp/Classes/file.dart';
+import 'package:flutter/material.dart';
+
 import 'package:cookapp/Classes/Shopping/list_item.dart';
 import 'package:cookapp/Classes/Shopping/list_store.dart';
-import 'package:flutter/material.dart';
 
 class ShoppingList {
   String Id = UniqueKey().toString();
@@ -18,8 +20,6 @@ class ShoppingList {
   DateTime? CreatedAt = DateTime.now();
   DateTime? UpdatedAt = DateTime.now();
 
-  static File file = File("ShoppingLists.json");
-
   ShoppingList({
     required this.Id,
     required this.Name,
@@ -31,6 +31,8 @@ class ShoppingList {
     this.CreatedAt,
     this.UpdatedAt,
   });
+
+  static String fileName = "ShoppingLists.json";
 
   // Deserialization from JSON
   ShoppingList.fromJson(Map<String, dynamic> json)
@@ -65,6 +67,7 @@ class ShoppingList {
   }
 
   static Future<List<ShoppingList>> loadLists() async {
+    final file = await AppDocuments.getFile(fileName);
     if (!await file.exists()) {
       return [];
     }
@@ -74,6 +77,7 @@ class ShoppingList {
   }
 
   static Future<void> saveLists(List<ShoppingList> lists) async {
+    final file = await AppDocuments.getFile(fileName);
     String jsonString = jsonEncode(lists.map((list) => list.toJson()).toList());
     await file.writeAsString(jsonString);
   }
@@ -91,6 +95,7 @@ class ShoppingList {
   }
 
   static Future<void> clearAllLists() async {
+    final file = await AppDocuments.getFile(fileName);
     await file.writeAsString(jsonEncode([]));
   }
 
